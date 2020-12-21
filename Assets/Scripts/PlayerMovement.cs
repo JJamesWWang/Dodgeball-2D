@@ -1,13 +1,12 @@
 ﻿using UnityEngine;
+using Mirror;
+using UnityEngine.InputSystem;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : NetworkBehaviour
 {
-    #region Server
-
-    #endregion
-
-
-    #region Client
-
-    #endregion
+    [Command]
+    public void CmdMoveTowards(Vector2 point)
+    {
+        
+    }
 }
