@@ -9,9 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5876689337531535278}
+  - component: {fileID: 2820203963363814096}
   - component: {fileID: 5876689337531535265}
   - component: {fileID: 5876689337531535264}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Right Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -27,11 +28,32 @@ Transform:
   m_GameObject: {fileID: 5876689337531535279}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 183, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 10, y: 180, z: 1}
   m_Children: []
   m_Father: {fileID: 5876689339435671995}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!50 &2820203963363814096
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5876689337531535279}
+  m_BodyType: 2
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!61 &5876689337531535265
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -56,7 +78,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 1
   serializedVersion: 2
-  m_Size: {x: 10, y: 300}
+  m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
 --- !u!114 &5876689337531535264
 MonoBehaviour:
@@ -71,16 +93,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boundary: {fileID: 0}
-  setXPosition: 0
-  lerpX: 0
-  setYPosition: 0
-  lerpY: 0
-  offset: {x: 0, y: 0}
+  setXPosition: 1
+  lerpX: 1
+  setYPosition: 1
+  lerpY: 0.5
+  offset: {x: 5, y: 0, z: 0}
   scaleWidth: 0
   scaleWidthFactor: 1
-  scaleHeight: 0
+  useLocalXScale: 1
+  scaleHeight: 1
   scaleHeightFactor: 1
-  useLocalScale: 0
+  useLocalYScale: 0
 --- !u!1 &5876689337667910247
 GameObject:
   m_ObjectHideFlags: 0
@@ -177,16 +200,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boundary: {fileID: 0}
-  setXPosition: 0
-  lerpX: 0
+  setXPosition: 1
+  lerpX: 0.5
   setYPosition: 0
   lerpY: 0
-  offset: {x: 0, y: 0}
+  offset: {x: -0.25, y: 0, z: 0}
   scaleWidth: 0
   scaleWidthFactor: 1
-  scaleHeight: 0
-  scaleHeightFactor: 1
-  useLocalScale: 0
+  useLocalXScale: 1
+  scaleHeight: 1
+  scaleHeightFactor: 0.33
+  useLocalYScale: 0
 --- !u!1 &5876689338054651757
 GameObject:
   m_ObjectHideFlags: 0
@@ -196,9 +220,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5876689338054651756}
+  - component: {fileID: 2077791320271168978}
   - component: {fileID: 5876689338054651759}
   - component: {fileID: 5876689338054651758}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Left Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -214,11 +239,32 @@ Transform:
   m_GameObject: {fileID: 5876689338054651757}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -183, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 10, y: 180, z: 1}
   m_Children: []
   m_Father: {fileID: 5876689339435671995}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!50 &2077791320271168978
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5876689338054651757}
+  m_BodyType: 2
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!61 &5876689338054651759
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -243,7 +289,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 1
   serializedVersion: 2
-  m_Size: {x: 10, y: 300}
+  m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
 --- !u!114 &5876689338054651758
 MonoBehaviour:
@@ -258,16 +304,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boundary: {fileID: 0}
-  setXPosition: 0
+  setXPosition: 1
   lerpX: 0
-  setYPosition: 0
-  lerpY: 0
-  offset: {x: 0, y: 0}
+  setYPosition: 1
+  lerpY: 0.5
+  offset: {x: -5, y: 0, z: 0}
   scaleWidth: 0
   scaleWidthFactor: 1
-  scaleHeight: 0
+  useLocalXScale: 1
+  scaleHeight: 1
   scaleHeightFactor: 1
-  useLocalScale: 0
+  useLocalYScale: 0
 --- !u!1 &5876689338471146471
 GameObject:
   m_ObjectHideFlags: 0
@@ -277,9 +324,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5876689338471146470}
+  - component: {fileID: 3779648671478360217}
   - component: {fileID: 5876689338471146489}
   - component: {fileID: 5876689338471146488}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Top Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -295,11 +343,32 @@ Transform:
   m_GameObject: {fileID: 5876689338471146471}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 105, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 500, y: 10, z: 1}
   m_Children: []
   m_Father: {fileID: 5876689339435671995}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!50 &3779648671478360217
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5876689338471146471}
+  m_BodyType: 2
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!61 &5876689338471146489
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -324,7 +393,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 1
   serializedVersion: 2
-  m_Size: {x: 500, y: 10}
+  m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
 --- !u!114 &5876689338471146488
 MonoBehaviour:
@@ -339,16 +408,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boundary: {fileID: 0}
-  setXPosition: 0
-  lerpX: 0
-  setYPosition: 0
-  lerpY: 0
-  offset: {x: 0, y: 0}
-  scaleWidth: 0
+  setXPosition: 1
+  lerpX: 0.5
+  setYPosition: 1
+  lerpY: 1
+  offset: {x: 0, y: 5, z: 0}
+  scaleWidth: 1
   scaleWidthFactor: 1
+  useLocalXScale: 0
   scaleHeight: 0
   scaleHeightFactor: 1
-  useLocalScale: 0
+  useLocalYScale: 1
 --- !u!1 &5876689338509775703
 GameObject:
   m_ObjectHideFlags: 0
@@ -449,12 +519,13 @@ MonoBehaviour:
   lerpX: 0.5
   setYPosition: 1
   lerpY: 0.5
-  offset: {x: 0, y: 0}
+  offset: {x: 0, y: 0, z: 0}
   scaleWidth: 1
   scaleWidthFactor: 0.01875
+  useLocalXScale: 0
   scaleHeight: 1
   scaleHeightFactor: 0.02222
-  useLocalScale: 0
+  useLocalYScale: 0
 --- !u!1 &5876689338600009987
 GameObject:
   m_ObjectHideFlags: 0
@@ -464,9 +535,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5876689338600009986}
+  - component: {fileID: 5450887232603829952}
   - component: {fileID: 5876689338600009989}
   - component: {fileID: 5876689338600009988}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Bottom Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -482,11 +554,32 @@ Transform:
   m_GameObject: {fileID: 5876689338600009987}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -105, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 500, y: 10, z: 1}
   m_Children: []
   m_Father: {fileID: 5876689339435671995}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!50 &5450887232603829952
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5876689338600009987}
+  m_BodyType: 2
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!61 &5876689338600009989
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -511,7 +604,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 1
   serializedVersion: 2
-  m_Size: {x: 500, y: 10}
+  m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
 --- !u!114 &5876689338600009988
 MonoBehaviour:
@@ -526,16 +619,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boundary: {fileID: 0}
-  setXPosition: 0
-  lerpX: 0
-  setYPosition: 0
+  setXPosition: 1
+  lerpX: 0.5
+  setYPosition: 1
   lerpY: 0
-  offset: {x: 0, y: 0}
-  scaleWidth: 0
+  offset: {x: 0, y: -5, z: 0}
+  scaleWidth: 1
   scaleWidthFactor: 1
+  useLocalXScale: 0
   scaleHeight: 0
   scaleHeightFactor: 1
-  useLocalScale: 0
+  useLocalYScale: 1
 --- !u!1 &5876689339435671992
 GameObject:
   m_ObjectHideFlags: 0

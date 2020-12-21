@@ -12,10 +12,12 @@ GameObject:
   - component: {fileID: 2356974901408827919}
   - component: {fileID: 818675958302017184}
   - component: {fileID: 5956679931081848945}
+  - component: {fileID: 4691361984766331481}
+  - component: {fileID: 4194847636255113913}
   - component: {fileID: 6415630031527748310}
   - component: {fileID: 4579051569387153554}
   - component: {fileID: 2356974901920539626}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -121,6 +123,43 @@ MonoBehaviour:
   localPositionSensitivity: 0.01
   localRotationSensitivity: 0.01
   localScaleSensitivity: 0.01
+--- !u!50 &4691361984766331481
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2356974901408827918}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
+--- !u!70 &4194847636255113913
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2356974901408827918}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0.5, y: 0}
+  m_Size: {x: 16, y: 31}
+  m_Direction: 0
 --- !u!114 &6415630031527748310
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -133,6 +172,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c318b2253e976a74298d759d6b63f75c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  isLeftTeam: 0
+  dodgeballPrefab: {fileID: -7800583326932366743, guid: 7b8a0500c4770994bb0b97770e438523, type: 3}
 --- !u!114 &4579051569387153554
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -145,6 +188,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3aca69befeafc04482de64a139c775e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
 --- !u!114 &2356974901920539626
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -159,3 +204,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
+  movementSpeed: 160
+  angularRotationSpeed: 15
+  stopDistance: 1

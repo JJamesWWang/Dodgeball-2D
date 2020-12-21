@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.Assertions;
 
-public class BoundaryAligner : MonoBehaviour
+public class BoundsAligner : MonoBehaviour
 {
-    [SerializeField] private Boundary boundary = null;
+    [SerializeField] private Bounds boundary = null;
     private Transform transformToResize = null;
 
     [SerializeField] private bool setXPosition = false;
