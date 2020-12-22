@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
-using Mirror;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 
-public class ThrowPowerBar : NetworkBehaviour
+public class ThrowPowerBar : MonoBehaviour
 {
     private bool fillingUp = true;
     private float fillSpeed;
@@ -11,7 +10,7 @@ public class ThrowPowerBar : NetworkBehaviour
 
     private Image indicator;
     private Camera mainCamera;
-    [SerializeField] private PlayerArm playerArm;
+    [SerializeField] private PlayerDodgeballThrower playerArm;
 
     private void Start()
     {

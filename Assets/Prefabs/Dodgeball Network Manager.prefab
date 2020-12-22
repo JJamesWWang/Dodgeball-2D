@@ -49,7 +49,7 @@ MonoBehaviour:
   runInBackground: 1
   autoStartServerBuild: 1
   showDebugMessages: 0
-  serverTickRate: 30
+  serverTickRate: 60
   offlineScene: Assets/Scenes/Main Menu.unity
   onlineScene: Assets/Scenes/Map 1.unity
   transport: {fileID: 4095912713878644769}

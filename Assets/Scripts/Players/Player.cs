@@ -38,14 +38,6 @@ public class Player : NetworkBehaviour
         isLeftTeam = value;
     }
 
-    [ContextMenu("Launch Ball")]
-    private void TestLaunchBall()
-    {
-        Dodgeball dodgeball = Instantiate(dodgeballPrefab, Vector3.zero, Quaternion.identity);
-        dodgeball.SetVelocity(new Vector2(0f, 100f));
-        NetworkServer.Spawn(dodgeball.gameObject);
-    }
-
     #endregion
 
     public override bool Equals(object other)

@@ -7,20 +7,20 @@ public class PlayerCommands : NetworkBehaviour
     private Camera mainCamera = null;
     private PlayerMovement playerMovement = null;
     [SerializeField] private ThrowPowerBar throwPowerBarPrefab = null;
-    private PlayerArm playerArm = null;
+    private PlayerDodgeballThrower playerArm = null;
 
     private void Start()
     {
         mainCamera = Camera.main;
         playerMovement = GetComponentInParent<PlayerMovement>();
-        playerArm = GetComponentInParent<PlayerArm>();
+        playerArm = GetComponentInParent<PlayerDodgeballThrower>();
     }
 
     private void Update()
     {
+        Vector2 mousePosition = Mouse.current.position.ReadValue();
         if (Mouse.current.rightButton.wasPressedThisFrame)
         {
-            Vector2 mousePosition = Mouse.current.position.ReadValue();
             MoveTowards(mousePosition);
         }
         if (Mouse.current.leftButton.wasPressedThisFrame)
@@ -29,7 +29,7 @@ public class PlayerCommands : NetworkBehaviour
         }
         if (Mouse.current.leftButton.wasReleasedThisFrame)
         {
-            ReleaseThrow();
+            ReleaseThrow(mousePosition);
         }
     }
 
@@ -45,8 +45,9 @@ public class PlayerCommands : NetworkBehaviour
         Instantiate(throwPowerBarPrefab, Vector3.zero, Quaternion.identity);
     }
 
-    private void ReleaseThrow()
+    private void ReleaseThrow(Vector2 mousePosition)
     {
-        playerArm.CmdReleaseThrow();
+        Vector2 throwAtPoint = mainCamera.ScreenToWorldPoint(mousePosition);
+        playerArm.CmdReleaseThrow(throwAtPoint);
     }
 }

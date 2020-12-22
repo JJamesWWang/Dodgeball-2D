@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 4579051569387153554}
   - component: {fileID: 2356974901920539626}
   - component: {fileID: 7418284750505816238}
+  - component: {fileID: 4489224569223591714}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -224,9 +225,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  minimumThrowPower: 10
-  maximumThrowPower: 30
+  minimumThrowSpeed: 100
+  maximumThrowSpeed: 500
   throwPowerFrequency: 2
+  offsetDistance: 24
+  throwCooldown: 0.5
+  dodgeballPrefab: {fileID: -7800583326932366743, guid: 7b8a0500c4770994bb0b97770e438523, type: 3}
+--- !u!114 &4489224569223591714
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2356974901408827918}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1768b83ffd4fa54487338933b6a5322, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8129695650714939215
 GameObject:
   m_ObjectHideFlags: 0
