@@ -3,8 +3,8 @@ using Mirror;
 
 public class Dodgeball : NetworkBehaviour
 {
+    [Tooltip("Number of bounces before Dodgeball disappears.")]
     [SerializeField] private int maxBounces = 3;
-    [SerializeField] private float launchSpeed = 300f;
     private int timesBounced = 0;
 
     [ServerCallback]

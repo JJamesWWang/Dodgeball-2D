@@ -7,8 +7,10 @@ public class BoundsAligner : MonoBehaviour
     private Transform transformToResize = null;
 
     [SerializeField] private bool setXPosition = false;
+    [Tooltip("0 is at Left Bound and 1 is at Right Bound")]
     [SerializeField] private float lerpX = 0f;
     [SerializeField] private bool setYPosition = false;
+    [Tooltip("0 is at Bottom Bound and 1 is at Top Bound")]
     [SerializeField] private float lerpY = 0f;
     [SerializeField] private Vector3 offset = Vector3.zero;
 

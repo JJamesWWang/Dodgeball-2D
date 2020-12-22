@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class DodgeballNetworkManager : NetworkManager
 {
-    public List<Player> Players { get; } = new List<Player>();
+    public HashSet<Player> Players { get; } = new HashSet<Player>();
 
     public override void OnServerAddPlayer(NetworkConnection conn)
     {
@@ -15,4 +15,17 @@ public class DodgeballNetworkManager : NetworkManager
         if (!player.IsLeftTeam)
             player.transform.Rotate(0f, 0f, 180f);
     }
+
+    public override void OnServerDisconnect(NetworkConnection conn)
+    {
+        Players.Remove(conn.identity.GetComponent<Player>());
+        base.OnServerDisconnect(conn);
+    }
+
+    public override void OnStopServer()
+    {
+        base.OnStopServer();
+        Players.Clear();
+    }
+
 }
