@@ -6,7 +6,6 @@ public class Player : NetworkBehaviour
 {
     [SyncVar]
     [SerializeField] private bool isLeftTeam;
-    [SerializeField] private Dodgeball dodgeballPrefab;
 
     public bool IsLeftTeam { get { return isLeftTeam; } }
 
