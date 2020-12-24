@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 4095912713878644768}
   - component: {fileID: 4095912713878644774}
   - component: {fileID: 4095912713878644769}
-  - component: {fileID: 5269724266820900195}
   m_Layer: 0
   m_Name: Dodgeball Network Manager
   m_TagString: Untagged
@@ -60,7 +59,7 @@ MonoBehaviour:
   authenticator: {fileID: 0}
   playerPrefab: {fileID: 5636154473464528627, guid: 12b7eb62d3e8d1a40b43a6f58c1a6279, type: 3}
   autoCreatePlayer: 1
-  playerSpawnMethod: 1
+  playerSpawnMethod: 0
   spawnPrefabs:
   - {fileID: 5636154473464528627, guid: 12b7eb62d3e8d1a40b43a6f58c1a6279, type: 3}
   - {fileID: 2356974901408827918, guid: b6ea555d69052f447899817abb60dd5f, type: 3}
@@ -109,18 +108,3 @@ MonoBehaviour:
   SendWindowSize: 128
   ReceiveWindowSize: 128
   debugGUI: 0
---- !u!114 &5269724266820900195
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4095912713878644771}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6442dc8070ceb41f094e44de0bf87274, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  showGUI: 1
-  offsetX: 0
-  offsetY: 0

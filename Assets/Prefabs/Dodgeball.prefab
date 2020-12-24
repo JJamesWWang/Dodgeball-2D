@@ -77,7 +77,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 81163bca464255e4c8a3f0e80ced522f, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.59607846, g: 0, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -173,4 +173,3 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   maxBounces: 3
-  launchSpeed: 100
