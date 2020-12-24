@@ -26,4 +26,12 @@ public class Map : MonoBehaviour
         }
     }
 
+    public Transform GetSpawnPoint(bool isLeftTeam)
+    {
+        if (isLeftTeam)
+            return _leftTeamSpawnPoint;
+        else
+            return _rightTeamSpawnPoint;
+    }
+
 }

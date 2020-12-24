@@ -18,6 +18,7 @@ public class PlayerCommands : NetworkBehaviour
 
     private void Update()
     {
+        if (!Application.isFocused) { return; }
         Vector2 mousePosition = Mouse.current.position.ReadValue();
         if (Mouse.current.rightButton.wasPressedThisFrame)
         {

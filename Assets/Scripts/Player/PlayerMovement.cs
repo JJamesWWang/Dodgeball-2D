@@ -20,7 +20,7 @@ public class PlayerMovement : NetworkBehaviour
     [Command]
     public void CmdMoveTowards(Vector2 point)
     {
-        Bounds movementBounds = player.IsLeftTeam ? Map.Instance.LeftTeamBounds : Map.Instance.RightTeamBounds;
+        Bounds movementBounds = player.Connection.IsLeftTeam ? Map.Instance.LeftTeamBounds : Map.Instance.RightTeamBounds;
         if (movementBounds.Contains(point))
         {
             SetDestination(point);

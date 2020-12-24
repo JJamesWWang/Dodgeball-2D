@@ -1,30 +1,28 @@
-﻿using Mirror;
-using System;
-using UnityEngine;
+﻿using UnityEngine;
+using Mirror;
 
-public class Player : NetworkBehaviour
+public class PlayerConnection : NetworkBehaviour
 {
     [SyncVar]
     [SerializeField] private bool isLeftTeam;
 
     public bool IsLeftTeam { get { return isLeftTeam; } }
+    public bool IsRightTeam { get { return !isLeftTeam; } }
 
     #region Client
 
     public override void OnStartClient()
     {
-        base.OnStartClient();
         if (NetworkServer.active) { return; }
         DodgeballNetworkManager networkManager = (DodgeballNetworkManager)NetworkManager.singleton;
-        networkManager.Players.Add(this);
+        networkManager.PlayerConnections.Add(this);
     }
 
     public override void OnStopClient()
     {
-        base.OnStopClient();
         if (NetworkServer.active) { return; }
         DodgeballNetworkManager networkManager = (DodgeballNetworkManager)NetworkManager.singleton;
-        networkManager.Players.Remove(this);
+        networkManager.PlayerConnections.Remove(this);
     }
 
     #endregion
@@ -41,7 +39,7 @@ public class Player : NetworkBehaviour
 
     public override bool Equals(object other)
     {
-        if (!(other is Player)) { return false; }
+        if (!(other is PlayerConnection)) { return false; }
         return connectionToClient.connectionId == ((NetworkBehaviour)other).connectionToClient.connectionId;
     }
 

@@ -6,6 +6,7 @@ public class BoundsAligner : MonoBehaviour
     [SerializeField] private Bounds boundary = null;
     private Transform transformToResize = null;
 
+    [Header("Position Settings")]
     [SerializeField] private bool setXPosition = false;
     [Tooltip("0 is at Left Bound and 1 is at Right Bound")]
     [SerializeField] private float lerpX = 0f;
@@ -14,6 +15,7 @@ public class BoundsAligner : MonoBehaviour
     [SerializeField] private float lerpY = 0f;
     [SerializeField] private Vector3 offset = Vector3.zero;
 
+    [Header("Scale Settings")]
     [SerializeField] private bool scaleWidth = false;
     [SerializeField] private float scaleWidthFactor = 1f;
     [SerializeField] private bool useLocalXScale = true;
