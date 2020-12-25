@@ -17,10 +17,12 @@ public class ScoreTracker : NetworkBehaviour
     public int RightTeamScore { get { return rightTeamScore; } }
 
     public static event Action<int, int> ServerScoreUpdated;
+    public static event Action<int, int> ClientScoreUpdated;
 
     private void HandleScoreUpdated(int _oldScore, int _newScore)
     {
         ServerScoreUpdated?.Invoke(leftTeamScore, rightTeamScore);
+        ClientScoreUpdated?.Invoke(leftTeamScore, rightTeamScore);
     }
 
     #region Server

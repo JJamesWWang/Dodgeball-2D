@@ -12,7 +12,7 @@ public class LobbyUI : MonoBehaviour
     [SerializeField] private TMP_Text rightTeamPlayersText;
     [SerializeField] private TMP_InputField usernameInput;
     [SerializeField] private Button startButton;
-    [SerializeField] private MatchTracker matchTracker;
+    [SerializeField] private GameState gameState;
     private DodgeballNetworkManager dodgeballNetworkManager;
     private PlayerConnection playerConnection;
 
@@ -32,26 +32,29 @@ public class LobbyUI : MonoBehaviour
     private void OnDestroy()
     {
         MatchTracker.ClientMatchStarted -= HandleMatchStarted;
-        DodgeballNetworkManager.ClientDisconnected -= HandleClientDisconnected;
+        MatchTracker.ClientMatchEnded -= HandleMatchEnded;
+        PlayerConnection.ClientPlayerSpawned -= HandlePlayerSpawned;
         PlayerConnection.ClientPlayerInfoUpdated -= HandlePlayerInfoUpdated;
+        DodgeballNetworkManager.ClientConnected -= HandleClientConnected;
+        DodgeballNetworkManager.ClientDisconnected -= HandleClientDisconnected;
     }
 
     private void Update()
     {
         if (Keyboard.current.escapeKey.wasPressedThisFrame)
         {
-            lobbyUIParent.SetActive(!lobbyUIParent.activeSelf);
+            lobbyUIParent.gameObject.SetActive(!lobbyUIParent.gameObject.activeSelf);
         }
     }
 
     private void HandleMatchStarted()
     {
-        lobbyUIParent.SetActive(false);
+        lobbyUIParent.gameObject.SetActive(false);
     }
 
-    private void HandleMatchEnded()
+    private void HandleMatchEnded(bool _isLeftTeamWin)
     {
-        lobbyUIParent.SetActive(true);
+        lobbyUIParent.gameObject.SetActive(true);
     }
 
     private void HandlePlayerSpawned(PlayerConnection connection)
@@ -117,7 +120,7 @@ public class LobbyUI : MonoBehaviour
 
     public void HandleStartClick()
     {
-        matchTracker.StartMatch();
+        gameState.StartGame();
     }
 
 }

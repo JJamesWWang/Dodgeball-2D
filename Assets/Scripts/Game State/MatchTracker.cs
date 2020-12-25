@@ -9,7 +9,7 @@ public class MatchTracker : NetworkBehaviour
     private ScoreTracker scoreTracker;
 
     public static event Action ClientMatchStarted;
-    public static event Action ClientMatchEnded;
+    public static event Action<bool> ClientMatchEnded;
 
     private void Start()
     {
@@ -74,28 +74,11 @@ public class MatchTracker : NetworkBehaviour
     private void CheckMatchOver(int leftTeamScore, int rightTeamScore)
     {
         int scoreToWin = scoreTracker.ScoreToWin;
-        bool matchEnded = false;
-        if (leftTeamScore == scoreToWin && rightTeamScore == scoreToWin)
-        {
-            Debug.Log("Tie!");
-            matchEnded = true;
-        }
-        else if (leftTeamScore == scoreToWin)
-        {
-            Debug.Log("Left Team Wins!");
-            matchEnded = true;
-        }
-        else if (rightTeamScore == scoreToWin)
-        {
-            Debug.Log("Right Team Wins!");
-            matchEnded = true;
-        }
+        if (leftTeamScore != scoreToWin && rightTeamScore != scoreToWin) { return; }
 
-        if (matchEnded)
-        {
-            InvokeMatchEnded();
-            ResetMatch();
-        }
+        bool isLeftTeamWin = leftTeamScore == scoreToWin;
+        InvokeMatchEnded(isLeftTeamWin);
+        ResetMatch();
     }
 
     #endregion
@@ -109,9 +92,9 @@ public class MatchTracker : NetworkBehaviour
     }
 
     [ClientRpc]
-    private void InvokeMatchEnded()
+    private void InvokeMatchEnded(bool isLeftTeamWin)
     {
-        ClientMatchEnded?.Invoke();
+        ClientMatchEnded?.Invoke(isLeftTeamWin);
     }
 
     #endregion
