@@ -10,6 +10,8 @@ public class LobbyUI : MonoBehaviour
     [SerializeField] private GameObject lobbyUIParent;
     [SerializeField] private TMP_Text leftTeamPlayersText;
     [SerializeField] private TMP_Text rightTeamPlayersText;
+    [SerializeField] private Button joinLeftTeamButton;
+    [SerializeField] private Button joinRightTeamButton;
     [SerializeField] private TMP_InputField usernameInput;
     [SerializeField] private Button startButton;
     [SerializeField] private GameState gameState;
@@ -50,11 +52,15 @@ public class LobbyUI : MonoBehaviour
     private void HandleMatchStarted()
     {
         lobbyUIParent.gameObject.SetActive(false);
+        joinLeftTeamButton.gameObject.SetActive(false);
+        joinRightTeamButton.gameObject.SetActive(false);
     }
 
     private void HandleMatchEnded(bool _isLeftTeamWin)
     {
         lobbyUIParent.gameObject.SetActive(true);
+        joinLeftTeamButton.gameObject.SetActive(true);
+        joinRightTeamButton.gameObject.SetActive(true);
     }
 
     private void HandlePlayerSpawned(PlayerConnection connection)
@@ -98,6 +104,16 @@ public class LobbyUI : MonoBehaviour
     private void HandlePlayerInfoUpdated()
     {
         ConstructPlayersText();
+    }
+
+    public void HandleJoinLeftTeamClick()
+    {
+        playerConnection.CmdSetIsLeftTeam(true);
+    }
+
+    public void HandleJoinRightTeamClick()
+    {
+        playerConnection.CmdSetIsLeftTeam(false);
     }
 
     public void HandleSaveClick()

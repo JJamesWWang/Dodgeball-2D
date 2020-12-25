@@ -10,6 +10,8 @@ public class MatchTracker : NetworkBehaviour
 
     public static event Action ClientMatchStarted;
     public static event Action<bool> ClientMatchEnded;
+    public static event Action ServerMatchStarted;
+    public static event Action ServerMatchEnded;
 
     private void Start()
     {
@@ -25,6 +27,7 @@ public class MatchTracker : NetworkBehaviour
     {
         scoreTracker.ResetScore();
         roundTracker.StartRound();
+        ServerMatchStarted?.Invoke();
         InvokeMatchStarted();
     }
 
@@ -77,6 +80,7 @@ public class MatchTracker : NetworkBehaviour
         if (leftTeamScore != scoreToWin && rightTeamScore != scoreToWin) { return; }
 
         bool isLeftTeamWin = leftTeamScore == scoreToWin;
+        ServerMatchEnded?.Invoke();
         InvokeMatchEnded(isLeftTeamWin);
         ResetMatch();
     }

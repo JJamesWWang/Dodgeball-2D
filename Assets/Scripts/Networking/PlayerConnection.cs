@@ -30,6 +30,13 @@ public class PlayerConnection : NetworkBehaviour
         SetUsername(name);
     }
 
+    [Command]
+    public void CmdSetIsLeftTeam(bool value)
+    {
+        if (GameState.Instance.HasStarted) { return; }
+        SetIsLeftTeam(value);
+    }
+
     [Server]
     public void SetIsLeftTeam(bool value)
     {
