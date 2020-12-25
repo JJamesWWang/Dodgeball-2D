@@ -9,6 +9,7 @@ public class MatchTracker : NetworkBehaviour
     private ScoreTracker scoreTracker;
 
     public static event Action ClientMatchStarted;
+    public static event Action ClientMatchEnded;
 
     private void Start()
     {
@@ -91,7 +92,10 @@ public class MatchTracker : NetworkBehaviour
         }
 
         if (matchEnded)
+        {
+            InvokeMatchEnded();
             ResetMatch();
+        }
     }
 
     #endregion
@@ -102,6 +106,12 @@ public class MatchTracker : NetworkBehaviour
     private void InvokeMatchStarted()
     {
         ClientMatchStarted?.Invoke();
+    }
+
+    [ClientRpc]
+    private void InvokeMatchEnded()
+    {
+        ClientMatchEnded?.Invoke();
     }
 
     #endregion

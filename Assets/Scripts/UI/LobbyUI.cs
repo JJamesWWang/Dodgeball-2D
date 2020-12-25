@@ -22,6 +22,7 @@ public class LobbyUI : MonoBehaviour
         if (NetworkServer.active)
             startButton.gameObject.SetActive(true);
         MatchTracker.ClientMatchStarted += HandleMatchStarted;
+        MatchTracker.ClientMatchEnded += HandleMatchEnded;
         PlayerConnection.ClientPlayerSpawned += HandlePlayerSpawned;
         PlayerConnection.ClientPlayerInfoUpdated += HandlePlayerInfoUpdated;
         DodgeballNetworkManager.ClientConnected += HandleClientConnected;
@@ -43,32 +44,14 @@ public class LobbyUI : MonoBehaviour
         }
     }
 
-    public void HandleSaveClick()
-    {
-        string username = usernameInput.text;
-        playerConnection.CmdSetUsername(username);
-    }
-
-    public void HandleLeaveClick()
-    {
-        if (NetworkServer.active)
-            if (NetworkClient.isConnected)
-                dodgeballNetworkManager.StopHost();
-            else
-                dodgeballNetworkManager.StopServer();
-        else
-            dodgeballNetworkManager.StopClient();
-        SceneManager.LoadScene(0);
-    }
-
-    public void HandleStartClick()
-    {
-        matchTracker.StartMatch();
-    }
-
     private void HandleMatchStarted()
     {
         lobbyUIParent.SetActive(false);
+    }
+
+    private void HandleMatchEnded()
+    {
+        lobbyUIParent.SetActive(true);
     }
 
     private void HandlePlayerSpawned(PlayerConnection connection)
@@ -113,4 +96,28 @@ public class LobbyUI : MonoBehaviour
     {
         ConstructPlayersText();
     }
+
+    public void HandleSaveClick()
+    {
+        string username = usernameInput.text;
+        playerConnection.CmdSetUsername(username);
+    }
+
+    public void HandleLeaveClick()
+    {
+        if (NetworkServer.active)
+            if (NetworkClient.isConnected)
+                dodgeballNetworkManager.StopHost();
+            else
+                dodgeballNetworkManager.StopServer();
+        else
+            dodgeballNetworkManager.StopClient();
+        SceneManager.LoadScene(0);
+    }
+
+    public void HandleStartClick()
+    {
+        matchTracker.StartMatch();
+    }
+
 }

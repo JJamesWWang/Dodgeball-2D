@@ -5,6 +5,7 @@ using System;
 public class RoundTracker : NetworkBehaviour
 {
     private PlayerTracker playerTracker;
+    private DodgeballTracker dodgeballTracker;
 
     public static event Action<bool> ServerRoundEnded;
 
@@ -12,6 +13,7 @@ public class RoundTracker : NetworkBehaviour
     private void Start()
     {
         playerTracker = GetComponent<PlayerTracker>();
+        dodgeballTracker = GetComponent<DodgeballTracker>();
     }
 
     #region Server
@@ -39,6 +41,7 @@ public class RoundTracker : NetworkBehaviour
     public void StartRound()
     {
         playerTracker.DespawnPlayers();
+        dodgeballTracker.DespawnDodgeballs();
         playerTracker.SpawnPlayers();
     }
 

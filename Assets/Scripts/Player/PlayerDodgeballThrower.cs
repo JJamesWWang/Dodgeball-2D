@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using Mirror;
 using UnityEngine.InputSystem;
+using System;
 
 public class PlayerDodgeballThrower : NetworkBehaviour
 {
@@ -60,7 +61,7 @@ public class PlayerDodgeballThrower : NetworkBehaviour
         Vector2 throwDirection = (throwAtPoint - throwFromPoint).normalized;
         Vector2 throwVelocity = throwSpeed * throwDirection;
         throwFromPoint += (throwDirection * offsetDistance);
-        Dodgeball dodgeball = Instantiate(dodgeballPrefab, throwFromPoint, Quaternion.identity);
+        Dodgeball dodgeball = Dodgeball.Spawn(dodgeballPrefab, throwFromPoint, Quaternion.identity);
         dodgeball.SetVelocity(throwVelocity);
         NetworkServer.Spawn(dodgeball.gameObject);
     }

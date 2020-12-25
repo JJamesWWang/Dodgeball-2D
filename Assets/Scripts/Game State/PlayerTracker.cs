@@ -50,7 +50,7 @@ public class PlayerTracker : NetworkBehaviour
     private void EliminatePlayer(Player player)
     {
         ServerPlayerEliminated?.Invoke(player);
-        Destroy(player.gameObject);
+        NetworkServer.Destroy(player.gameObject);
     }
 
     [Server]
@@ -80,9 +80,9 @@ public class PlayerTracker : NetworkBehaviour
     public void DespawnPlayers()
     {
         foreach (Player player in leftTeamPlayers)
-            Destroy(player.gameObject);
+            NetworkServer.Destroy(player.gameObject);
         foreach (Player player in rightTeamPlayers)
-            Destroy(player.gameObject);
+            NetworkServer.Destroy(player.gameObject);
 
         leftTeamPlayers.Clear();
         rightTeamPlayers.Clear();
