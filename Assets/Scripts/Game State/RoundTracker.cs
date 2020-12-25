@@ -11,8 +11,10 @@ public class RoundTracker : NetworkBehaviour
     [ServerCallback]
     private void Start()
     {
-        playerTracker = GetComponentInParent<PlayerTracker>();
+        playerTracker = GetComponent<PlayerTracker>();
     }
+
+    #region Server
 
     public override void OnStartServer()
     {
@@ -26,15 +28,19 @@ public class RoundTracker : NetworkBehaviour
         PlayerTracker.ServerPlayerEliminated -= HandlePlayerEliminated;
     }
 
+    [Server]
     private void HandlePlayerEliminated(Player player)
     {
         if (playerTracker.LeftTeamPlayers.Count == 0 || playerTracker.RightTeamPlayers.Count == 0)
             ServerRoundEnded?.Invoke(player.Connection.IsRightTeam);
     }
 
+    [Server]
     public void StartRound()
     {
         playerTracker.DespawnPlayers();
         playerTracker.SpawnPlayers();
     }
+
+    #endregion Server
 }

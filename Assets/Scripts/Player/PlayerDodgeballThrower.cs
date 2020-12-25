@@ -27,6 +27,8 @@ public class PlayerDodgeballThrower : NetworkBehaviour
         timeSinceLastThrow -= Time.deltaTime;
     }
 
+    #region Server
+
     [Command]
     public void CmdStartThrow()
     {
@@ -80,4 +82,5 @@ public class PlayerDodgeballThrower : NetworkBehaviour
         return throwPowerPercentage;
     }
 
+    #endregion
 }

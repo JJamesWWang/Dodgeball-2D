@@ -7,11 +7,25 @@ public class DodgeballNetworkManager : NetworkManager
 {
     public List<PlayerConnection> PlayerConnections { get; } = new List<PlayerConnection>();
 
+    public PlayerConnection GetPlayerConnection(int connectionId)
+    {
+        foreach (PlayerConnection playerConnection in PlayerConnections)
+            if (playerConnection.connectionToClient.connectionId == connectionId)
+                return playerConnection;
+        Debug.LogException(new ArgumentException($"ConnectionID does not exist: {connectionId}"));
+        return null;
+    }
+
+    public static event Action<NetworkConnection> ClientConnected;
+    public static event Action<NetworkConnection> ClientDisconnected;
+
+    #region Server
+
     public override void OnServerAddPlayer(NetworkConnection conn)
     {
         PlayerConnection playerConnection = Instantiate(playerPrefab).GetComponent<PlayerConnection>();
-        NetworkServer.AddPlayerForConnection(conn, playerConnection.gameObject);
         SetUpPlayerConnection(playerConnection);
+        NetworkServer.AddPlayerForConnection(conn, playerConnection.gameObject);
     }
 
     [Server]
@@ -19,8 +33,7 @@ public class DodgeballNetworkManager : NetworkManager
     {
         PlayerConnections.Add(playerConnection);
         playerConnection.SetIsLeftTeam(PlayerConnections.Count % 2 == 1);
-        if (playerConnection.IsRightTeam)
-            playerConnection.transform.Rotate(0f, 0f, 180f);
+        playerConnection.SetUsername($"Player {PlayerConnections.Count}");
     }
 
     public override void OnServerDisconnect(NetworkConnection conn)
@@ -36,4 +49,21 @@ public class DodgeballNetworkManager : NetworkManager
         PlayerConnections.Clear();
     }
 
+    #endregion
+
+    #region Client
+
+    public override void OnClientConnect(NetworkConnection conn)
+    {
+        base.OnClientConnect(conn);
+        ClientConnected?.Invoke(conn);
+    }
+
+    public override void OnClientDisconnect(NetworkConnection conn)
+    {
+        StopClient();
+        ClientDisconnected?.Invoke(conn);
+    }
+
+    #endregion
 }

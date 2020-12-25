@@ -10,6 +10,8 @@ public class Dodgeball : NetworkBehaviour
 
     public static event Action<Player> ServerPlayerHit;
 
+    #region Server
+
     [ServerCallback]
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -37,4 +39,6 @@ public class Dodgeball : NetworkBehaviour
     {
         GetComponent<Rigidbody2D>().velocity = velocity;    // Using GetComponent<> because Start might not have been run yet
     }
+
+    #endregion
 }

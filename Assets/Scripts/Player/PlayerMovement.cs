@@ -14,8 +14,10 @@ public class PlayerMovement : NetworkBehaviour
 
     private void Start()
     {
-        player = GetComponentInParent<Player>();    
+        player = GetComponent<Player>();    
     }
+
+    #region Server
 
     [Command]
     public void CmdMoveTowards(Vector2 point)
@@ -70,4 +72,6 @@ public class PlayerMovement : NetworkBehaviour
         if (distanceToDestination.sqrMagnitude < stopDistance * stopDistance)
             reachedDestination = true;
     }
+
+    #endregion
 }

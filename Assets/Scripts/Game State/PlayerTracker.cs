@@ -22,6 +22,8 @@ public class PlayerTracker : NetworkBehaviour
         dodgeballNetworkManager = (DodgeballNetworkManager)NetworkManager.singleton;
     }
 
+    #region Server
+
     public override void OnStartServer()
     {
         base.OnStartServer();
@@ -65,6 +67,8 @@ public class PlayerTracker : NetworkBehaviour
         Transform spawnPoint = Map.Instance.GetSpawnPoint(isLeftTeam);
         Player player = Instantiate(playerPrefab, spawnPoint.position, Quaternion.identity);
         player.SetConnection(playerConnection);
+        if (playerConnection.IsRightTeam)
+            player.transform.Rotate(0f, 0f, 180f);
         if (isLeftTeam)
             leftTeamPlayers.Add(player);
         else
@@ -83,4 +87,6 @@ public class PlayerTracker : NetworkBehaviour
         leftTeamPlayers.Clear();
         rightTeamPlayers.Clear();
     }
+
+    #endregion
 }

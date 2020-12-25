@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 2360796140888744034}
   - component: {fileID: 2360796140888744035}
-  - component: {fileID: 2360796140888744038}
-  - component: {fileID: 2360796140888744033}
   - component: {fileID: 2360796140888744032}
+  - component: {fileID: 2360796140888744033}
+  - component: {fileID: 2360796140888744038}
   - component: {fileID: 2360796140888744061}
   m_Layer: 0
   m_Name: Game State
@@ -51,6 +51,34 @@ MonoBehaviour:
   serverOnly: 0
   m_AssetId: 
   hasSpawned: 0
+--- !u!114 &2360796140888744032
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2360796140888744060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71ffae76e60ee394ebb35e619bf67d15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+--- !u!114 &2360796140888744033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2360796140888744060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18f37d9fa3eb922429023fdf41aae5d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
 --- !u!114 &2360796140888744038
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -68,35 +96,6 @@ MonoBehaviour:
   leftTeamPlayers: []
   rightTeamPlayers: []
   playerPrefab: {fileID: 6415630031527748310, guid: b6ea555d69052f447899817abb60dd5f, type: 3}
---- !u!114 &2360796140888744033
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2360796140888744060}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 18f37d9fa3eb922429023fdf41aae5d8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
---- !u!114 &2360796140888744032
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2360796140888744060}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71ffae76e60ee394ebb35e619bf67d15, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  startButton: {fileID: 0}
 --- !u!114 &2360796140888744061
 MonoBehaviour:
   m_ObjectHideFlags: 0

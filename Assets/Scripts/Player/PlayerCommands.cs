@@ -12,13 +12,16 @@ public class PlayerCommands : NetworkBehaviour
     private void Start()
     {
         mainCamera = Camera.main;
-        playerMovement = GetComponentInParent<PlayerMovement>();
-        playerArm = GetComponentInParent<PlayerDodgeballThrower>();
+        playerMovement = GetComponent<PlayerMovement>();
+        playerArm = GetComponent<PlayerDodgeballThrower>();
     }
 
+    #region Client
+
+    [ClientCallback]
     private void Update()
     {
-        if (!Application.isFocused) { return; }
+        if (!Application.isFocused || !hasAuthority) { return; }
         Vector2 mousePosition = Mouse.current.position.ReadValue();
         if (Mouse.current.rightButton.wasPressedThisFrame)
         {
@@ -34,21 +37,26 @@ public class PlayerCommands : NetworkBehaviour
         }
     }
 
+    [Client]
     private void MoveTowards(Vector2 mousePosition)
     {
         Vector2 point = mainCamera.ScreenToWorldPoint(mousePosition);
         playerMovement.CmdMoveTowards(point);
     }
 
+    [Client]
     private void StartThrow()
     {
         playerArm.CmdStartThrow();
         Instantiate(throwPowerBarPrefab, Vector3.zero, Quaternion.identity);
     }
 
+    [Client]
     private void ReleaseThrow(Vector2 mousePosition)
     {
         Vector2 throwAtPoint = mainCamera.ScreenToWorldPoint(mousePosition);
         playerArm.CmdReleaseThrow(throwAtPoint);
     }
+
+    #endregion
 }

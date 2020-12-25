@@ -23,10 +23,7 @@ public class ScoreTracker : NetworkBehaviour
         ServerScoreUpdated?.Invoke(leftTeamScore, rightTeamScore);
     }
 
-    private void Start()
-    {
-        ResetScore();
-    }
+    #region Server
 
     [Server]
     public void ResetScore()
@@ -46,4 +43,6 @@ public class ScoreTracker : NetworkBehaviour
     {
         rightTeamScore += 1;
     }
+
+    #endregion
 }

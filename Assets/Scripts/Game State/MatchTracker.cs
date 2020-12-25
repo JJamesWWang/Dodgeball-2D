@@ -1,34 +1,36 @@
 ﻿using UnityEngine;
 using Mirror;
-using UnityEngine.UI;
+using System;
 
 public class MatchTracker : NetworkBehaviour
 {
-    [SerializeField] private Button startButton = null;
     private RoundTracker roundTracker;
     private PlayerTracker playerTracker;
     private ScoreTracker scoreTracker;
 
+    public static event Action ClientMatchStarted;
+
     private void Start()
     {
-        roundTracker = GetComponentInParent<RoundTracker>();
-        playerTracker = GetComponentInParent<PlayerTracker>();
-        scoreTracker = GetComponentInParent<ScoreTracker>();
-        if (!NetworkServer.active)
-            startButton.gameObject.SetActive(false);
+        roundTracker = GetComponent<RoundTracker>();
+        playerTracker = GetComponent<PlayerTracker>();
+        scoreTracker = GetComponent<ScoreTracker>();
     }
 
+    #region Server
+
+    [Server]
     public void StartMatch()
     {
         scoreTracker.ResetScore();
-        startButton.gameObject.SetActive(false);
         roundTracker.StartRound();
+        InvokeMatchStarted();
     }
 
+    [Server]
     public void ResetMatch()
     {
         playerTracker.DespawnPlayers();
-        startButton.gameObject.SetActive(true);
     }
 
     public override void OnStartServer()
@@ -91,5 +93,17 @@ public class MatchTracker : NetworkBehaviour
         if (matchEnded)
             ResetMatch();
     }
+
+    #endregion
+
+    #region Client
+
+    [ClientRpc]
+    private void InvokeMatchStarted()
+    {
+        ClientMatchStarted?.Invoke();
+    }
+
+    #endregion
 
 }

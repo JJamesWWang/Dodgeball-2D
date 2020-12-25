@@ -1,13 +1,48 @@
 ﻿using UnityEngine;
 using Mirror;
+using System;
 
 public class PlayerConnection : NetworkBehaviour
 {
-    [SyncVar]
+    [SyncVar(hook = nameof(HandleTeamUpdated))]
     [SerializeField] private bool isLeftTeam;
+    [SyncVar(hook = nameof(HandleUsernameUpdated))]
+    [SerializeField] private string username;
 
     public bool IsLeftTeam { get { return isLeftTeam; } }
     public bool IsRightTeam { get { return !isLeftTeam; } }
+    public string Username { get { return username; } }
+
+    public static event Action ClientPlayerInfoUpdated;
+    public static event Action<PlayerConnection> ClientPlayerSpawned;
+
+    private void Start()
+    {
+        DontDestroyOnLoad(gameObject);
+    }
+
+    #region Server
+
+    [Command]
+    public void CmdSetUsername(string name)
+    {
+        if (string.IsNullOrEmpty(name)) { return; }
+        SetUsername(name);
+    }
+
+    [Server]
+    public void SetIsLeftTeam(bool value)
+    {
+        isLeftTeam = value;
+    }
+
+    [Server]
+    public void SetUsername(string name)
+    {
+        username = name;
+    }
+
+    #endregion
 
     #region Client
 
@@ -18,6 +53,11 @@ public class PlayerConnection : NetworkBehaviour
         networkManager.PlayerConnections.Add(this);
     }
 
+    public override void OnStartLocalPlayer()
+    {
+        ClientPlayerSpawned?.Invoke(this);
+    }
+
     public override void OnStopClient()
     {
         if (NetworkServer.active) { return; }
@@ -25,27 +65,16 @@ public class PlayerConnection : NetworkBehaviour
         networkManager.PlayerConnections.Remove(this);
     }
 
-    #endregion
-
-    #region Server
-
-    [Server]
-    public void SetIsLeftTeam(bool value)
+    private void HandleTeamUpdated(bool _oldIsLeftTeam, bool _newIsLeftTeam)
     {
-        isLeftTeam = value;
+        ClientPlayerInfoUpdated?.Invoke();
+    }
+
+    private void HandleUsernameUpdated(string _oldName, string _newName)
+    {
+        ClientPlayerInfoUpdated?.Invoke();
     }
 
     #endregion
-
-    public override bool Equals(object other)
-    {
-        if (!(other is PlayerConnection)) { return false; }
-        return connectionToClient.connectionId == ((NetworkBehaviour)other).connectionToClient.connectionId;
-    }
-
-    public override int GetHashCode()
-    {
-        return connectionToClient.connectionId.ToString().GetHashCode();
-    }
 
 }
