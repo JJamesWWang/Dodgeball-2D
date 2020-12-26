@@ -1,13 +1,16 @@
 ﻿using UnityEngine;
 using Mirror;
 using System;
+using System.Collections;
 
 public class RoundTracker : NetworkBehaviour
 {
     private PlayerTracker playerTracker;
     private DodgeballTracker dodgeballTracker;
+    [SerializeField] private float timeBetweenRounds = 3f;
 
     public static event Action<bool> ServerRoundEnded;
+    public static event Action<float> ClientCountdownStarted;
 
     [ServerCallback]
     private void Start()
@@ -42,8 +45,26 @@ public class RoundTracker : NetworkBehaviour
     {
         playerTracker.DespawnPlayers();
         dodgeballTracker.DespawnDodgeballs();
+        StartCoroutine(SpawnPlayersAfterWaitTime());
+    }
+
+    [Server]
+    private IEnumerator SpawnPlayersAfterWaitTime()
+    {
+        InvokeCountdownStarted();
+        yield return new WaitForSeconds(timeBetweenRounds);
         playerTracker.SpawnPlayers();
     }
 
     #endregion Server
+
+    #region Client
+
+    [ClientRpc]
+    private void InvokeCountdownStarted()
+    {
+        ClientCountdownStarted?.Invoke(timeBetweenRounds);
+    }
+
+    #endregion
 }

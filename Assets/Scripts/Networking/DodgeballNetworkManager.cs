@@ -29,6 +29,7 @@ public class DodgeballNetworkManager : NetworkManager
 
     public override void OnServerDisconnect(NetworkConnection conn)
     {
+        if (conn.identity == null) { return; }
         PlayerConnection playerConnection = conn.identity.GetComponent<PlayerConnection>();
         PlayerConnections.Remove(playerConnection);
         base.OnServerDisconnect(conn);
