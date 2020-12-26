@@ -22,6 +22,23 @@ public class PlayerMovement : NetworkBehaviour
     [Command]
     public void CmdMoveTowards(Vector2 point)
     {
+        MoveTowards(point);
+    }
+
+    #endregion
+
+    #region Client
+
+    [Client]
+    public void CliMoveTowards(Vector2 point)
+    {
+        MoveTowards(point);
+    }
+
+    #endregion
+
+    private void MoveTowards(Vector2 point)
+    {
         Bounds movementBounds = player.Connection.IsLeftTeam ? Map.Instance.LeftTeamBounds : Map.Instance.RightTeamBounds;
         if (movementBounds.Contains(point))
         {
@@ -29,14 +46,12 @@ public class PlayerMovement : NetworkBehaviour
         }
     }
 
-    [Server]
     private void SetDestination(Vector2 point)
     {
         destination = point;
         reachedDestination = false;
     }
 
-    [ServerCallback]
     private void Update()
     {
         if (reachedDestination) { return; }
@@ -45,7 +60,7 @@ public class PlayerMovement : NetworkBehaviour
         CheckReachedDestination();
     }
 
-    [Server]
+
     private void MoveTowardsDestination()
     {
         Vector2 position = transform.position;
@@ -54,7 +69,6 @@ public class PlayerMovement : NetworkBehaviour
         transform.position = position;
     }
 
-    [Server]
     private void RotateTowardsDestination()
     {
         Vector2 position = transform.position;
@@ -64,7 +78,6 @@ public class PlayerMovement : NetworkBehaviour
         transform.rotation = Quaternion.Slerp(transform.rotation, rotatedZAxis, angularRotationSpeed * Time.deltaTime);
     }
 
-    [Server]
     private void CheckReachedDestination()
     {
         Vector2 position = transform.position;
@@ -73,5 +86,4 @@ public class PlayerMovement : NetworkBehaviour
             reachedDestination = true;
     }
 
-    #endregion
 }

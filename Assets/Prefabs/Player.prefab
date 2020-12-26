@@ -119,7 +119,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
-  syncInterval: 0.1
+  syncInterval: 0
   clientAuthority: 0
   localPositionSensitivity: 0.01
   localRotationSensitivity: 0.01
@@ -175,8 +175,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  canvas: {fileID: 0}
-  usernameText: {fileID: 0}
+  connectionNetId: 0
+  connection: {fileID: 0}
 --- !u!114 &4579051569387153554
 MonoBehaviour:
   m_ObjectHideFlags: 0

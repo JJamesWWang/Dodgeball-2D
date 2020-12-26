@@ -42,6 +42,7 @@ public class PlayerCommands : NetworkBehaviour
     {
         Vector2 point = mainCamera.ScreenToWorldPoint(mousePosition);
         playerMovement.CmdMoveTowards(point);
+        playerMovement.CliMoveTowards(point);
     }
 
     [Client]
