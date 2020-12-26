@@ -18,10 +18,9 @@ public class Player : NetworkBehaviour
     #region Server
 
     [Server]
-    public void SetConnection(PlayerConnection playerConnection)
+    public void SetConnectionNetId(uint id)
     {
-        connection = playerConnection;
-        connectionNetId = playerConnection.netId;
+        connectionNetId = id;
     }
 
     #endregion
