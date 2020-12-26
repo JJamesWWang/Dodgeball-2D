@@ -7,6 +7,7 @@ public class Dodgeball : NetworkBehaviour
     [Tooltip("Number of bounces before Dodgeball disappears.")]
     [SerializeField] private int maxBounces = 3;
     private int timesBounced = 0;
+    private SpriteRenderer spriteRenderer;
     [SerializeField] private static Dodgeball dodgeballPrefab;
 
     public static event Action<Dodgeball> ServerDodgeballSpawned;
@@ -25,6 +26,22 @@ public class Dodgeball : NetworkBehaviour
     }
 
     [ServerCallback]
+    private void Start()
+    {
+        spriteRenderer = GetComponent<SpriteRenderer>();   
+    }
+
+    [ServerCallback]
+    private void Update()
+    {
+        if (!spriteRenderer.isVisible)
+        {
+            NetworkServer.Destroy(gameObject);
+            ServerDodgeballDespawned?.Invoke(this);
+        }
+    }
+
+    [ServerCallback]
     private void OnCollisionEnter2D(Collision2D collision)
     {
         HandleCollision(collision);
@@ -34,19 +51,18 @@ public class Dodgeball : NetworkBehaviour
     private void HandleCollision(Collision2D collision)
     {
         var collidedObject = collision.collider.gameObject;
-        Dodgeball dodgeball = collision.otherCollider.gameObject.GetComponent<Dodgeball>();
         if (collidedObject.layer == LayerMask.NameToLayer("Player"))
         {
             Player player = collidedObject.GetComponent<Player>();
             ServerPlayerHit?.Invoke(player);
             NetworkServer.Destroy(gameObject);
-            ServerDodgeballDespawned?.Invoke(dodgeball);
+            ServerDodgeballDespawned?.Invoke(this);
         }
 
         if (timesBounced >= maxBounces)
         {
             NetworkServer.Destroy(gameObject);
-            ServerDodgeballDespawned?.Invoke(dodgeball);
+            ServerDodgeballDespawned?.Invoke(this);
         }
         timesBounced += 1;
     }

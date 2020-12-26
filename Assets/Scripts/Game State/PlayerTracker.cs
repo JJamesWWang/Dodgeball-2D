@@ -49,8 +49,8 @@ public class PlayerTracker : NetworkBehaviour
     [Server]
     private void EliminatePlayer(Player player)
     {
-        ServerPlayerEliminated?.Invoke(player);
         NetworkServer.Destroy(player.gameObject);
+        ServerPlayerEliminated?.Invoke(player);
     }
 
     [Server]
