@@ -7,7 +7,7 @@ public class GameState : NetworkBehaviour
     private DodgeballNetworkManager dodgeballNetworkManager;
 
     public static GameState Instance { get; private set; }
-    public bool HasStarted { get; private set; }
+    public bool IsInPlay { get; private set; }
 
     private void Awake()
     {
@@ -44,13 +44,13 @@ public class GameState : NetworkBehaviour
     [Server]
     private void HandleMatchStarted()
     {
-        HasStarted = true;
+        IsInPlay = true;
     }
 
     [Server]
     private void HandleMatchEnded()
     {
-        HasStarted = false;
+        IsInPlay = false;
     }
 
     [Server]
@@ -59,6 +59,12 @@ public class GameState : NetworkBehaviour
         // Temporarily disabled for easier debugging
         //if (IsValidTeamComposition())
         matchTracker.StartMatch();
+    }
+
+    [Server]
+    public void EndGame()
+    {
+
     }
 
     [Server]

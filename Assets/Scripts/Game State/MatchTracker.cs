@@ -55,7 +55,8 @@ public class MatchTracker : NetworkBehaviour
     private void HandleRoundEnded(bool isLeftTeamWin)
     {
         IncrementScore(isLeftTeamWin);
-        roundTracker.StartRound();
+        if (GameState.Instance.IsInPlay)
+            roundTracker.StartRound();
     }
 
     [Server]

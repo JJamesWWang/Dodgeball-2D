@@ -35,7 +35,7 @@ public class PlayerConnection : NetworkBehaviour
     [Command]
     public void CmdSetIsLeftTeam(bool value)
     {
-        if (GameState.Instance.HasStarted) { return; }
+        if (GameState.Instance.IsInPlay) { return; }
         SetIsLeftTeam(value);
     }
 
