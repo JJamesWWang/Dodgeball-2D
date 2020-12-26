@@ -25,20 +25,20 @@ public class LobbyUI : MonoBehaviour
             startButton.gameObject.SetActive(true);
         MatchTracker.ClientMatchStarted += HandleMatchStarted;
         MatchTracker.ClientMatchEnded += HandleMatchEnded;
-        PlayerConnection.ClientPlayerSpawned += HandlePlayerSpawned;
+        PlayerConnection.ClientLocalPlayerConnected += HandleLocalPlayerConnected;
+        PlayerConnection.ClientPlayerConnected += HandlePlayerConnected;
+        PlayerConnection.ClientPlayerDisconnected += HandlePlayerDisconnected;
         PlayerConnection.ClientPlayerInfoUpdated += HandlePlayerInfoUpdated;
-        DodgeballNetworkManager.ClientConnected += HandleClientConnected;
-        DodgeballNetworkManager.ClientDisconnected += HandleClientDisconnected;
     }
 
     private void OnDestroy()
     {
         MatchTracker.ClientMatchStarted -= HandleMatchStarted;
         MatchTracker.ClientMatchEnded -= HandleMatchEnded;
-        PlayerConnection.ClientPlayerSpawned -= HandlePlayerSpawned;
+        PlayerConnection.ClientLocalPlayerConnected -= HandleLocalPlayerConnected;
+        PlayerConnection.ClientPlayerConnected -= HandlePlayerConnected;
+        PlayerConnection.ClientPlayerDisconnected -= HandlePlayerDisconnected;
         PlayerConnection.ClientPlayerInfoUpdated -= HandlePlayerInfoUpdated;
-        DodgeballNetworkManager.ClientConnected -= HandleClientConnected;
-        DodgeballNetworkManager.ClientDisconnected -= HandleClientDisconnected;
     }
 
     private void Update()
@@ -63,10 +63,20 @@ public class LobbyUI : MonoBehaviour
         joinRightTeamButton.gameObject.SetActive(true);
     }
 
-    private void HandlePlayerSpawned(PlayerConnection connection)
+    private void HandleLocalPlayerConnected(PlayerConnection connection)
     {
         playerConnection = connection;
         InitLobbyUI();
+    }
+
+    private void HandlePlayerConnected(PlayerConnection connection)
+    {
+        ConstructPlayersText();
+    }
+
+    private void HandlePlayerDisconnected(PlayerConnection connection)
+    {
+        ConstructPlayersText();
     }
 
     private void InitLobbyUI()
@@ -91,17 +101,7 @@ public class LobbyUI : MonoBehaviour
             rightTeamPlayersText.text += $"{connection.Username}\n";
     }
 
-    private void HandleClientConnected(NetworkConnection _conn)
-    {
-        ConstructPlayersText();
-    }
-
-    private void HandleClientDisconnected(NetworkConnection _conn)
-    {
-        ConstructPlayersText();
-    }
-    
-    private void HandlePlayerInfoUpdated()
+    private void HandlePlayerInfoUpdated(uint _netId, string _propertyName, object _value)
     {
         ConstructPlayersText();
     }

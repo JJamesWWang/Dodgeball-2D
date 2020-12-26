@@ -66,14 +66,15 @@ public class PlayerTracker : NetworkBehaviour
         bool isLeftTeam = playerConnection.IsLeftTeam;
         Transform spawnPoint = Map.Instance.GetSpawnPoint(isLeftTeam);
         Player player = Instantiate(playerPrefab, spawnPoint.position, Quaternion.identity);
-        player.SetConnection(playerConnection);
         if (playerConnection.IsRightTeam)
             player.transform.Rotate(0f, 0f, 180f);
+        player.SetConnectionNetId(playerConnection.netId);
+        NetworkServer.Spawn(player.gameObject, playerConnection.connectionToClient);
+
         if (isLeftTeam)
             leftTeamPlayers.Add(player);
         else
             rightTeamPlayers.Add(player);
-        NetworkServer.Spawn(player.gameObject, playerConnection.connectionToClient);
     }
 
     [Server]

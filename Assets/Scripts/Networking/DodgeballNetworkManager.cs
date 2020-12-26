@@ -7,15 +7,6 @@ public class DodgeballNetworkManager : NetworkManager
 {
     public List<PlayerConnection> PlayerConnections { get; } = new List<PlayerConnection>();
 
-    public PlayerConnection GetPlayerConnection(int connectionId)
-    {
-        foreach (PlayerConnection playerConnection in PlayerConnections)
-            if (playerConnection.connectionToClient.connectionId == connectionId)
-                return playerConnection;
-        Debug.LogException(new ArgumentException($"ConnectionID does not exist: {connectionId}"));
-        return null;
-    }
-
     public static event Action<NetworkConnection> ClientConnected;
     public static event Action<NetworkConnection> ClientDisconnected;
 

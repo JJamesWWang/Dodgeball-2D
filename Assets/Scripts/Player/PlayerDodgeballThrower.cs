@@ -7,12 +7,12 @@ public class PlayerDodgeballThrower : NetworkBehaviour
 {
     private bool hasThrowStarted = false;
     private float throwStartTime = 0f;
-    [SerializeField] private float minimumThrowSpeed = 10f;
-    [SerializeField] private float maximumThrowSpeed = 30f;
+    [SerializeField] private float minimumThrowSpeed = 100f;
+    [SerializeField] private float maximumThrowSpeed = 500f;
     [Tooltip("1 over this value is how many seconds it takes to go from 0% power to 0% power again.")]
     [SerializeField] private float throwPowerFrequency = 2f;
     [Tooltip("Distance to throw from player's origin to avoid an immediate collision.")]
-    [SerializeField] private float offsetDistance = 30f;
+    [SerializeField] private float offsetDistance = 24f;
     [SerializeField] private float throwCooldown = 0.5f;
     private float timeSinceLastThrow = 0f;
 

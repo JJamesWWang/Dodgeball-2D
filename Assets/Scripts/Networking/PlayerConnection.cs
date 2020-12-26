@@ -13,8 +13,10 @@ public class PlayerConnection : NetworkBehaviour
     public bool IsRightTeam { get { return !isLeftTeam; } }
     public string Username { get { return username; } }
 
-    public static event Action ClientPlayerInfoUpdated;
-    public static event Action<PlayerConnection> ClientPlayerSpawned;
+    public static event Action<uint, string, object> ClientPlayerInfoUpdated;
+    public static event Action<PlayerConnection> ClientPlayerConnected;
+    public static event Action<PlayerConnection> ClientLocalPlayerConnected;
+    public static event Action<PlayerConnection> ClientPlayerDisconnected;
 
     private void Start()
     {
@@ -55,31 +57,39 @@ public class PlayerConnection : NetworkBehaviour
 
     public override void OnStartClient()
     {
-        if (NetworkServer.active) { return; }
-        DodgeballNetworkManager networkManager = (DodgeballNetworkManager)NetworkManager.singleton;
-        networkManager.PlayerConnections.Add(this);
+        if (!NetworkServer.active)
+        {
+            DodgeballNetworkManager networkManager = (DodgeballNetworkManager)NetworkManager.singleton;
+            networkManager.PlayerConnections.Add(this);
+        }
+        ClientPlayerConnected?.Invoke(this);
     }
 
     public override void OnStartLocalPlayer()
     {
-        ClientPlayerSpawned?.Invoke(this);
+        ClientLocalPlayerConnected?.Invoke(this);
     }
 
     public override void OnStopClient()
     {
-        if (NetworkServer.active) { return; }
-        DodgeballNetworkManager networkManager = (DodgeballNetworkManager)NetworkManager.singleton;
-        networkManager.PlayerConnections.Remove(this);
+        if (!NetworkServer.active)
+        {
+            DodgeballNetworkManager networkManager = (DodgeballNetworkManager)NetworkManager.singleton;
+            networkManager.PlayerConnections.Remove(this);
+        }
+        ClientPlayerDisconnected?.Invoke(this);
     }
 
-    private void HandleTeamUpdated(bool _oldIsLeftTeam, bool _newIsLeftTeam)
+    [Client]
+    private void HandleTeamUpdated(bool _oldIsLeftTeam, bool newIsLeftTeam)
     {
-        ClientPlayerInfoUpdated?.Invoke();
+        ClientPlayerInfoUpdated?.Invoke(netId, nameof(IsLeftTeam), newIsLeftTeam);
     }
 
-    private void HandleUsernameUpdated(string _oldName, string _newName)
+    [Client]
+    private void HandleUsernameUpdated(string _oldName, string newName)
     {
-        ClientPlayerInfoUpdated?.Invoke();
+        ClientPlayerInfoUpdated?.Invoke(netId, nameof(Username), newName);
     }
 
     #endregion
