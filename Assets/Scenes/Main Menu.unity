@@ -2944,7 +2944,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 759790b4000638b4a8fb80bb8a40d978, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useSteam: 1
   buttonsParent: {fileID: 1421228291}
   enterIPAddressParent: {fileID: 1459298630}
   enterIPAddressText: {fileID: 992005145}
