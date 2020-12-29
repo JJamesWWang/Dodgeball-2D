@@ -160,7 +160,7 @@ namespace Mirror
             {
                 GameObject roomPlayer = conn.identity.gameObject;
 
-                // if null or not a room player, dont replace it
+                // if null or not a room player, don't replace it
                 if (roomPlayer != null && roomPlayer.GetComponent<NetworkRoomPlayer>() != null)
                     SceneLoadedForPlayer(conn, roomPlayer);
             }
@@ -348,7 +348,7 @@ namespace Mirror
 
         /// <summary>
         /// This causes the server to switch scenes and sets the networkSceneName.
-        /// <para>Clients that connect to this server will automatically switch to this scene. This is called autmatically if onlineScene or offlineScene are set, but it can be called from user code to switch scenes again while the game is in progress. This automatically sets clients to be not-ready. The clients must call NetworkClient.Ready() again to participate in the new scene.</para>
+        /// <para>Clients that connect to this server will automatically switch to this scene. This is called automatically if onlineScene or offlineScene are set, but it can be called from user code to switch scenes again while the game is in progress. This automatically sets clients to be not-ready. The clients must call NetworkClient.Ready() again to participate in the new scene.</para>
         /// </summary>
         /// <param name="newSceneName"></param>
         public override void ServerChangeScene(string newSceneName)
@@ -403,13 +403,13 @@ namespace Mirror
         {
             if (string.IsNullOrEmpty(RoomScene))
             {
-                logger.LogError("NetworkRoomManager RoomScene is empty. Set the RoomScene in the inspector for the NetworkRoomMangaer");
+                logger.LogError("NetworkRoomManager RoomScene is empty. Set the RoomScene in the inspector for the NetworkRoomManager");
                 return;
             }
 
             if (string.IsNullOrEmpty(GameplayScene))
             {
-                logger.LogError("NetworkRoomManager PlayScene is empty. Set the PlayScene in the inspector for the NetworkRoomMangaer");
+                logger.LogError("NetworkRoomManager PlayScene is empty. Set the PlayScene in the inspector for the NetworkRoomManager");
                 return;
             }
 
@@ -515,7 +515,7 @@ namespace Mirror
 
         #endregion
 
-        #region room server virtuals
+        #region room server virtual methods
 
         /// <summary>
         /// This is called on the host when a host is started.
@@ -621,7 +621,7 @@ namespace Mirror
 
         #endregion
 
-        #region room client virtuals
+        #region room client virtual methods
 
         /// <summary>
         /// This is a hook to allow custom behaviour when the game client enters the room.

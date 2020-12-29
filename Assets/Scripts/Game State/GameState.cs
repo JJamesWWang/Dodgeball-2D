@@ -1,30 +1,31 @@
-﻿using UnityEngine;
+using System.Collections;
+using UnityEngine;
 using Mirror;
+using System;
 
 public class GameState : NetworkBehaviour
 {
     private MatchTracker matchTracker;
-    private DodgeballNetworkManager dodgeballNetworkManager;
+    private Room room;
 
     public static GameState Instance { get; private set; }
     public bool IsInPlay { get; private set; }
+    public static Action ServerGameStateReady;
 
     private void Awake()
     {
         if (Instance != null && Instance != this)
-        {
             Destroy(this);
-        }
         else
-        {
             Instance = this;
-        }
+
+        matchTracker = GetComponent<MatchTracker>();
     }
 
     private void Start()
     {
-        matchTracker = GetComponent<MatchTracker>();
-        dodgeballNetworkManager = (DodgeballNetworkManager)NetworkManager.singleton;
+        room = (Room)NetworkManager.singleton;
+        ServerGameStateReady?.Invoke();
     }
 
     #region Server
@@ -72,11 +73,15 @@ public class GameState : NetworkBehaviour
     {
         int leftTeamPlayerCount = 0;
         int rightTeamPlayerCount = 0;
-        foreach (PlayerConnection playerConnection in dodgeballNetworkManager.PlayerConnections)
-            if (playerConnection.IsLeftTeam)
+        foreach (Connection connection in room.Connections)
+        {
+            var playerData = connection.GetComponent<PlayerData>();
+            if (playerData.IsLeftTeam)
                 leftTeamPlayerCount += 1;
             else
                 rightTeamPlayerCount += 1;
+
+        }
 
         return leftTeamPlayerCount > 0 && rightTeamPlayerCount > 0;
     }

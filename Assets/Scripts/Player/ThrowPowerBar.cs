@@ -8,13 +8,12 @@ public class ThrowPowerBar : MonoBehaviour
     private float fillSpeed;
     [SerializeField] private Vector2 offset = new Vector2(-5f, 5f);
 
-    private Image indicator;
     private Camera mainCamera;
     [SerializeField] private PlayerDodgeballThrower playerArm;
+    [SerializeField] private Image indicator;
 
     private void Start()
     {
-        indicator = GetComponentInChildren<Image>();
         mainCamera = Camera.main;
         fillSpeed = 1f / playerArm.TimeTo100Percent;
     }

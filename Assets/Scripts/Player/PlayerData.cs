@@ -1,8 +1,8 @@
-﻿using UnityEngine;
-using Mirror;
 using System;
+using Mirror;
+using UnityEngine;
 
-public class PlayerConnection : NetworkBehaviour
+public class PlayerData : NetworkBehaviour
 {
     [SyncVar(hook = nameof(HandleTeamUpdated))]
     [SerializeField] private bool isLeftTeam;
@@ -14,14 +14,6 @@ public class PlayerConnection : NetworkBehaviour
     public string Username { get { return username; } }
 
     public static event Action<uint, string, object> ClientPlayerInfoUpdated;
-    public static event Action<PlayerConnection> ClientPlayerConnected;
-    public static event Action<PlayerConnection> ClientLocalPlayerConnected;
-    public static event Action<PlayerConnection> ClientPlayerDisconnected;
-
-    private void Start()
-    {
-        DontDestroyOnLoad(gameObject);
-    }
 
     #region Server
 
@@ -35,7 +27,6 @@ public class PlayerConnection : NetworkBehaviour
     [Command]
     public void CmdSetIsLeftTeam(bool value)
     {
-        if (GameState.Instance.IsInPlay) { return; }
         SetIsLeftTeam(value);
     }
 
@@ -55,31 +46,6 @@ public class PlayerConnection : NetworkBehaviour
 
     #region Client
 
-    public override void OnStartClient()
-    {
-        if (!NetworkServer.active)
-        {
-            DodgeballNetworkManager networkManager = (DodgeballNetworkManager)NetworkManager.singleton;
-            networkManager.PlayerConnections.Add(this);
-        }
-        ClientPlayerConnected?.Invoke(this);
-    }
-
-    public override void OnStartLocalPlayer()
-    {
-        ClientLocalPlayerConnected?.Invoke(this);
-    }
-
-    public override void OnStopClient()
-    {
-        if (!NetworkServer.active)
-        {
-            DodgeballNetworkManager networkManager = (DodgeballNetworkManager)NetworkManager.singleton;
-            networkManager.PlayerConnections.Remove(this);
-        }
-        ClientPlayerDisconnected?.Invoke(this);
-    }
-
     [Client]
     private void HandleTeamUpdated(bool _oldIsLeftTeam, bool newIsLeftTeam)
     {
@@ -93,5 +59,4 @@ public class PlayerConnection : NetworkBehaviour
     }
 
     #endregion
-
 }

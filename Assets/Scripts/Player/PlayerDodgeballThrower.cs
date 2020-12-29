@@ -61,7 +61,7 @@ public class PlayerDodgeballThrower : NetworkBehaviour
         Vector2 throwDirection = (throwAtPoint - throwFromPoint).normalized;
         Vector2 throwVelocity = throwSpeed * throwDirection;
         throwFromPoint += (throwDirection * offsetDistance);
-        Dodgeball dodgeball = Dodgeball.Spawn(dodgeballPrefab, throwFromPoint, Quaternion.identity);
+        Dodgeball dodgeball = Instantiate(dodgeballPrefab, throwFromPoint, Quaternion.identity);
         dodgeball.SetVelocity(throwVelocity);
         NetworkServer.Spawn(dodgeball.gameObject);
     }

@@ -11,7 +11,7 @@ public class MatchUI : MonoBehaviour
     [SerializeField] private TMP_Text rightTeamWinsText;
     [SerializeField] private TMP_Text countdownText;
 
-    private void Start()
+    private void Awake()
     {
         MatchTracker.ClientMatchStarted += HandleMatchStarted;
         MatchTracker.ClientMatchEnded += HandleMatchEnded;

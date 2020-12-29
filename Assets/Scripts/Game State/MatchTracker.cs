@@ -13,7 +13,7 @@ public class MatchTracker : NetworkBehaviour
     public static event Action ServerMatchStarted;
     public static event Action ServerMatchEnded;
 
-    private void Start()
+    private void Awake()
     {
         roundTracker = GetComponent<RoundTracker>();
         playerTracker = GetComponent<PlayerTracker>();

@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &4095912713878644771
+--- !u!1 &5986427118085032023
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,23 +8,23 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4095912713878644768}
-  - component: {fileID: 4095912713878644774}
-  - component: {fileID: 4095912713878644769}
+  - component: {fileID: 5986427118085032018}
+  - component: {fileID: 5308120376640935954}
+  - component: {fileID: 8480245606784881957}
   m_Layer: 0
-  m_Name: Dodgeball Network Manager
+  m_Name: Room
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4095912713878644768
+--- !u!4 &5986427118085032018
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4095912713878644771}
+  m_GameObject: {fileID: 5986427118085032023}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -32,16 +32,16 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4095912713878644774
+--- !u!114 &5308120376640935954
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4095912713878644771}
+  m_GameObject: {fileID: 5986427118085032023}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 00f0e0d6674225842bb248cc94952fc2, type: 3}
+  m_Script: {fileID: 11500000, guid: 351716888638e204f82cbb63e9b8c105, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   dontDestroyOnLoad: 1
@@ -50,28 +50,33 @@ MonoBehaviour:
   showDebugMessages: 0
   serverTickRate: 60
   offlineScene: Assets/Scenes/Main Menu.unity
-  onlineScene: Assets/Scenes/Map 1.unity
-  transport: {fileID: 4095912713878644769}
+  onlineScene: Assets/Scenes/Lobby.unity
+  transport: {fileID: 8480245606784881957}
   networkAddress: localhost
   maxConnections: 10
   disconnectInactiveConnections: 0
   disconnectInactiveTimeout: 60
   authenticator: {fileID: 0}
-  playerPrefab: {fileID: 5636154473464528627, guid: 12b7eb62d3e8d1a40b43a6f58c1a6279, type: 3}
+  playerPrefab: {fileID: 2356974901408827918, guid: b6ea555d69052f447899817abb60dd5f, type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 0
-  spawnPrefabs:
-  - {fileID: 5636154473464528627, guid: 12b7eb62d3e8d1a40b43a6f58c1a6279, type: 3}
-  - {fileID: 2356974901408827918, guid: b6ea555d69052f447899817abb60dd5f, type: 3}
-  - {fileID: 85076300178066087, guid: 7b8a0500c4770994bb0b97770e438523, type: 3}
---- !u!114 &4095912713878644769
+  spawnPrefabs: []
+  showRoomGUI: 0
+  minPlayers: 2
+  roomPlayerPrefab: {fileID: 4534741638958361608, guid: 12b7eb62d3e8d1a40b43a6f58c1a6279, type: 3}
+  RoomScene: Assets/Scenes/Lobby.unity
+  GameplayScene: Assets/Scenes/Map 1.unity
+  _allPlayersReady: 0
+  roomSlots: []
+  clientIndex: 0
+--- !u!114 &8480245606784881957
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4095912713878644771}
-  m_Enabled: 0
+  m_GameObject: {fileID: 5986427118085032023}
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6b0fecffa3f624585964b0d0eb21b18e, type: 3}
   m_Name: 

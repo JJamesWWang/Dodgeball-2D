@@ -9,11 +9,15 @@ public class PlayerCommands : NetworkBehaviour
     [SerializeField] private ThrowPowerBar throwPowerBarPrefab = null;
     private PlayerDodgeballThrower playerArm = null;
 
+    private void Awake()
+    {
+        playerMovement = GetComponent<PlayerMovement>();
+        playerArm = GetComponent<PlayerDodgeballThrower>();
+    }
+
     private void Start()
     {
         mainCamera = Camera.main;
-        playerMovement = GetComponent<PlayerMovement>();
-        playerArm = GetComponent<PlayerDodgeballThrower>();
     }
 
     #region Client

@@ -13,7 +13,7 @@ public class RoundTracker : NetworkBehaviour
     public static event Action<float> ClientCountdownStarted;
 
     [ServerCallback]
-    private void Start()
+    private void Awake()
     {
         playerTracker = GetComponent<PlayerTracker>();
         dodgeballTracker = GetComponent<DodgeballTracker>();
@@ -23,13 +23,11 @@ public class RoundTracker : NetworkBehaviour
 
     public override void OnStartServer()
     {
-        base.OnStartServer();
         PlayerTracker.ServerPlayerEliminated += HandlePlayerEliminated;
     }
 
     public override void OnStopServer()
     {
-        base.OnStopServer();
         PlayerTracker.ServerPlayerEliminated -= HandlePlayerEliminated;
     }
 
@@ -37,7 +35,7 @@ public class RoundTracker : NetworkBehaviour
     private void HandlePlayerEliminated(Player player)
     {
         if (playerTracker.LeftTeamPlayers.Count == 0 || playerTracker.RightTeamPlayers.Count == 0)
-            ServerRoundEnded?.Invoke(player.Connection.IsRightTeam);
+            ServerRoundEnded?.Invoke(player.Data.IsRightTeam);
     }
 
     [Server]

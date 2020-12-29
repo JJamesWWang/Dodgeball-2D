@@ -1,92 +1,86 @@
-﻿using UnityEngine;
+using UnityEngine;
 using Mirror;
 using System.Collections.Generic;
 using System;
 
 public class PlayerTracker : NetworkBehaviour
 {
-    // The following are temporarily serialized for debugging purposes
-    [SerializeField] private List<Player> leftTeamPlayers = new List<Player>();
-    [SerializeField] private List<Player> rightTeamPlayers = new List<Player>();
-
-    public List<Player> LeftTeamPlayers { get { return leftTeamPlayers; } }
-    public List<Player> RightTeamPlayers { get { return rightTeamPlayers; } }
-
-    private DodgeballNetworkManager dodgeballNetworkManager;
-    [SerializeField] private Player playerPrefab = null;
+    private Room room;
+    public List<Player> LeftTeamPlayers { get; } = new List<Player>();
+    public List<Player> RightTeamPlayers { get; } = new List<Player>();
 
     public static event Action<Player> ServerPlayerEliminated;
 
     private void Start()
     {
-        dodgeballNetworkManager = (DodgeballNetworkManager)NetworkManager.singleton;
+        room = (Room)NetworkManager.singleton;
     }
 
     #region Server
 
     public override void OnStartServer()
     {
-        base.OnStartServer();
-        Dodgeball.ServerPlayerHit += HandlePlayerHit;
+        Player.ServerPlayerHit += HandlePlayerHit;
     }
 
     public override void OnStopServer()
     {
-        base.OnStopServer();
-        Dodgeball.ServerPlayerHit -= HandlePlayerHit;
+        Player.ServerPlayerHit -= HandlePlayerHit;
     }
 
     [Server]
     private void HandlePlayerHit(Player player)
     {
-        if (player.Connection.IsLeftTeam)
-            leftTeamPlayers.Remove(player);
+        if (player.Data.IsLeftTeam)
+            LeftTeamPlayers.Remove(player);
         else
-            rightTeamPlayers.Remove(player);
+            RightTeamPlayers.Remove(player);
         EliminatePlayer(player);
     }
 
     [Server]
     private void EliminatePlayer(Player player)
     {
-        NetworkServer.Destroy(player.gameObject);
+        // Temporarily set player to out of nowhere
+        player.transform.position = new Vector2(5000, 0);
         ServerPlayerEliminated?.Invoke(player);
     }
 
     [Server]
     public void SpawnPlayers()
     {
-        foreach (PlayerConnection playerConnection in dodgeballNetworkManager.PlayerConnections)
-            SpawnPlayer(playerConnection);
+        foreach (Player player in room.Players)
+            SpawnPlayer(player);
     }
 
     [Server]
-    private void SpawnPlayer(PlayerConnection playerConnection)
+    private void SpawnPlayer(Player player)
     {
-        bool isLeftTeam = playerConnection.IsLeftTeam;
+        var playerData = player.Data;
+        bool isLeftTeam = playerData.IsLeftTeam;
         Transform spawnPoint = Map.Instance.GetSpawnPoint(isLeftTeam);
-        Player player = Instantiate(playerPrefab, spawnPoint.position, Quaternion.identity);
-        if (playerConnection.IsRightTeam)
+        player.transform.position = spawnPoint.position;
+        player.transform.rotation = Quaternion.identity;
+        if (playerData.IsRightTeam)
             player.transform.Rotate(0f, 0f, 180f);
-        player.SetConnection(playerConnection);
-        NetworkServer.Spawn(player.gameObject, playerConnection.connectionToClient);
 
         if (isLeftTeam)
-            leftTeamPlayers.Add(player);
+            LeftTeamPlayers.Add(player);
         else
-            rightTeamPlayers.Add(player);
+            RightTeamPlayers.Add(player);
     }
 
     [Server]
     public void DespawnPlayers()
     {
-        foreach (Player player in leftTeamPlayers)
-            NetworkServer.Destroy(player.gameObject);
-        foreach (Player player in rightTeamPlayers)
-            NetworkServer.Destroy(player.gameObject);
+        // Temporarily set player to out of nowhere
+        foreach (Player player in LeftTeamPlayers)
+            player.transform.position = new Vector2(5000, 0);
+        foreach (Player player in RightTeamPlayers)
+            player.transform.position = new Vector2(5000, 0);
 
-        leftTeamPlayers.Clear();
-        rightTeamPlayers.Clear();
+        LeftTeamPlayers.Clear();
+        RightTeamPlayers.Clear();
     }
 
     #endregion

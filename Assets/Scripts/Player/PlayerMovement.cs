@@ -12,9 +12,9 @@ public class PlayerMovement : NetworkBehaviour
 
     private Player player;
 
-    private void Start()
+    private void Awake()
     {
-        player = GetComponent<Player>();    
+        player = GetComponent<Player>();
     }
 
     #region Server
@@ -39,11 +39,9 @@ public class PlayerMovement : NetworkBehaviour
 
     private void MoveTowards(Vector2 point)
     {
-        Bounds movementBounds = player.Connection.IsLeftTeam ? Map.Instance.LeftTeamBounds : Map.Instance.RightTeamBounds;
+        Bounds movementBounds = player.Data.IsLeftTeam ? Map.Instance.LeftTeamBounds : Map.Instance.RightTeamBounds;
         if (movementBounds.Contains(point))
-        {
             SetDestination(point);
-        }
     }
 
     private void SetDestination(Vector2 point)

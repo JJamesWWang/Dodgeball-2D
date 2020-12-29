@@ -6,11 +6,10 @@ public class ScoreTracker : NetworkBehaviour
 {
     [SerializeField] private int scoreToWin = 11;
 
-    // The following 2 are temporarily serialized for debugging purposes
     [SyncVar(hook = nameof(HandleScoreUpdated))]
-    [SerializeField] private int leftTeamScore = 0;
+    private int leftTeamScore = 0;
     [SyncVar(hook = nameof(HandleScoreUpdated))]
-    [SerializeField] private int rightTeamScore = 0;
+    private int rightTeamScore = 0;
 
     public int ScoreToWin { get { return scoreToWin; } }
     public int LeftTeamScore { get { return leftTeamScore; } }

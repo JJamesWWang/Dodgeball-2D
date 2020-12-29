@@ -1,27 +1,28 @@
-﻿using Mirror;
+using Mirror;
 using System;
 using TMPro;
 using UnityEngine;
 
 public class Player : NetworkBehaviour
 {
-    // Temporarily serialized for debugging purposes
     [SyncVar]
-    [SerializeField] private uint connectionNetId;
-    [SerializeField] private PlayerConnection connection;
+    private uint connectionNetId;
 
-    public uint ConnectionNetId { get { return connectionNetId; } }
-    public PlayerConnection Connection { get { return connection; } }
+    public uint ConnectionNetId { get { return connectionNetId; } set { connectionNetId = value; } }
+    public Connection Connection { get; private set; }
+    public PlayerData Data { get; private set; }
 
+    public static event Action<Player> ServerPlayerHit;
     public static event Action<Player> ClientPlayerSpawned;
 
     #region Server
 
     [Server]
-    public void SetConnection(PlayerConnection playerConnection)
+    public void SetConnection(Connection connection)
     {
-        connection = playerConnection;
-        connectionNetId = playerConnection.netId;
+        Connection = connection;
+        ConnectionNetId = connection.netId;
+        Data = connection.GetComponent<PlayerData>();
     }
 
     #endregion
@@ -30,15 +31,22 @@ public class Player : NetworkBehaviour
 
     public override void OnStartClient()
     {
-        DodgeballNetworkManager dodgeballNetworkManager = (DodgeballNetworkManager)NetworkManager.singleton;
-        foreach (PlayerConnection playerConnection in dodgeballNetworkManager.PlayerConnections)
-            if (playerConnection.netId == connectionNetId)
+        Room room = (Room)NetworkManager.singleton;
+        foreach (Connection connection in room.Connections)
+            if (connection.netId == ConnectionNetId)
             {
-                connection = playerConnection;
+                Connection = connection;
+                Data = connection.GetComponent<PlayerData>();
                 break;
             }
 
         ClientPlayerSpawned?.Invoke(this);
+    }
+
+    [ServerCallback]
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        ServerPlayerHit?.Invoke(this);
     }
 
     #endregion Client

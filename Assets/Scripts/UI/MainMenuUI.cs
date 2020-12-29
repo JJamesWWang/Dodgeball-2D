@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using Mirror;
 using TMPro;
 using System.Text.RegularExpressions;
@@ -14,35 +14,23 @@ public class MainMenuUI : MonoBehaviour
     [SerializeField] private GameObject enterIPAddressParent;
     [SerializeField] private TMP_Text enterIPAddressText;
     [SerializeField] private TMP_InputField enterIPAddressInput;
-    private DodgeballNetworkManager dodgeballNetworkManager;
+    private Room room;
 
     private void Start()
     {
         defaultIPAddressText = enterIPAddressText.text;
-        dodgeballNetworkManager = (DodgeballNetworkManager)NetworkManager.singleton;
+        room = (Room)NetworkManager.singleton;
         gameObject.SetActive(true);
-        DodgeballNetworkManager.ClientDisconnected += HandleClientDisconnected;
-        DodgeballNetworkManager.ClientConnected += HandleClientConnected;
-    }
-
-    private void OnDestroy()
-    {
-        DodgeballNetworkManager.ClientDisconnected -= HandleClientDisconnected;
-        DodgeballNetworkManager.ClientConnected -= HandleClientConnected;
     }
 
     public void HandleServerClick()
     {
-        dodgeballNetworkManager.StartServer();
-        // Temporarily hardcoding this
-        dodgeballNetworkManager.ServerChangeScene("Map 1");
+        room.StartServer();
     }
 
     public void HandleHostClick()
     {
-        dodgeballNetworkManager.StartHost();
-        // Temporarily hardcoding this
-        dodgeballNetworkManager.ServerChangeScene("Map 1");
+        room.StartHost();
     }
 
     public void HandleClientClick()
@@ -57,14 +45,14 @@ public class MainMenuUI : MonoBehaviour
         if (string.IsNullOrEmpty(enteredIPAddress)) { return; }
         Regex validIPAddressChecker = new Regex("^((25[0-5]|(2[0-4]|1[0-9]|[1-9]|)[0-9])(\\.(?!$)|$)){4}$");
         if (enteredIPAddress != "localhost" &&
-            !validIPAddressChecker.IsMatch(enteredIPAddress)) 
+            !validIPAddressChecker.IsMatch(enteredIPAddress))
         {
             enterIPAddressText.text = invalidIPAddressText;
-            return; 
+            return;
         }
         enterIPAddressText.text = connectingIPAddressText;
-        dodgeballNetworkManager.networkAddress = enteredIPAddress;
-        dodgeballNetworkManager.StartClient();
+        room.networkAddress = enteredIPAddress;
+        room.StartClient();
     }
 
     public void HandleEnterIPAddressClose()
@@ -77,7 +65,7 @@ public class MainMenuUI : MonoBehaviour
     private void HandleClientConnected(NetworkConnection _conn)
     {
         // Temporarily hardcoding this
-        dodgeballNetworkManager.ServerChangeScene("Map 1");
+        //lobby.ServerChangeScene("Lobby");
     }
 
     private void HandleClientDisconnected(NetworkConnection _conn)

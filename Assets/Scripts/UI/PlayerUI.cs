@@ -4,7 +4,8 @@ public class PlayerUI : MonoBehaviour
 {
     [SerializeField] private UsernameText usernameTextPrefab;
     [SerializeField] private Canvas canvas;
-    private void Start()
+
+    private void Awake()
     {
         Player.ClientPlayerSpawned += HandlePlayerSpawned;
     }

@@ -1,4 +1,4 @@
-﻿using TMPro;
+using TMPro;
 using UnityEngine;
 
 public class UsernameText : MonoBehaviour
@@ -8,22 +8,26 @@ public class UsernameText : MonoBehaviour
     private TMP_Text usernameText;
     [SerializeField] private Vector2 offset = new Vector2(0f, 30f);
 
-    private void Start()
+    private void Awake()
     {
         rect = GetComponent<RectTransform>();
         usernameText = GetComponent<TMP_Text>();
-        PlayerConnection.ClientPlayerInfoUpdated += HandlePlayerInfoUpdated;
+    }
+
+    private void Start()
+    {
+        PlayerData.ClientPlayerInfoUpdated += HandlePlayerInfoUpdated;
     }
 
     private void OnDestroy()
     {
-        PlayerConnection.ClientPlayerInfoUpdated -= HandlePlayerInfoUpdated;
+        PlayerData.ClientPlayerInfoUpdated -= HandlePlayerInfoUpdated;
     }
 
     public void SetPlayer(Player playerToFollow)
     {
         player = playerToFollow;
-        GetComponent<TMP_Text>().text = player.Connection.Username;
+        usernameText.text = player.Data.Username;
     }
 
     private void LateUpdate()
@@ -40,9 +44,9 @@ public class UsernameText : MonoBehaviour
 
     private void HandlePlayerInfoUpdated(uint netId, string propertyName, object value)
     {
-        uint playerConnectionNetId = player.ConnectionNetId;
-        if (playerConnectionNetId != netId) { return; }
-        if (propertyName != nameof(player.Connection.Username)) { return; }
+        uint connectionNetId = player.ConnectionNetId;
+        if (connectionNetId != netId) { return; }
+        if (propertyName != nameof(player.Data.Username)) { return; }
 
         usernameText.text = (string)value;
     }
