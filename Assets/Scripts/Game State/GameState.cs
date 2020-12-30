@@ -73,16 +73,13 @@ public class GameState : NetworkBehaviour
     {
         int leftTeamPlayerCount = 0;
         int rightTeamPlayerCount = 0;
-        foreach (Connection connection in room.Connections)
+        foreach (Player player in room.Players)
         {
-            var playerData = connection.GetComponent<PlayerData>();
-            if (playerData.IsLeftTeam)
+            if (player.IsLeftTeam)
                 leftTeamPlayerCount += 1;
             else
                 rightTeamPlayerCount += 1;
-
         }
-
         return leftTeamPlayerCount > 0 && rightTeamPlayerCount > 0;
     }
 

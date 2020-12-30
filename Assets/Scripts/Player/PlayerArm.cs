@@ -1,9 +1,7 @@
 ﻿using UnityEngine;
 using Mirror;
-using UnityEngine.InputSystem;
-using System;
 
-public class PlayerDodgeballThrower : NetworkBehaviour
+public class PlayerArm : NetworkBehaviour
 {
     private bool hasThrowStarted = false;
     private float throwStartTime = 0f;
@@ -46,6 +44,7 @@ public class PlayerDodgeballThrower : NetworkBehaviour
             hasThrowStarted = false;
             return;
         }
+        if (!hasThrowStarted) { return; }
 
         ThrowDodgeball(throwAtPoint);
         timeSinceLastThrow = throwCooldown;
@@ -81,6 +80,12 @@ public class PlayerDodgeballThrower : NetworkBehaviour
 
         float throwPowerPercentage = ((int)(throwPower * 100f)) / 100f;
         return throwPowerPercentage;
+    }
+
+    [Server]
+    public void StopThrow()
+    {
+        hasThrowStarted = false;
     }
 
     #endregion

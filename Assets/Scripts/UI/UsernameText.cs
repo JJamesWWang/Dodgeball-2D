@@ -13,21 +13,10 @@ public class UsernameText : MonoBehaviour
         rect = GetComponent<RectTransform>();
         usernameText = GetComponent<TMP_Text>();
     }
-
-    private void Start()
-    {
-        PlayerData.ClientPlayerInfoUpdated += HandlePlayerInfoUpdated;
-    }
-
-    private void OnDestroy()
-    {
-        PlayerData.ClientPlayerInfoUpdated -= HandlePlayerInfoUpdated;
-    }
-
     public void SetPlayer(Player playerToFollow)
     {
         player = playerToFollow;
-        usernameText.text = player.Data.Username;
+        usernameText.text = player.Username;
     }
 
     private void LateUpdate()
@@ -40,15 +29,4 @@ public class UsernameText : MonoBehaviour
         Vector2 playerPosition = player.transform.position;
         rect.position = playerPosition + offset;
     }
-
-
-    private void HandlePlayerInfoUpdated(uint netId, string propertyName, object value)
-    {
-        uint connectionNetId = player.ConnectionNetId;
-        if (connectionNetId != netId) { return; }
-        if (propertyName != nameof(player.Data.Username)) { return; }
-
-        usernameText.text = (string)value;
-    }
-
 }

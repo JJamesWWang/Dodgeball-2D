@@ -29,24 +29,6 @@ public class PlayerTracker : NetworkBehaviour
     }
 
     [Server]
-    private void HandlePlayerHit(Player player)
-    {
-        if (player.Data.IsLeftTeam)
-            LeftTeamPlayers.Remove(player);
-        else
-            RightTeamPlayers.Remove(player);
-        EliminatePlayer(player);
-    }
-
-    [Server]
-    private void EliminatePlayer(Player player)
-    {
-        // Temporarily set player to out of nowhere
-        player.transform.position = new Vector2(5000, 0);
-        ServerPlayerEliminated?.Invoke(player);
-    }
-
-    [Server]
     public void SpawnPlayers()
     {
         foreach (Player player in room.Players)
@@ -56,15 +38,29 @@ public class PlayerTracker : NetworkBehaviour
     [Server]
     private void SpawnPlayer(Player player)
     {
-        var playerData = player.Data;
-        bool isLeftTeam = playerData.IsLeftTeam;
-        Transform spawnPoint = Map.Instance.GetSpawnPoint(isLeftTeam);
-        player.transform.position = spawnPoint.position;
-        player.transform.rotation = Quaternion.identity;
-        if (playerData.IsRightTeam)
-            player.transform.Rotate(0f, 0f, 180f);
+        player.transform.position = GetPlayerSpawnPoint(player);
+        player.transform.localEulerAngles = GetPlayerSpawnRotation(player);
+        player.EnableInput();
+        AddPlayer(player);
 
-        if (isLeftTeam)
+    }
+
+    private Vector2 GetPlayerSpawnPoint(Player player)
+    {
+        Transform spawnPoint = Map.Instance.GetSpawnPoint(player.IsLeftTeam);
+        return spawnPoint.position;
+    }
+
+    private Vector3 GetPlayerSpawnRotation(Player player)
+    {
+        if (player.IsRightTeam)
+            return new Vector3(0f, 0f, -180f);
+        return Vector3.zero;
+    }
+
+    private void AddPlayer(Player player)
+    {
+        if (player.IsLeftTeam)
             LeftTeamPlayers.Add(player);
         else
             RightTeamPlayers.Add(player);
@@ -75,12 +71,41 @@ public class PlayerTracker : NetworkBehaviour
     {
         // Temporarily set player to out of nowhere
         foreach (Player player in LeftTeamPlayers)
-            player.transform.position = new Vector2(5000, 0);
+            DespawnPlayer(player);
         foreach (Player player in RightTeamPlayers)
-            player.transform.position = new Vector2(5000, 0);
-
+            DespawnPlayer(player);
         LeftTeamPlayers.Clear();
         RightTeamPlayers.Clear();
+    }
+
+    [Server]
+    private void DespawnPlayer(Player player)
+    {
+        player.transform.position = new Vector2(5000, 0);
+        player.DisableInput();
+    }
+
+    private void RemovePlayer(Player player)
+    {
+        if (player.IsLeftTeam)
+            LeftTeamPlayers.Remove(player);
+        else
+            RightTeamPlayers.Remove(player);
+    }
+
+    [Server]
+    private void HandlePlayerHit(Player player)
+    {
+        EliminatePlayer(player);
+    }
+
+    [Server]
+    private void EliminatePlayer(Player player)
+    {
+        // Temporarily set player to out of nowhere
+        DespawnPlayer(player);
+        RemovePlayer(player);
+        ServerPlayerEliminated?.Invoke(player);
     }
 
     #endregion

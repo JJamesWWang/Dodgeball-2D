@@ -25,21 +25,21 @@ public class PlayerMovement : NetworkBehaviour
         MoveTowards(point);
     }
 
+    [Server]
+    public void StopMovement()
+    {
+        reachedDestination = true;
+    }
+
     #endregion
 
     #region Client
-
-    [Client]
-    public void CliMoveTowards(Vector2 point)
-    {
-        MoveTowards(point);
-    }
 
     #endregion
 
     private void MoveTowards(Vector2 point)
     {
-        Bounds movementBounds = player.Data.IsLeftTeam ? Map.Instance.LeftTeamBounds : Map.Instance.RightTeamBounds;
+        Bounds movementBounds = player.IsLeftTeam ? Map.Instance.LeftTeamBounds : Map.Instance.RightTeamBounds;
         if (movementBounds.Contains(point))
             SetDestination(point);
     }

@@ -1,14 +1,40 @@
+using System.Xml.Linq;
 using System.Collections;
 using UnityEngine;
 using Mirror;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
+using System.Collections.ObjectModel;
 
 public class Room : NetworkRoomManager
 {
     [SerializeField] private float timeToWaitForAllPlayersToConnect = 5f;
-    public List<Connection> Connections { get; } = new List<Connection>();
-    public List<Player> Players { get; } = new List<Player>();
+    private List<Connection> connections = new List<Connection>();
+    private List<Player> players = new List<Player>();
+
+    public ReadOnlyCollection<Connection> Connections { get { return connections.AsReadOnly(); } }
+    public ReadOnlyCollection<Player> Players { get { return players.AsReadOnly(); } }
+
+    public void AddConnection(Connection connection)
+    {
+        connections.Add(connection);
+    }
+
+    public void RemoveConnection(Connection connection)
+    {
+        connections.Remove(connection);
+    }
+
+    public void AddPlayer(Player player)
+    {
+        players.Add(player);
+    }
+
+    public void RemovePlayer(Player player)
+    {
+        players.Remove(player);
+    }
+
 
     #region Server
 
@@ -56,23 +82,21 @@ public class Room : NetworkRoomManager
     [Server]
     private void SetUpConnection(Connection connection)
     {
-        Connections.Add(connection);
-        var playerData = connection.GetComponent<PlayerData>();
-        playerData.SetIsLeftTeam(Connections.Count % 2 == 1);
-        playerData.SetUsername($"Player {Connections.Count}");
+        var playerData = connection.PlayerData;
+        var playerNumber = Connections.Count + 1;
+        playerData.SetIsLeftTeam(playerNumber % 2 == 1);
+        playerData.SetUsername($"Player {playerNumber}");
     }
 
     public override GameObject OnRoomServerCreateGamePlayer(NetworkConnection conn, GameObject roomPlayer)
     {
-        Player player = CreateGamePlayer(roomPlayer);
-        Players.Add(player);
-        return player.gameObject;
+        return CreateGamePlayer(roomPlayer).gameObject;
     }
 
     private Player CreateGamePlayer(GameObject roomPlayer)
     {
         var connection = roomPlayer.GetComponent<Connection>();
-        var playerData = connection.GetComponent<PlayerData>();
+        var playerData = connection.PlayerData;
         bool isLeftTeam = playerData.IsLeftTeam;
         Transform spawnPoint = Map.Instance.GetSpawnPoint(isLeftTeam);
         var player = Instantiate(playerPrefab, spawnPoint.position, Quaternion.identity).GetComponent<Player>();
@@ -84,19 +108,17 @@ public class Room : NetworkRoomManager
 
     public override void OnRoomServerDisconnect(NetworkConnection conn)
     {
-        if (conn.identity == null) { return; }
-        var connection = conn.identity.GetComponent<Connection>();
-        Connections.Remove(connection);
     }
 
     public override void OnRoomStopHost()
     {
-        Connections.Clear();
     }
 
     #endregion
 
     #region Client
+
+
 
     #endregion
 

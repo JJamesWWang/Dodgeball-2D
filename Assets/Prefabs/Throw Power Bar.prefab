@@ -126,7 +126,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   offset: {x: -7, y: 24}
-  playerArm: {fileID: 7418284750505816238, guid: b6ea555d69052f447899817abb60dd5f, type: 3}
+  playerArm: {fileID: 216935844735843815, guid: b6ea555d69052f447899817abb60dd5f, type: 3}
   indicator: {fileID: 3987415130733258410}
 --- !u!1 &3987415130733258423
 GameObject:

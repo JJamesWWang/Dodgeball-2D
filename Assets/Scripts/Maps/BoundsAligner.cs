@@ -23,7 +23,7 @@ public class BoundsAligner : MonoBehaviour
     [SerializeField] private float scaleHeightFactor = 1f;
     [SerializeField] private bool useLocalYScale = true;
 
-    public void Awake()
+    private void Awake()
     {
         transformToResize = gameObject.transform;
         AlignPosition();

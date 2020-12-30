@@ -4,19 +4,17 @@ using UnityEngine.InputSystem;
 
 public class PlayerCommands : NetworkBehaviour
 {
+    private bool inputEnabled = false;
     private Camera mainCamera = null;
-    private PlayerMovement playerMovement = null;
+    private PlayerMovement playerMovement;
+    private PlayerArm playerArm;
+    private ThrowPowerBar throwPowerBar;
     [SerializeField] private ThrowPowerBar throwPowerBarPrefab = null;
-    private PlayerDodgeballThrower playerArm = null;
 
     private void Awake()
     {
         playerMovement = GetComponent<PlayerMovement>();
-        playerArm = GetComponent<PlayerDodgeballThrower>();
-    }
-
-    private void Start()
-    {
+        playerArm = GetComponent<PlayerArm>();
         mainCamera = Camera.main;
     }
 
@@ -25,20 +23,16 @@ public class PlayerCommands : NetworkBehaviour
     [ClientCallback]
     private void Update()
     {
-        if (!Application.isFocused || !hasAuthority) { return; }
+        if (!Application.isFocused || !hasAuthority || !inputEnabled) { return; }
         Vector2 mousePosition = Mouse.current.position.ReadValue();
         if (Mouse.current.rightButton.wasPressedThisFrame)
-        {
             MoveTowards(mousePosition);
-        }
+
         if (Mouse.current.leftButton.wasPressedThisFrame)
-        {
             StartThrow();
-        }
+
         if (Mouse.current.leftButton.wasReleasedThisFrame)
-        {
             ReleaseThrow(mousePosition);
-        }
     }
 
     [Client]
@@ -46,14 +40,13 @@ public class PlayerCommands : NetworkBehaviour
     {
         Vector2 point = mainCamera.ScreenToWorldPoint(mousePosition);
         playerMovement.CmdMoveTowards(point);
-        playerMovement.CliMoveTowards(point);
     }
 
     [Client]
     private void StartThrow()
     {
         playerArm.CmdStartThrow();
-        Instantiate(throwPowerBarPrefab, Vector3.zero, Quaternion.identity);
+        throwPowerBar = Instantiate(throwPowerBarPrefab, Vector3.zero, Quaternion.identity);
     }
 
     [Client]
@@ -61,6 +54,14 @@ public class PlayerCommands : NetworkBehaviour
     {
         Vector2 throwAtPoint = mainCamera.ScreenToWorldPoint(mousePosition);
         playerArm.CmdReleaseThrow(throwAtPoint);
+    }
+
+    [TargetRpc]
+    public void TargetSetInputEnabled(bool enabled)
+    {
+        inputEnabled = enabled;
+        if (throwPowerBar != null)
+            Destroy(throwPowerBar.gameObject);
     }
 
     #endregion

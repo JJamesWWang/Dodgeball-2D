@@ -35,7 +35,7 @@ public class RoundTracker : NetworkBehaviour
     private void HandlePlayerEliminated(Player player)
     {
         if (playerTracker.LeftTeamPlayers.Count == 0 || playerTracker.RightTeamPlayers.Count == 0)
-            ServerRoundEnded?.Invoke(player.Data.IsRightTeam);
+            ServerRoundEnded?.Invoke(player.IsRightTeam);
     }
 
     [Server]

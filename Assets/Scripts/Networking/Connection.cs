@@ -4,19 +4,39 @@ using System;
 
 public class Connection : NetworkRoomPlayer
 {
+    private Room room;
+    public PlayerData PlayerData { get; private set; }
     public static event Action<Connection> ClientConnected;
     public static event Action<Connection> ClientLocalConnected;
     public static event Action<Connection> ClientDisconnected;
+
+    private void Awake()
+    {
+        PlayerData = GetComponent<PlayerData>();
+    }
+
+    #region Server
+
+    public override void OnStartServer()
+    {
+        room = (Room)NetworkManager.singleton;
+        room.AddConnection(this);
+    }
+
+    public override void OnStopServer()
+    {
+        room.RemoveConnection(this);
+    }
+
+    #endregion
 
     #region Client
 
     public override void OnStartClient()
     {
+        room = (Room)NetworkManager.singleton;
         if (!NetworkServer.active)
-        {
-            Room room = (Room)NetworkManager.singleton;
-            room.Connections.Add(this);
-        }
+            room.AddConnection(this);
         ClientConnected?.Invoke(this);
     }
 
@@ -28,10 +48,7 @@ public class Connection : NetworkRoomPlayer
     public override void OnStopClient()
     {
         if (!NetworkServer.active)
-        {
-            Room room = (Room)NetworkManager.singleton;
-            room.Connections.Remove(this);
-        }
+            room.RemoveConnection(this);
         ClientDisconnected?.Invoke(this);
     }
 

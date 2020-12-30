@@ -1,0 +1,4 @@
+1. No using GetComponent<> on another object unless you have to (such as when GameObjects are passed by Mirror).
+    Reason: This could expose public fields that otherwise should remain hidden (treat components as private information)
+    Fix: Create a method in the class you are accessing to follow the Law of Demeter. Use composition when necessary, but even try to avoid that.
+2. Use var only when it is absolutely redundant to state the class name (foreach loops, GetComponent<>, the variable name is the same name as the class name).

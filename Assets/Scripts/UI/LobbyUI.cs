@@ -10,8 +10,6 @@ public class LobbyUI : MonoBehaviour
     [SerializeField] private GameObject lobbyUIParent;
     [SerializeField] private TMP_Text leftTeamPlayersText;
     [SerializeField] private TMP_Text rightTeamPlayersText;
-    [SerializeField] private Button joinLeftTeamButton;
-    [SerializeField] private Button joinRightTeamButton;
     [SerializeField] private TMP_InputField usernameInput;
     [SerializeField] private Button startButton;
     private Room room;
@@ -19,8 +17,6 @@ public class LobbyUI : MonoBehaviour
 
     private void Awake()
     {
-        MatchTracker.ClientMatchStarted += HandleMatchStarted;
-        MatchTracker.ClientMatchEnded += HandleMatchEnded;
         Connection.ClientLocalConnected += HandleLocalPlayerConnected;
         Connection.ClientConnected += HandlePlayerConnected;
         Connection.ClientDisconnected += HandlePlayerDisconnected;
@@ -36,39 +32,15 @@ public class LobbyUI : MonoBehaviour
 
     private void OnDestroy()
     {
-        MatchTracker.ClientMatchStarted -= HandleMatchStarted;
-        MatchTracker.ClientMatchEnded -= HandleMatchEnded;
         Connection.ClientLocalConnected -= HandleLocalPlayerConnected;
         Connection.ClientConnected -= HandlePlayerConnected;
         Connection.ClientDisconnected -= HandlePlayerDisconnected;
         PlayerData.ClientPlayerInfoUpdated -= HandlePlayerInfoUpdated;
     }
 
-    private void Update()
-    {
-        if (Keyboard.current.escapeKey.wasPressedThisFrame)
-        {
-            lobbyUIParent.gameObject.SetActive(!lobbyUIParent.gameObject.activeSelf);
-        }
-    }
-
-    private void HandleMatchStarted()
-    {
-        lobbyUIParent.gameObject.SetActive(false);
-        joinLeftTeamButton.gameObject.SetActive(false);
-        joinRightTeamButton.gameObject.SetActive(false);
-    }
-
-    private void HandleMatchEnded(bool _isLeftTeamWin)
-    {
-        lobbyUIParent.gameObject.SetActive(true);
-        joinLeftTeamButton.gameObject.SetActive(true);
-        joinRightTeamButton.gameObject.SetActive(true);
-    }
-
     private void HandleLocalPlayerConnected(Connection connection)
     {
-        localPlayerData = connection.GetComponent<PlayerData>();
+        localPlayerData = connection.PlayerData;
         InitLobbyUI();
     }
 
@@ -98,7 +70,7 @@ public class LobbyUI : MonoBehaviour
 
     private void AddToPlayersText(Connection connection)
     {
-        var playerData = connection.GetComponent<PlayerData>();
+        var playerData = connection.PlayerData;
         if (playerData.IsLeftTeam)
             leftTeamPlayersText.text += $"{playerData.Username}\n";
         else

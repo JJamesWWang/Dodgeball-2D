@@ -3123,7 +3123,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76c392e42b5098c458856cdf6ecaaaa1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_FirstSelected: {fileID: 0}
+  m_FirstSelected: {fileID: 1135483753}
   m_sendNavigationEvents: 1
   m_DragThreshold: 10
 --- !u!4 &1840446607
@@ -3304,8 +3304,6 @@ MonoBehaviour:
   lobbyUIParent: {fileID: 881784868}
   leftTeamPlayersText: {fileID: 1004816056}
   rightTeamPlayersText: {fileID: 1543675477}
-  joinLeftTeamButton: {fileID: 1846226111}
-  joinRightTeamButton: {fileID: 134208057}
   usernameInput: {fileID: 1135483757}
   startButton: {fileID: 1739301523}
 --- !u!4 &1887270153
