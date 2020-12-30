@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using Mirror;
 using TMPro;
 
-public class LobbyUI : MonoBehaviour
+public class LobbyUI : NetworkBehaviour
 {
     [SerializeField] private GameObject lobbyUIParent;
     [SerializeField] private TMP_Text leftTeamPlayersText;
@@ -15,22 +15,22 @@ public class LobbyUI : MonoBehaviour
     private Room room;
     private PlayerData localPlayerData;
 
-    private void Awake()
+    public override void OnStartClient()
     {
+        room = (Room)NetworkManager.singleton;
+        if (NetworkServer.active)
+            startButton.gameObject.SetActive(true);
+        var connection = Connection.LocalConnection;
+        if (connection != null)
+            HandleLocalPlayerConnected(connection);
+
         Connection.ClientLocalConnected += HandleLocalPlayerConnected;
         Connection.ClientConnected += HandlePlayerConnected;
         Connection.ClientDisconnected += HandlePlayerDisconnected;
         PlayerData.ClientPlayerInfoUpdated += HandlePlayerInfoUpdated;
     }
 
-    private void Start()
-    {
-        room = (Room)NetworkManager.singleton;
-        if (NetworkServer.active)
-            startButton.gameObject.SetActive(true);
-    }
-
-    private void OnDestroy()
+    public override void OnStopClient()
     {
         Connection.ClientLocalConnected -= HandleLocalPlayerConnected;
         Connection.ClientConnected -= HandlePlayerConnected;
@@ -107,7 +107,6 @@ public class LobbyUI : MonoBehaviour
                 room.StopServer();
         else
             room.StopClient();
-        SceneManager.LoadScene(0);
     }
 
     public void HandleStartClick()

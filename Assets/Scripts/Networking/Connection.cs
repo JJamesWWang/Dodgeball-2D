@@ -5,6 +5,7 @@ using System;
 public class Connection : NetworkRoomPlayer
 {
     private Room room;
+    public static Connection LocalConnection { get; private set; }
     public PlayerData PlayerData { get; private set; }
     public static event Action<Connection> ClientConnected;
     public static event Action<Connection> ClientLocalConnected;
@@ -40,6 +41,11 @@ public class Connection : NetworkRoomPlayer
         ClientConnected?.Invoke(this);
     }
 
+    public override void OnStartAuthority()
+    {
+        LocalConnection = this;
+    }
+
     public override void OnStartLocalPlayer()
     {
         ClientLocalConnected?.Invoke(this);
@@ -49,6 +55,8 @@ public class Connection : NetworkRoomPlayer
     {
         if (!NetworkServer.active)
             room.RemoveConnection(this);
+        if (hasAuthority)
+            LocalConnection = null;
         ClientDisconnected?.Invoke(this);
     }
 
