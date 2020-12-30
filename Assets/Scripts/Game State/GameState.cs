@@ -1,8 +1,10 @@
-using System.Collections;
 using UnityEngine;
 using Mirror;
 using System;
 
+// Properties: static Instance, IsInPlay 
+// Events: ServerGameStateReady
+// Methods: [Server] StartGame
 public class GameState : NetworkBehaviour
 {
     private MatchTracker matchTracker;
@@ -10,6 +12,7 @@ public class GameState : NetworkBehaviour
 
     public static GameState Instance { get; private set; }
     public bool IsInPlay { get; private set; }
+
     public static Action ServerGameStateReady;
 
     private void Awake()
@@ -32,14 +35,39 @@ public class GameState : NetworkBehaviour
 
     public override void OnStartServer()
     {
-        MatchTracker.ServerMatchStarted += HandleMatchStarted;
-        MatchTracker.ServerMatchEnded += HandleMatchEnded;
+        SubscribeEvents();
     }
 
     public override void OnStopServer()
     {
-        MatchTracker.ServerMatchStarted -= HandleMatchStarted;
-        MatchTracker.ServerMatchEnded -= HandleMatchEnded;
+        UnsubscribeEvents();
+    }
+
+    [Server]
+    public void StartGame()
+    {
+        // Temporarily disabled for easier debugging
+        //if (IsValidTeamComposition())
+        matchTracker.StartMatch();
+    }
+
+    [Server]
+    private bool IsValidTeamComposition()
+    {
+        int leftTeamPlayerCount = 0;
+        int rightTeamPlayerCount = 0;
+        foreach (Player player in room.Players)
+            if (player.IsLeftTeam)
+                leftTeamPlayerCount += 1;
+            else
+                rightTeamPlayerCount += 1;
+        return leftTeamPlayerCount > 0 && rightTeamPlayerCount > 0;
+    }
+
+    private void SubscribeEvents()
+    {
+        MatchTracker.ServerMatchStarted += HandleMatchStarted;
+        MatchTracker.ServerMatchEnded += HandleMatchEnded;
     }
 
     [Server]
@@ -54,33 +82,10 @@ public class GameState : NetworkBehaviour
         IsInPlay = false;
     }
 
-    [Server]
-    public void StartGame()
+    private void UnsubscribeEvents()
     {
-        // Temporarily disabled for easier debugging
-        //if (IsValidTeamComposition())
-        matchTracker.StartMatch();
-    }
-
-    [Server]
-    public void EndGame()
-    {
-
-    }
-
-    [Server]
-    private bool IsValidTeamComposition()
-    {
-        int leftTeamPlayerCount = 0;
-        int rightTeamPlayerCount = 0;
-        foreach (Player player in room.Players)
-        {
-            if (player.IsLeftTeam)
-                leftTeamPlayerCount += 1;
-            else
-                rightTeamPlayerCount += 1;
-        }
-        return leftTeamPlayerCount > 0 && rightTeamPlayerCount > 0;
+        MatchTracker.ServerMatchStarted -= HandleMatchStarted;
+        MatchTracker.ServerMatchEnded -= HandleMatchEnded;
     }
 
     #endregion

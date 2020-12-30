@@ -1,65 +1,65 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Mirror;
 using TMPro;
 
 public class LobbyUI : NetworkBehaviour
 {
+    private Room room;
+    private PlayerData localPlayerData;
     [SerializeField] private GameObject lobbyUIParent;
     [SerializeField] private TMP_Text leftTeamPlayersText;
     [SerializeField] private TMP_Text rightTeamPlayersText;
     [SerializeField] private TMP_InputField usernameInput;
     [SerializeField] private Button startButton;
-    private Room room;
-    private PlayerData localPlayerData;
+
+    #region General
+
+    public void HandleLeaveClick()
+    {
+        room.Disconnect();
+    }
+
+    #endregion
+
+    #region Server
+
+    [Server]
+    public void HandleStartClick()
+    {
+        room.ServerChangeScene(room.GameplayScene);
+    }
+
+    #endregion
+
+    #region Client
 
     public override void OnStartClient()
     {
         room = (Room)NetworkManager.singleton;
         if (NetworkServer.active)
             startButton.gameObject.SetActive(true);
+        CheckInit();
+        SubscribeEvents();
+    }
+
+    [Client]
+    private void CheckInit()
+    {
         var connection = Connection.LocalConnection;
         if (connection != null)
-            HandleLocalPlayerConnected(connection);
-
-        Connection.ClientLocalConnected += HandleLocalPlayerConnected;
-        Connection.ClientConnected += HandlePlayerConnected;
-        Connection.ClientDisconnected += HandlePlayerDisconnected;
-        PlayerData.ClientPlayerInfoUpdated += HandlePlayerInfoUpdated;
+            Init(connection);
     }
 
-    public override void OnStopClient()
-    {
-        Connection.ClientLocalConnected -= HandleLocalPlayerConnected;
-        Connection.ClientConnected -= HandlePlayerConnected;
-        Connection.ClientDisconnected -= HandlePlayerDisconnected;
-        PlayerData.ClientPlayerInfoUpdated -= HandlePlayerInfoUpdated;
-    }
-
-    private void HandleLocalPlayerConnected(Connection connection)
+    [Client]
+    private void Init(Connection connection)
     {
         localPlayerData = connection.PlayerData;
-        InitLobbyUI();
-    }
-
-    private void HandlePlayerConnected(Connection connection)
-    {
-        ConstructPlayersText();
-    }
-
-    private void HandlePlayerDisconnected(Connection connection)
-    {
-        ConstructPlayersText();
-    }
-
-    private void InitLobbyUI()
-    {
         ConstructPlayersText();
         usernameInput.text = localPlayerData.Username;
     }
 
+    [Client]
     private void ConstructPlayersText()
     {
         leftTeamPlayersText.text = "";
@@ -68,6 +68,7 @@ public class LobbyUI : NetworkBehaviour
             AddToPlayersText(connection);
     }
 
+    [Client]
     private void AddToPlayersText(Connection connection)
     {
         var playerData = connection.PlayerData;
@@ -77,41 +78,72 @@ public class LobbyUI : NetworkBehaviour
             rightTeamPlayersText.text += $"{playerData.Username}\n";
     }
 
-    private void HandlePlayerInfoUpdated(uint _netId, string _propertyName, object _value)
+    public override void OnStopClient()
     {
-        ConstructPlayersText();
+        UnsubscribeEvents();
     }
 
+    [Client]
     public void HandleJoinLeftTeamClick()
     {
         localPlayerData.CmdSetIsLeftTeam(true);
     }
 
+    [Client]
     public void HandleJoinRightTeamClick()
     {
         localPlayerData.CmdSetIsLeftTeam(false);
     }
 
+    [Client]
     public void HandleSaveClick()
     {
         string username = usernameInput.text;
         localPlayerData.CmdSetUsername(username);
     }
 
-    public void HandleLeaveClick()
+    [Client]
+    private void SubscribeEvents()
     {
-        if (NetworkServer.active)
-            if (NetworkClient.isConnected)
-                room.StopHost();
-            else
-                room.StopServer();
-        else
-            room.StopClient();
+        Connection.ClientLocalConnected += HandleLocalPlayerConnected;
+        Connection.ClientConnected += HandlePlayerConnected;
+        Connection.ClientDisconnected += HandlePlayerDisconnected;
+        PlayerData.ClientPlayerDataUpdated += HandlePlayerDataUpdated;
     }
 
-    public void HandleStartClick()
+    [Client]
+    private void HandleLocalPlayerConnected(Connection connection)
     {
-        room.ServerChangeScene(room.GameplayScene);
+        Init(connection);
     }
+
+    [Client]
+    private void HandlePlayerConnected(Connection connection)
+    {
+        ConstructPlayersText();
+    }
+
+    [Client]
+    private void HandlePlayerDisconnected(Connection connection)
+    {
+        ConstructPlayersText();
+    }
+
+    [Client]
+    private void HandlePlayerDataUpdated(uint _netId, string _propertyName, object _value)
+    {
+        ConstructPlayersText();
+    }
+
+    [Client]
+    private void UnsubscribeEvents()
+    {
+        Connection.ClientLocalConnected -= HandleLocalPlayerConnected;
+        Connection.ClientConnected -= HandlePlayerConnected;
+        Connection.ClientDisconnected -= HandlePlayerDisconnected;
+        PlayerData.ClientPlayerDataUpdated -= HandlePlayerDataUpdated;
+    }
+
+    #endregion
 
 }

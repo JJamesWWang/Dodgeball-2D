@@ -1,26 +1,24 @@
 using UnityEngine;
 using Mirror;
-using TMPro;
 using System.Text.RegularExpressions;
+using TMPro;
 
 public class MainMenuUI : MonoBehaviour
 {
     private string defaultIPAddressText;
     private string connectingIPAddressText = "Connecting...";
     private string invalidIPAddressText = "Invalid IP Address.";
-    private string failedToConnectText = "Couldn't connect.";
+    private Room room;
 
     [SerializeField] private GameObject buttonsParent;
     [SerializeField] private GameObject enterIPAddressParent;
     [SerializeField] private TMP_Text enterIPAddressText;
     [SerializeField] private TMP_InputField enterIPAddressInput;
-    private Room room;
 
     private void Start()
     {
         defaultIPAddressText = enterIPAddressText.text;
         room = (Room)NetworkManager.singleton;
-        gameObject.SetActive(true);
     }
 
     public void HandleServerClick()
@@ -42,16 +40,31 @@ public class MainMenuUI : MonoBehaviour
     public void HandleEnterIPAddressConnect()
     {
         string enteredIPAddress = enterIPAddressInput.text;
-        if (string.IsNullOrEmpty(enteredIPAddress)) { return; }
+        bool isValidIPAddress = IsValidIPAddress(enteredIPAddress);
+        UpdateIPAddressText(isValidIPAddress);
+        if (!isValidIPAddress) { return; }
+        ConnectToIPAddress(enteredIPAddress);
+    }
+
+    private bool IsValidIPAddress(string ipAddress)
+    {
+        if (string.IsNullOrEmpty(ipAddress)) { return false; }
         Regex validIPAddressChecker = new Regex("^((25[0-5]|(2[0-4]|1[0-9]|[1-9]|)[0-9])(\\.(?!$)|$)){4}$");
-        if (enteredIPAddress != "localhost" &&
-            !validIPAddressChecker.IsMatch(enteredIPAddress))
-        {
+        return ipAddress == "localhost" ||
+                validIPAddressChecker.IsMatch(ipAddress);
+    }
+
+    private void UpdateIPAddressText(bool isValidIPAddress)
+    {
+        if (isValidIPAddress)
+            enterIPAddressText.text = connectingIPAddressText;
+        else
             enterIPAddressText.text = invalidIPAddressText;
-            return;
-        }
-        enterIPAddressText.text = connectingIPAddressText;
-        room.networkAddress = enteredIPAddress;
+    }
+
+    private void ConnectToIPAddress(string ipAddress)
+    {
+        room.networkAddress = ipAddress;
         room.StartClient();
     }
 
@@ -60,16 +73,5 @@ public class MainMenuUI : MonoBehaviour
         enterIPAddressText.text = defaultIPAddressText;
         enterIPAddressParent.SetActive(false);
         buttonsParent.SetActive(true);
-    }
-
-    private void HandleClientConnected(NetworkConnection _conn)
-    {
-        // Temporarily hardcoding this
-        //lobby.ServerChangeScene("Lobby");
-    }
-
-    private void HandleClientDisconnected(NetworkConnection _conn)
-    {
-        enterIPAddressText.text = failedToConnectText;
     }
 }

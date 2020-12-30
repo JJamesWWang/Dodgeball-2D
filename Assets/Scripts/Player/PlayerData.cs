@@ -1,7 +1,10 @@
-using System;
-using Mirror;
 using UnityEngine;
+using Mirror;
+using System;
 
+// Properties: IsLeftTeam, IsRightTeam, Username
+// Events: ClientPlayerDataUpdated
+// Methods: CmdSetUsername, CmdSetIsLeftTeam, [Server] SetUsername, [Server] SetIsLeftTeam
 public class PlayerData : NetworkBehaviour
 {
     [SyncVar(hook = nameof(HandleTeamUpdated))]
@@ -13,7 +16,8 @@ public class PlayerData : NetworkBehaviour
     public bool IsRightTeam { get { return !isLeftTeam; } }
     public string Username { get { return username; } }
 
-    public static event Action<uint, string, object> ClientPlayerInfoUpdated;
+    /// <summary> uint: connectionNetId, string: propertyName, object: propertyValue  </summary>
+    public static event Action<uint, string, object> ClientPlayerDataUpdated;
 
     #region Server
 
@@ -31,15 +35,15 @@ public class PlayerData : NetworkBehaviour
     }
 
     [Server]
-    public void SetIsLeftTeam(bool value)
-    {
-        isLeftTeam = value;
-    }
-
-    [Server]
     public void SetUsername(string name)
     {
         username = name;
+    }
+
+    [Server]
+    public void SetIsLeftTeam(bool value)
+    {
+        isLeftTeam = value;
     }
 
     #endregion
@@ -49,13 +53,13 @@ public class PlayerData : NetworkBehaviour
     [Client]
     private void HandleTeamUpdated(bool _oldIsLeftTeam, bool newIsLeftTeam)
     {
-        ClientPlayerInfoUpdated?.Invoke(netId, nameof(IsLeftTeam), newIsLeftTeam);
+        ClientPlayerDataUpdated?.Invoke(netId, nameof(IsLeftTeam), newIsLeftTeam);
     }
 
     [Client]
     private void HandleUsernameUpdated(string _oldName, string newName)
     {
-        ClientPlayerInfoUpdated?.Invoke(netId, nameof(Username), newName);
+        ClientPlayerDataUpdated?.Invoke(netId, nameof(Username), newName);
     }
 
     #endregion

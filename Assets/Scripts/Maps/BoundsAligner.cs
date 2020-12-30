@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.Assertions;
 
 public class BoundsAligner : MonoBehaviour
 {
@@ -33,8 +32,10 @@ public class BoundsAligner : MonoBehaviour
     private void AlignPosition()
     {
         Vector3 newPosition = transformToResize.position;
-        if (setXPosition) { newPosition.x = Mathf.Lerp(boundary.LeftBound, boundary.RightBound, lerpX); }
-        if (setYPosition) { newPosition.y = Mathf.Lerp(boundary.BottomBound, boundary.TopBound, lerpY); }
+        if (setXPosition)
+            newPosition.x = Mathf.Lerp(boundary.LeftBound, boundary.RightBound, lerpX);
+        if (setYPosition)
+            newPosition.y = Mathf.Lerp(boundary.BottomBound, boundary.TopBound, lerpY);
         newPosition += offset;
         transformToResize.position = newPosition;
     }
@@ -47,8 +48,11 @@ public class BoundsAligner : MonoBehaviour
         if (useLocalYScale)
             newScale.y = transformToResize.localScale.y;
 
-        if (scaleWidth) { newScale.x *= boundary.BoundWidth * scaleWidthFactor; }
-        if (scaleHeight) { newScale.y *= boundary.BoundHeight * scaleHeightFactor; }
+        if (scaleWidth)
+            newScale.x *= boundary.BoundWidth * scaleWidthFactor;
+        if (scaleHeight)
+            newScale.y *= boundary.BoundHeight * scaleHeightFactor;
+
         transformToResize.localScale = newScale;
     }
 }

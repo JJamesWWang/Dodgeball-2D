@@ -1,8 +1,10 @@
+using UnityEngine;
 using Mirror;
 using System;
-using TMPro;
-using UnityEngine;
 
+// Properties: ConnectionNetId, Username, IsLeftTeam, IsRightTeam
+// Events: ServerPlayerHit, ClientPlayerSpawned
+// Methods: [Server] SetConnection, [Server] EnableInput, [Server] DisableInput, 
 public class Player : NetworkBehaviour
 {
     [SyncVar]
@@ -17,7 +19,6 @@ public class Player : NetworkBehaviour
     public string Username { get { return data.Username; } }
     public bool IsLeftTeam { get { return data.IsLeftTeam; } }
     public bool IsRightTeam { get { return data.IsRightTeam; } }
-
 
     public static event Action<Player> ServerPlayerHit;
     public static event Action<Player> ClientPlayerSpawned;
@@ -47,7 +48,6 @@ public class Player : NetworkBehaviour
     {
         connectionNetId = connection.netId;
         data = connection.PlayerData;
-
     }
 
     [Server]
@@ -64,6 +64,12 @@ public class Player : NetworkBehaviour
         arm.StopThrow();
     }
 
+    [ServerCallback]
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        ServerPlayerHit?.Invoke(this);
+    }
+
     #endregion
 
     #region Client
@@ -71,27 +77,25 @@ public class Player : NetworkBehaviour
     public override void OnStartClient()
     {
         room = (Room)NetworkManager.singleton;
-        foreach (Connection connection in room.Connections)
-            if (connection.netId == ConnectionNetId)
-            {
-                data = connection.PlayerData;
-                break;
-            }
+        data = FindPlayerData();
         if (!NetworkServer.active)
             room.AddPlayer(this);
         ClientPlayerSpawned?.Invoke(this);
+    }
+
+    [Client]
+    private PlayerData FindPlayerData()
+    {
+        foreach (Connection connection in room.Connections)
+            if (connection.netId == ConnectionNetId)
+                return connection.PlayerData;
+        return null;
     }
 
     public override void OnStopClient()
     {
         if (!NetworkServer.active)
             room.RemovePlayer(this);
-    }
-
-    [ServerCallback]
-    private void OnCollisionEnter2D(Collision2D other)
-    {
-        ServerPlayerHit?.Invoke(this);
     }
 
     #endregion Client

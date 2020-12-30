@@ -4,13 +4,12 @@ using UnityEngine.InputSystem;
 
 public class ThrowPowerBar : MonoBehaviour
 {
+    [SerializeField] private Image indicator;
     private bool fillingUp = true;
     private float fillSpeed;
-    [SerializeField] private Vector2 offset = new Vector2(-5f, 5f);
-
-    private Camera mainCamera;
     [SerializeField] private PlayerArm playerArm;
-    [SerializeField] private Image indicator;
+    [SerializeField] private Vector2 offset = new Vector2(-5f, 5f);
+    private Camera mainCamera;
 
     private void Awake()
     {

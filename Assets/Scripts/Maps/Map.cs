@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 
+// Properties: LeftTeamBounds, RightTeamBounds, ArenaBounds, LeftTeamSpawnPoint, RightTeamSpawnPoint
+// Methods: GetSpawnPoint
 public class Map : MonoBehaviour
 {
     [SerializeField] private Bounds _leftTeamBounds;
@@ -17,13 +19,10 @@ public class Map : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance != null && Instance != this) 
-        { 
-            Destroy(this); 
-        } else
-        {
+        if (Instance != null && Instance != this)
+            Destroy(this);
+        else
             Instance = this;
-        }
     }
 
     public Transform GetSpawnPoint(bool isLeftTeam)

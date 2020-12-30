@@ -95,10 +95,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d543506f0bb34b34a95713b09f75bfc3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _LeftBound: 0
-  _RightBound: 160
-  _TopBound: 90
-  _BottomBound: -90
+  leftBound: 0
+  rightBound: 160
+  bottomBound: -90
+  topBound: 90
 --- !u!1 &210691852487526047
 GameObject:
   m_ObjectHideFlags: 0
@@ -434,10 +434,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d543506f0bb34b34a95713b09f75bfc3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _LeftBound: -160
-  _RightBound: 0
-  _TopBound: 90
-  _BottomBound: -90
+  leftBound: -160
+  rightBound: 0
+  bottomBound: -90
+  topBound: 90
 --- !u!1 &210691853465047143
 GameObject:
   m_ObjectHideFlags: 0
@@ -598,10 +598,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d543506f0bb34b34a95713b09f75bfc3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _LeftBound: -160
-  _RightBound: 160
-  _TopBound: 90
-  _BottomBound: -90
+  leftBound: -160
+  rightBound: 160
+  bottomBound: -90
+  topBound: 90
 --- !u!1 &210691854058136062
 GameObject:
   m_ObjectHideFlags: 0

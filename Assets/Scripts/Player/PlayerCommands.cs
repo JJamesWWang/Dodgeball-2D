@@ -2,14 +2,15 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+// Methods: TargetSetInputEnabled
 public class PlayerCommands : NetworkBehaviour
 {
     private bool inputEnabled = false;
     private Camera mainCamera = null;
     private PlayerMovement playerMovement;
     private PlayerArm playerArm;
-    private ThrowPowerBar throwPowerBar;
     [SerializeField] private ThrowPowerBar throwPowerBarPrefab = null;
+    private ThrowPowerBar throwPowerBar;
 
     private void Awake()
     {
@@ -24,22 +25,37 @@ public class PlayerCommands : NetworkBehaviour
     private void Update()
     {
         if (!Application.isFocused || !hasAuthority || !inputEnabled) { return; }
-        Vector2 mousePosition = Mouse.current.position.ReadValue();
-        if (Mouse.current.rightButton.wasPressedThisFrame)
-            MoveTowards(mousePosition);
-
-        if (Mouse.current.leftButton.wasPressedThisFrame)
-            StartThrow();
-
-        if (Mouse.current.leftButton.wasReleasedThisFrame)
-            ReleaseThrow(mousePosition);
+        HandleInput();
     }
 
     [Client]
-    private void MoveTowards(Vector2 mousePosition)
+    private void HandleInput()
     {
+        CheckMoveTowards();
+        CheckStartThrow();
+        CheckReleaseThrow();
+    }
+
+    [Client]
+    private void CheckMoveTowards()
+    {
+        if (!Mouse.current.rightButton.wasPressedThisFrame) { return; }
+        Vector2 mousePosition = Mouse.current.position.ReadValue();
         Vector2 point = mainCamera.ScreenToWorldPoint(mousePosition);
+        MoveTowards(point);
+    }
+
+    [Client]
+    private void MoveTowards(Vector2 point)
+    {
         playerMovement.CmdMoveTowards(point);
+    }
+
+    [Client]
+    private void CheckStartThrow()
+    {
+        if (!Mouse.current.leftButton.wasPressedThisFrame) { return; }
+        StartThrow();
     }
 
     [Client]
@@ -50,9 +66,17 @@ public class PlayerCommands : NetworkBehaviour
     }
 
     [Client]
-    private void ReleaseThrow(Vector2 mousePosition)
+    private void CheckReleaseThrow()
     {
+        if (!Mouse.current.leftButton.wasReleasedThisFrame) { return; }
+        Vector2 mousePosition = Mouse.current.position.ReadValue();
         Vector2 throwAtPoint = mainCamera.ScreenToWorldPoint(mousePosition);
+        ReleaseThrow(throwAtPoint);
+    }
+
+    [Client]
+    private void ReleaseThrow(Vector2 throwAtPoint)
+    {
         playerArm.CmdReleaseThrow(throwAtPoint);
     }
 

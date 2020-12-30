@@ -2,16 +2,18 @@
 using Mirror;
 using System;
 
+// Events: ServerMatchStarted, ServerMatchEnded, ClientMatchEnded
+// Methods: [Server] StartMatch, [Server] ResetMatch, 
 public class MatchTracker : NetworkBehaviour
 {
     private RoundTracker roundTracker;
     private PlayerTracker playerTracker;
     private ScoreTracker scoreTracker;
 
-    public static event Action ClientMatchStarted;
-    public static event Action<bool> ClientMatchEnded;
     public static event Action ServerMatchStarted;
     public static event Action ServerMatchEnded;
+    /// <summary> bool: isLeftTeamWin </summary>
+    public static event Action<bool> ClientMatchEnded;
 
     private void Awake()
     {
@@ -22,13 +24,21 @@ public class MatchTracker : NetworkBehaviour
 
     #region Server
 
+    public override void OnStartServer()
+    {
+        SubscribeEvents();
+    }
+    public override void OnStopServer()
+    {
+        UnsubscribeEvents();
+    }
+
     [Server]
     public void StartMatch()
     {
         scoreTracker.ResetScore();
         roundTracker.StartRound();
         ServerMatchStarted?.Invoke();
-        InvokeMatchStarted();
     }
 
     [Server]
@@ -37,18 +47,11 @@ public class MatchTracker : NetworkBehaviour
         playerTracker.DespawnPlayers();
     }
 
-    public override void OnStartServer()
+    [Server]
+    private void SubscribeEvents()
     {
-        base.OnStartServer();
-        RoundTracker.ServerRoundEnded += HandleRoundEnded;
+        RoundTracker.ServerRoundOver += HandleRoundEnded;
         ScoreTracker.ServerScoreUpdated += HandleScoreUpdated;
-    }
-
-    public override void OnStopServer()
-    {
-        base.OnStopServer();
-        RoundTracker.ServerRoundEnded -= HandleRoundEnded;
-        ScoreTracker.ServerScoreUpdated -= HandleScoreUpdated;
     }
 
     [Server]
@@ -77,24 +80,36 @@ public class MatchTracker : NetworkBehaviour
     [Server]
     private void CheckMatchOver(int leftTeamScore, int rightTeamScore)
     {
-        int scoreToWin = scoreTracker.ScoreToWin;
-        if (leftTeamScore != scoreToWin && rightTeamScore != scoreToWin) { return; }
-
-        bool isLeftTeamWin = leftTeamScore == scoreToWin;
+        if (!IsMatchOver(leftTeamScore, rightTeamScore)) { return; }
         ServerMatchEnded?.Invoke();
-        InvokeMatchEnded(isLeftTeamWin);
+        InvokeMatchEnded(IsLeftTeamWin(leftTeamScore, rightTeamScore));
         ResetMatch();
+    }
+
+    [Server]
+    private bool IsMatchOver(int leftTeamScore, int rightTeamScore)
+    {
+        int scoreToWin = scoreTracker.ScoreToWin;
+        return leftTeamScore == scoreToWin || rightTeamScore == scoreToWin;
+    }
+
+    [Server]
+    private bool IsLeftTeamWin(int leftTeamScore, int rightTeamScore)
+    {
+        int scoreToWin = scoreTracker.ScoreToWin;
+        return leftTeamScore == scoreToWin;
+    }
+
+    [Server]
+    private void UnsubscribeEvents()
+    {
+        RoundTracker.ServerRoundOver -= HandleRoundEnded;
+        ScoreTracker.ServerScoreUpdated -= HandleScoreUpdated;
     }
 
     #endregion
 
     #region Client
-
-    [ClientRpc]
-    private void InvokeMatchStarted()
-    {
-        ClientMatchStarted?.Invoke();
-    }
 
     [ClientRpc]
     private void InvokeMatchEnded(bool isLeftTeamWin)

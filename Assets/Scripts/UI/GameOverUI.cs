@@ -2,7 +2,6 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameOverUI : MonoBehaviour
@@ -16,12 +15,12 @@ public class GameOverUI : MonoBehaviour
 
     private void Awake()
     {
-        MatchTracker.ClientMatchEnded += HandleMatchEnded;
+        SubscribeEvents();
     }
 
     private void OnDestroy()
     {
-        MatchTracker.ClientMatchEnded -= HandleMatchEnded;
+        UnsubscribeEvents();
     }
 
     private void Start()
@@ -33,20 +32,8 @@ public class GameOverUI : MonoBehaviour
 
     private void Update()
     {
-        if (NetworkServer.active)
-            restartButton.gameObject.SetActive(true);
         if (Keyboard.current.escapeKey.wasPressedThisFrame)
             gameOverPanel.SetActive(!gameOverPanel.activeSelf);
-    }
-
-    private void HandleMatchEnded(bool isLeftTeamWin)
-    {
-        if (isLeftTeamWin)
-            leftTeamWinsText.gameObject.SetActive(true);
-        else
-            rightTeamWinsText.gameObject.SetActive(true);
-        waitingForHostText.gameObject.SetActive(true);
-        gameOverPanel.SetActive(true);
     }
 
     public void HandleRestartClicked()
@@ -56,12 +43,37 @@ public class GameOverUI : MonoBehaviour
 
     public void HandleDisconnectClicked()
     {
-        if (NetworkServer.active)
-            if (NetworkClient.isConnected)
-                room.StopHost();
-            else
-                room.StopServer();
-        else
-            room.StopClient();
+        room.Disconnect();
     }
+
+    private void SubscribeEvents()
+    {
+        MatchTracker.ClientMatchEnded += HandleMatchEnded;
+    }
+
+    private void HandleMatchEnded(bool isLeftTeamWin)
+    {
+        ShowGameOverPanel(isLeftTeamWin);
+    }
+
+    private void ShowGameOverPanel(bool isLeftTeamWin)
+    {
+        ShowWinnerText(isLeftTeamWin);
+        waitingForHostText.gameObject.SetActive(true);
+        gameOverPanel.SetActive(true);
+    }
+
+    private void ShowWinnerText(bool isLeftTeamWin)
+    {
+        if (isLeftTeamWin)
+            leftTeamWinsText.gameObject.SetActive(true);
+        else
+            rightTeamWinsText.gameObject.SetActive(true);
+    }
+
+    private void UnsubscribeEvents()
+    {
+        MatchTracker.ClientMatchEnded -= HandleMatchEnded;
+    }
+
 }

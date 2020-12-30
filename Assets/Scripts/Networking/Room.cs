@@ -1,11 +1,11 @@
-using System.Xml.Linq;
-using System.Collections;
 using UnityEngine;
 using Mirror;
+using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.SceneManagement;
 using System.Collections.ObjectModel;
 
+// Properties: Connections, Players
+// Methods: AddConnection, RemoveConnection, AddPlayer, RemovePlayer, Disconnect
 public class Room : NetworkRoomManager
 {
     [SerializeField] private float timeToWaitForAllPlayersToConnect = 5f;
@@ -14,6 +14,8 @@ public class Room : NetworkRoomManager
 
     public ReadOnlyCollection<Connection> Connections { get { return connections.AsReadOnly(); } }
     public ReadOnlyCollection<Player> Players { get { return players.AsReadOnly(); } }
+
+    #region General
 
     public void AddConnection(Connection connection)
     {
@@ -35,35 +37,29 @@ public class Room : NetworkRoomManager
         players.Remove(player);
     }
 
+    public void Disconnect()
+    {
+        if (NetworkServer.active)
+            if (NetworkClient.isConnected)
+                StopHost();
+            else
+                StopServer();
+        else
+            StopClient();
+    }
+
+    #endregion
 
     #region Server
 
     public override void OnRoomStartServer()
     {
-        GameState.ServerGameStateReady += HandleGameStateReady;
+        SubscribeEvents();
     }
 
     public override void OnRoomStopServer()
     {
-        GameState.ServerGameStateReady -= HandleGameStateReady;
-    }
-
-    private void HandleGameStateReady()
-    {
-        StartCoroutine(WaitForAllPlayersToConnect());
-        GameState.Instance.StartGame();
-    }
-
-    private IEnumerator WaitForAllPlayersToConnect()
-    {
-        int secondsPassed = 0;
-        while (secondsPassed < timeToWaitForAllPlayersToConnect)
-        {
-            if (Players.Count == Connections.Count)
-                break;
-            secondsPassed += 1;
-            yield return new WaitForSeconds(1f);
-        }
+        UnsubscribeEvents();
     }
 
     public override void OnRoomServerAddPlayer(NetworkConnection conn)
@@ -96,29 +92,43 @@ public class Room : NetworkRoomManager
     private Player CreateGamePlayer(GameObject roomPlayer)
     {
         var connection = roomPlayer.GetComponent<Connection>();
-        var playerData = connection.PlayerData;
-        bool isLeftTeam = playerData.IsLeftTeam;
-        Transform spawnPoint = Map.Instance.GetSpawnPoint(isLeftTeam);
-        var player = Instantiate(playerPrefab, spawnPoint.position, Quaternion.identity).GetComponent<Player>();
-        if (playerData.IsRightTeam)
-            player.transform.Rotate(0f, 0f, 180f);
+        // Temporarily set player to out of nowhere
+        var player = Instantiate(playerPrefab, new Vector3(5000f, 0f, 0f), Quaternion.identity).GetComponent<Player>();
         player.SetConnection(connection);
         return player;
     }
 
-    public override void OnRoomServerDisconnect(NetworkConnection conn)
+    private void SubscribeEvents()
     {
+        GameState.ServerGameStateReady += HandleGameStateReady;
     }
 
-    public override void OnRoomStopHost()
+    private void HandleGameStateReady()
     {
+        StartCoroutine(StartGame());
     }
 
-    #endregion
+    private IEnumerator StartGame()
+    {
+        yield return WaitForAllPlayersToConnect();
+        GameState.Instance.StartGame();
+    }
 
-    #region Client
-
-
+    private IEnumerator WaitForAllPlayersToConnect()
+    {
+        int secondsPassed = 0;
+        while (secondsPassed < timeToWaitForAllPlayersToConnect)
+        {
+            if (Players.Count == Connections.Count)
+                break;
+            secondsPassed += 1;
+            yield return new WaitForSeconds(1f);
+        }
+    }
+    private void UnsubscribeEvents()
+    {
+        GameState.ServerGameStateReady -= HandleGameStateReady;
+    }
 
     #endregion
 

@@ -1,8 +1,5 @@
 ﻿using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.UI;
 using TMPro;
-using Mirror;
 
 public class MatchUI : MonoBehaviour
 {
@@ -13,14 +10,12 @@ public class MatchUI : MonoBehaviour
 
     private void Awake()
     {
-        ScoreTracker.ClientScoreUpdated += HandleScoreUpdated;
-        RoundTracker.ClientCountdownStarted += HandleCountdownStarted;
+        SubscribeEvents();
     }
 
     private void OnDestroy()
     {
-        ScoreTracker.ClientScoreUpdated -= HandleScoreUpdated;
-        RoundTracker.ClientCountdownStarted -= HandleCountdownStarted;
+        UnsubscribeEvents();
     }
 
     private void Update()
@@ -40,6 +35,12 @@ public class MatchUI : MonoBehaviour
             countdownText.gameObject.SetActive(false);
     }
 
+    private void SubscribeEvents()
+    {
+        RoundTracker.ClientCountdownStarted += HandleCountdownStarted;
+        ScoreTracker.ClientScoreUpdated += HandleScoreUpdated;
+    }
+
     private void HandleCountdownStarted(float timeBetweenRounds)
     {
         timeLeft = timeBetweenRounds;
@@ -51,6 +52,12 @@ public class MatchUI : MonoBehaviour
     {
         leftTeamScoreText.text = leftTeamScore.ToString();
         rightTeamScoreText.text = rightTeamScore.ToString();
+    }
+
+    private void UnsubscribeEvents()
+    {
+        RoundTracker.ClientCountdownStarted -= HandleCountdownStarted;
+        ScoreTracker.ClientScoreUpdated -= HandleScoreUpdated;
     }
 
 }

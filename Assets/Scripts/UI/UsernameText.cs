@@ -1,22 +1,23 @@
-using TMPro;
 using UnityEngine;
+using TMPro;
 
+// Methods: SetPlayer
 public class UsernameText : MonoBehaviour
 {
     private Player player;
     private RectTransform rect;
-    private TMP_Text usernameText;
+    private TMP_Text text;
     [SerializeField] private Vector2 offset = new Vector2(0f, 30f);
 
     private void Awake()
     {
         rect = GetComponent<RectTransform>();
-        usernameText = GetComponent<TMP_Text>();
+        text = GetComponent<TMP_Text>();
     }
     public void SetPlayer(Player playerToFollow)
     {
         player = playerToFollow;
-        usernameText.text = player.Username;
+        text.text = player.Username;
     }
 
     private void LateUpdate()

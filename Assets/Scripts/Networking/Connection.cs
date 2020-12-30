@@ -2,6 +2,8 @@ using UnityEngine;
 using Mirror;
 using System;
 
+// Properties: PlayerData
+// Events: ClientConnected, ClientLocalConnected, ClientDisconnected
 public class Connection : NetworkRoomPlayer
 {
     private Room room;
@@ -27,6 +29,8 @@ public class Connection : NetworkRoomPlayer
     public override void OnStopServer()
     {
         room.RemoveConnection(this);
+        if (NetworkClient.active)
+            ClientDisconnected?.Invoke(this);
     }
 
     #endregion
