@@ -40,7 +40,8 @@ public class PlayerTracker : NetworkBehaviour
     public void SpawnPlayers()
     {
         foreach (Player player in room.Players)
-            SpawnPlayer(player);
+            if (!player.IsSpectator)
+                SpawnPlayer(player);
     }
 
     [Server]
@@ -99,6 +100,7 @@ public class PlayerTracker : NetworkBehaviour
     private void SubscribeEvents()
     {
         Player.ServerPlayerHit += HandlePlayerHit;
+        Player.ServerPlayerDisconnected += HandlePlayerDisconnected;
     }
 
     [Server]
@@ -123,6 +125,12 @@ public class PlayerTracker : NetworkBehaviour
             leftTeamPlayers.Remove(player);
         else
             rightTeamPlayers.Remove(player);
+    }
+
+    [Server]
+    private void HandlePlayerDisconnected(Player player)
+    {
+        EliminatePlayer(player);
     }
 
     [Server]

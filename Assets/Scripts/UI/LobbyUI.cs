@@ -87,12 +87,20 @@ public class LobbyUI : NetworkBehaviour
     public void HandleJoinLeftTeamClick()
     {
         localPlayerData.CmdSetIsLeftTeam(true);
+        localPlayerData.CmdSetIsSpectator(false);
+    }
+
+    [Client]
+    public void HandleSpectateClick()
+    {
+        localPlayerData.CmdSetIsSpectator(true);
     }
 
     [Client]
     public void HandleJoinRightTeamClick()
     {
         localPlayerData.CmdSetIsLeftTeam(false);
+        localPlayerData.CmdSetIsSpectator(false);
     }
 
     [Client]

@@ -2,8 +2,8 @@ using UnityEngine;
 using Mirror;
 using System;
 
-// Properties: ConnectionNetId, Username, IsLeftTeam, IsRightTeam
-// Events: ServerPlayerHit, ClientPlayerSpawned
+// Properties: ConnectionNetId, Username, IsLeftTeam, IsRightTeam, IsSpectator
+// Events: ServerPlayerHit, ServerPlayerDisconnected, ClientPlayerSpawned
 // Methods: [Server] SetConnection, [Server] EnableInput, [Server] DisableInput, 
 public class Player : NetworkBehaviour
 {
@@ -19,8 +19,10 @@ public class Player : NetworkBehaviour
     public string Username { get { return data.Username; } }
     public bool IsLeftTeam { get { return data.IsLeftTeam; } }
     public bool IsRightTeam { get { return data.IsRightTeam; } }
+    public bool IsSpectator { get { return data.IsSpectator; } }
 
     public static event Action<Player> ServerPlayerHit;
+    public static event Action<Player> ServerPlayerDisconnected;
     public static event Action<Player> ClientPlayerSpawned;
 
     private void Awake()
@@ -41,6 +43,7 @@ public class Player : NetworkBehaviour
     public override void OnStopServer()
     {
         room.RemovePlayer(this);
+        ServerPlayerDisconnected?.Invoke(this);
     }
 
     [Server]
@@ -89,6 +92,7 @@ public class Player : NetworkBehaviour
         foreach (Connection connection in room.Connections)
             if (connection.netId == ConnectionNetId)
                 return connection.PlayerData;
+        Debug.LogError("No Player found in FindPlayerData().");
         return null;
     }
 

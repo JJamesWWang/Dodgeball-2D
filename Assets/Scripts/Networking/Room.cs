@@ -62,6 +62,16 @@ public class Room : NetworkRoomManager
         UnsubscribeEvents();
     }
 
+    public override void OnServerConnect(NetworkConnection conn)
+    {
+        if (numPlayers >= maxConnections)
+        {
+            conn.Disconnect();
+            return;
+        }
+        OnRoomServerConnect(conn);
+    }
+
     public override void OnRoomServerAddPlayer(NetworkConnection conn)
     {
         GameObject player = OnRoomServerCreateRoomPlayer(conn);
@@ -82,6 +92,8 @@ public class Room : NetworkRoomManager
         var playerNumber = Connections.Count + 1;
         playerData.SetIsLeftTeam(playerNumber % 2 == 1);
         playerData.SetUsername($"Player {playerNumber}");
+        if (!IsSceneActive(RoomScene))
+            playerData.SetIsSpectator(true);
     }
 
     public override GameObject OnRoomServerCreateGamePlayer(NetworkConnection conn, GameObject roomPlayer)
@@ -89,6 +101,7 @@ public class Room : NetworkRoomManager
         return CreateGamePlayer(roomPlayer).gameObject;
     }
 
+    [Server]
     private Player CreateGamePlayer(GameObject roomPlayer)
     {
         var connection = roomPlayer.GetComponent<Connection>();
@@ -98,22 +111,26 @@ public class Room : NetworkRoomManager
         return player;
     }
 
+    [Server]
     private void SubscribeEvents()
     {
         GameState.ServerGameStateReady += HandleGameStateReady;
     }
 
+    [Server]
     private void HandleGameStateReady()
     {
         StartCoroutine(StartGame());
     }
 
+    [Server]
     private IEnumerator StartGame()
     {
         yield return WaitForAllPlayersToConnect();
         GameState.Instance.StartGame();
     }
 
+    [Server]
     private IEnumerator WaitForAllPlayersToConnect()
     {
         int secondsPassed = 0;
@@ -125,6 +142,8 @@ public class Room : NetworkRoomManager
             yield return new WaitForSeconds(1f);
         }
     }
+
+    [Server]
     private void UnsubscribeEvents()
     {
         GameState.ServerGameStateReady -= HandleGameStateReady;
