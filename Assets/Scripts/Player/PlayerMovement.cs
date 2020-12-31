@@ -1,20 +1,26 @@
 ﻿using UnityEngine;
 using Mirror;
-using UnityEngine.InputSystem;
 
+// Methods: CmdMoveTowards, StopMovement
 public class PlayerMovement : NetworkBehaviour
 {
+    private Player player;
     private Vector2 destination;
-    private bool reachedDestination = true;
+    private bool hasReachedDestination = true;
     [SerializeField] private float movementSpeed = 160f;
     [SerializeField] private float angularRotationSpeed = 15f;
+    [Tooltip("If the Player is within this distance, it will stop moving.")]
+    private Bounds bounds;
     [SerializeField] private float stopDistance = 1f;
 
-    private Player player;
+    private void Awake()
+    {
+        player = GetComponent<Player>();
+    }
 
     private void Start()
     {
-        player = GetComponent<Player>();    
+        bounds = player.IsLeftTeam ? Map.Instance.LeftTeamBounds : Map.Instance.RightTeamBounds;
     }
 
     #region Server
@@ -25,50 +31,98 @@ public class PlayerMovement : NetworkBehaviour
         MoveTowards(point);
     }
 
-    #endregion
-
-    #region Client
-
-    [Client]
-    public void CliMoveTowards(Vector2 point)
-    {
-        MoveTowards(point);
-    }
-
-    #endregion
-
+    [Server]
     private void MoveTowards(Vector2 point)
     {
-        Bounds movementBounds = player.Connection.IsLeftTeam ? Map.Instance.LeftTeamBounds : Map.Instance.RightTeamBounds;
-        if (movementBounds.Contains(point))
-        {
+        if (bounds.Contains(point))
             SetDestination(point);
-        }
+        else
+            SetBoundedDestination(point);
     }
 
-    private void SetDestination(Vector2 point)
+    [Server]
+    private void SetDestination(Vector2 destinationPoint)
     {
-        destination = point;
-        reachedDestination = false;
+        destination = destinationPoint;
+        hasReachedDestination = false;
     }
 
+    [Server]
+    private void SetBoundedDestination(Vector2 destinationPoint)
+    {
+        Vector2 intersectionWithYBound = CalculateIntersectionWithYBound(destinationPoint);
+        Vector2 intersectionWithXBound = CalculateIntersectionWithXBound(destinationPoint);
+        if (bounds.Contains(intersectionWithYBound))
+            SetDestination(intersectionWithYBound);
+        else
+            SetDestination(intersectionWithXBound);
+    }
+
+    [Server]
+    private Vector2 CalculateIntersectionWithYBound(Vector2 destinationPoint)
+    {
+        Vector2 startPoint = transform.position;
+        Vector2 vectorToPoint = destinationPoint - startPoint;
+        float boundY = vectorToPoint.y > 0 ? bounds.TopBound : bounds.BottomBound;
+        float slope = vectorToPoint.y / vectorToPoint.x;
+        return startPoint + CalculateYBoundedVector(startPoint.y, boundY, slope);
+    }
+
+    [Server]
+    private Vector2 CalculateYBoundedVector(float startY, float stopY, float slope)
+    {
+        float distance = stopY - startY;
+        float x = distance / slope;
+        float y = distance;
+        return new Vector2(x, y);
+    }
+
+    [Server]
+    private Vector2 CalculateIntersectionWithXBound(Vector2 destinationPoint)
+    {
+        Vector2 startPoint = transform.position;
+        Vector2 vectorToPoint = destinationPoint - startPoint;
+        float boundX = vectorToPoint.x > 0 ? bounds.RightBound : bounds.LeftBound;
+        float slope = vectorToPoint.y / vectorToPoint.x;
+        return startPoint + CalculateXBoundedVector(startPoint.x, boundX, slope);
+    }
+
+    [Server]
+    private Vector2 CalculateXBoundedVector(float startX, float stopX, float slope)
+    {
+        float distance = stopX - startX;
+        float y = slope * distance;
+        float x = distance;
+        return new Vector2(x, y);
+    }
+
+    [Server]
+    public void StopMovement()
+    {
+        hasReachedDestination = true;
+    }
+
+    [Server]
     private void Update()
     {
-        if (reachedDestination) { return; }
+        if (hasReachedDestination) { return; }
         MoveTowardsDestination();
         RotateTowardsDestination();
         CheckReachedDestination();
     }
 
-
+    [Server]
     private void MoveTowardsDestination()
     {
         Vector2 position = transform.position;
         Vector2 destinationDirection = (destination - position).normalized;
         position += destinationDirection * movementSpeed * Time.deltaTime;
+        position.x = Mathf.Clamp(position.x, bounds.LeftBound, bounds.RightBound);
+        position.y = Mathf.Clamp(position.y, bounds.BottomBound, bounds.TopBound);
         transform.position = position;
     }
 
+    [Server]
     private void RotateTowardsDestination()
     {
         Vector2 position = transform.position;
@@ -78,12 +132,15 @@ public class PlayerMovement : NetworkBehaviour
         transform.rotation = Quaternion.Slerp(transform.rotation, rotatedZAxis, angularRotationSpeed * Time.deltaTime);
     }
 
+    [Server]
     private void CheckReachedDestination()
     {
         Vector2 position = transform.position;
         Vector2 distanceToDestination = destination - position;
         if (distanceToDestination.sqrMagnitude < stopDistance * stopDistance)
-            reachedDestination = true;
+            hasReachedDestination = true;
     }
+
+    #endregion
 
 }

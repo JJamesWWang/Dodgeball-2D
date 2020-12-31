@@ -1,10 +1,14 @@
-﻿using UnityEngine;
+using UnityEngine;
 using Mirror;
+using System.Collections;
 
+// Properties: static Instance, IsInPlay 
+// Methods: [Server] StartGame, [Server] EndGame
 public class GameState : NetworkBehaviour
 {
+    private Room room;
     private MatchTracker matchTracker;
-    private DodgeballNetworkManager dodgeballNetworkManager;
+    [SerializeField] private float timeToWaitForAllPlayersToConnect = 5f;
 
     public static GameState Instance { get; private set; }
     public bool IsInPlay { get; private set; }
@@ -12,33 +16,83 @@ public class GameState : NetworkBehaviour
     private void Awake()
     {
         if (Instance != null && Instance != this)
-        {
-            Destroy(this);
-        }
+            Destroy(gameObject);
         else
-        {
             Instance = this;
-        }
+
+        matchTracker = GetComponent<MatchTracker>();
+    }
+
+    private void OnDestroy()
+    {
+        Instance = null;
     }
 
     private void Start()
     {
-        matchTracker = GetComponent<MatchTracker>();
-        dodgeballNetworkManager = (DodgeballNetworkManager)NetworkManager.singleton;
+        room = (Room)NetworkManager.singleton;
+        StartCoroutine(StartGame());
+    }
+
+    private void OnEnable()
+    {
+        SubscribeEvents();
+    }
+
+    private void OnDisable()
+    {
+        UnsubscribeEvents();
     }
 
     #region Server
 
-    public override void OnStartServer()
+    [Server]
+    private IEnumerator StartGame()
     {
-        MatchTracker.ServerMatchStarted += HandleMatchStarted;
-        MatchTracker.ServerMatchEnded += HandleMatchEnded;
+        yield return WaitForAllPlayersToConnect();
+        // Temporarily disabled for easier debugging
+        //if (IsValidTeamComposition()gg)
+        matchTracker.StartMatch();
     }
 
-    public override void OnStopServer()
+    [Server]
+    private IEnumerator WaitForAllPlayersToConnect()
     {
-        MatchTracker.ServerMatchStarted -= HandleMatchStarted;
-        MatchTracker.ServerMatchEnded -= HandleMatchEnded;
+        int secondsPassed = 0;
+        while (secondsPassed < timeToWaitForAllPlayersToConnect)
+        {
+            if (room.Players.Count == room.Connections.Count)
+                break;
+            secondsPassed += 1;
+            yield return new WaitForSeconds(1f);
+        }
+    }
+
+    [Server]
+    private bool IsValidTeamComposition()
+    {
+        int leftTeamPlayerCount = 0;
+        int rightTeamPlayerCount = 0;
+        foreach (Player player in room.Players)
+            if (player.IsLeftTeam)
+                leftTeamPlayerCount += 1;
+            else
+                rightTeamPlayerCount += 1;
+        return leftTeamPlayerCount > 0 && rightTeamPlayerCount > 0;
+    }
+
+    [Server]
+    private void EndGame(bool isLeftTeamWin)
+    {
+        matchTracker.EndMatch(isLeftTeamWin);
+    }
+
+    [Server]
+    private void SubscribeEvents()
+    {
+        MatchTracker.ServerMatchStarted += HandleMatchStarted;
+        PlayerTracker.ServerATeamLeft += HandleATeamLeft;
+        MatchTracker.ServerMatchEnded += HandleMatchEnded;
     }
 
     [Server]
@@ -48,37 +102,23 @@ public class GameState : NetworkBehaviour
     }
 
     [Server]
+    private void HandleATeamLeft(bool isLeftTeam)
+    {
+        EndGame(!isLeftTeam);
+    }
+
+    [Server]
     private void HandleMatchEnded()
     {
         IsInPlay = false;
     }
 
     [Server]
-    public void StartGame()
+    private void UnsubscribeEvents()
     {
-        // Temporarily disabled for easier debugging
-        //if (IsValidTeamComposition())
-        matchTracker.StartMatch();
-    }
-
-    [Server]
-    public void EndGame()
-    {
-
-    }
-
-    [Server]
-    private bool IsValidTeamComposition()
-    {
-        int leftTeamPlayerCount = 0;
-        int rightTeamPlayerCount = 0;
-        foreach (PlayerConnection playerConnection in dodgeballNetworkManager.PlayerConnections)
-            if (playerConnection.IsLeftTeam)
-                leftTeamPlayerCount += 1;
-            else
-                rightTeamPlayerCount += 1;
-
-        return leftTeamPlayerCount > 0 && rightTeamPlayerCount > 0;
+        MatchTracker.ServerMatchStarted -= HandleMatchStarted;
+        PlayerTracker.ServerATeamLeft -= HandleATeamLeft;
+        MatchTracker.ServerMatchEnded -= HandleMatchEnded;
     }
 
     #endregion

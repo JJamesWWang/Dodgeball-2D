@@ -80,7 +80,7 @@ namespace Mirror
         /// </summary>
         [Scene]
         [FormerlySerializedAs("m_OnlineScene")]
-        [Tooltip("Scene that Mirror will switch to when the server is started. Clients will recieve a Scene Message to load the server's current scene when they connect.")]
+        [Tooltip("Scene that Mirror will switch to when the server is started. Clients will receive a Scene Message to load the server's current scene when they connect.")]
         public string onlineScene = "";
 
         // transport layer
@@ -793,7 +793,7 @@ namespace Mirror
 
         /// <summary>
         /// This causes the server to switch scenes and sets the networkSceneName.
-        /// <para>Clients that connect to this server will automatically switch to this scene. This is called autmatically if onlineScene or offlineScene are set, but it can be called from user code to switch scenes again while the game is in progress. This automatically sets clients to be not-ready. The clients must call NetworkClient.Ready() again to participate in the new scene.</para>
+        /// <para>Clients that connect to this server will automatically switch to this scene. This is called automatically if onlineScene or offlineScene are set, but it can be called from user code to switch scenes again while the game is in progress. This automatically sets clients to be not-ready. The clients must call NetworkClient.Ready() again to participate in the new scene.</para>
         /// </summary>
         /// <param name="newSceneName"></param>
         public virtual void ServerChangeScene(string newSceneName)
@@ -1058,7 +1058,7 @@ namespace Mirror
         public static int startPositionIndex;
 
         /// <summary>
-        /// List of transforms populted by NetworkStartPosition components found in the scene.
+        /// List of transforms populated by NetworkStartPosition components found in the scene.
         /// </summary>
         public static List<Transform> startPositions = new List<Transform>();
 
@@ -1080,7 +1080,7 @@ namespace Mirror
         }
 
         /// <summary>
-        /// Unregisters the transform of a game object as a player spawn location.
+        /// Un-registers the transform of a game object as a player spawn location.
         /// <para>This is done automatically by the <see cref="NetworkStartPosition">NetworkStartPosition</see> component, but can be done manually from user code.</para>
         /// </summary>
         /// <param name="start">Transform to unregister.</param>

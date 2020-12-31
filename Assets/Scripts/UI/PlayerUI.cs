@@ -4,14 +4,20 @@ public class PlayerUI : MonoBehaviour
 {
     [SerializeField] private UsernameText usernameTextPrefab;
     [SerializeField] private Canvas canvas;
-    private void Start()
+
+    private void OnEnable()
     {
-        Player.ClientPlayerSpawned += HandlePlayerSpawned;
+        SubscribeEvents();
     }
 
-    private void OnDestroy()
+    private void OnDisable()
     {
-        Player.ClientPlayerSpawned -= HandlePlayerSpawned;
+        UnsubscribeEvents();
+    }
+
+    private void SubscribeEvents()
+    {
+        Player.ClientPlayerSpawned += HandlePlayerSpawned;
     }
 
     private void HandlePlayerSpawned(Player player)
@@ -19,6 +25,11 @@ public class PlayerUI : MonoBehaviour
         UsernameText usernameText = Instantiate(usernameTextPrefab, Vector3.zero, Quaternion.identity);
         usernameText.SetPlayer(player);
         usernameText.transform.SetParent(canvas.transform);
+    }
+
+    private void UnsubscribeEvents()
+    {
+        Player.ClientPlayerSpawned -= HandlePlayerSpawned;
     }
 
 }

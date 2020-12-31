@@ -4,17 +4,15 @@ using UnityEngine.InputSystem;
 
 public class ThrowPowerBar : MonoBehaviour
 {
-    private bool fillingUp = true;
+    [SerializeField] private Image indicator;
+    private bool isFillingUp = true;
     private float fillSpeed;
+    [SerializeField] private PlayerArm playerArm;
     [SerializeField] private Vector2 offset = new Vector2(-5f, 5f);
-
-    private Image indicator;
     private Camera mainCamera;
-    [SerializeField] private PlayerDodgeballThrower playerArm;
 
-    private void Start()
+    private void Awake()
     {
-        indicator = GetComponentInChildren<Image>();
         mainCamera = Camera.main;
         fillSpeed = 1f / playerArm.TimeTo100Percent;
     }
@@ -28,10 +26,10 @@ public class ThrowPowerBar : MonoBehaviour
 
     private void FillIndicator()
     {
-        int sign = fillingUp ? 1 : -1;
+        int sign = isFillingUp ? 1 : -1;
         indicator.fillAmount = Mathf.Clamp(indicator.fillAmount + sign * fillSpeed * Time.deltaTime, 0f, 1f);
         if (indicator.fillAmount == 0f || indicator.fillAmount == 1f)
-            fillingUp = !fillingUp;
+            isFillingUp = !isFillingUp;
     }
 
     private void FollowMouse()

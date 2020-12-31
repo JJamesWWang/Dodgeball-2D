@@ -1,27 +1,79 @@
-﻿using Mirror;
-using System;
-using TMPro;
 using UnityEngine;
+using Mirror;
+using System;
 
+// Properties: ConnectionNetId, Team, IsLeftTeam, IsRightTeam, IsSpectator, Username, 
+// Events: ServerPlayerHit, ServerPlayerDisconnected, ClientPlayerSpawned
+// Methods: [Server] SetConnection, [Server] EnableInput, [Server] DisableInput, 
 public class Player : NetworkBehaviour
 {
     // Temporarily serialized for debugging purposes
     [SyncVar]
     [SerializeField] private uint connectionNetId;
-    [SerializeField] private PlayerConnection connection;
+    private PlayerData data;
+    private PlayerCommands commands;
+    private PlayerMovement movement;
+    private PlayerArm arm;
+    private Room room;
 
     public uint ConnectionNetId { get { return connectionNetId; } }
-    public PlayerConnection Connection { get { return connection; } }
+    public Team Team { get { return data.Team; } }
+    public bool IsLeftTeam { get { return data.IsLeftTeam; } }
+    public bool IsRightTeam { get { return data.IsRightTeam; } }
+    public bool IsSpectator { get { return data.IsSpectator; } }
+    public string Username { get { return data.Username; } }
 
+
+    public static event Action<Player> ServerPlayerHit;
+    public static event Action<Player> ServerPlayerDisconnected;
     public static event Action<Player> ClientPlayerSpawned;
+
+    private void Awake()
+    {
+        commands = GetComponent<PlayerCommands>();
+        movement = GetComponent<PlayerMovement>();
+        arm = GetComponent<PlayerArm>();
+    }
 
     #region Server
 
-    [Server]
-    public void SetConnection(PlayerConnection playerConnection)
+    public override void OnStartServer()
     {
-        connection = playerConnection;
-        connectionNetId = playerConnection.netId;
+        room = (Room)NetworkManager.singleton;
+        room.AddPlayer(this);
+    }
+
+    public override void OnStopServer()
+    {
+        room.RemovePlayer(this);
+        ServerPlayerDisconnected?.Invoke(this);
+    }
+
+    [Server]
+    public void SetConnection(Connection connection)
+    {
+        connectionNetId = connection.netId;
+        data = connection.PlayerData;
+    }
+
+    [Server]
+    public void EnableInput()
+    {
+        commands.SetServerInputEnabled(true);
+    }
+
+    [Server]
+    public void DisableInput()
+    {
+        commands.SetServerInputEnabled(false);
+        movement.StopMovement();
+        arm.StopThrow();
+    }
+
+    [Server]
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        ServerPlayerHit?.Invoke(this);
     }
 
     #endregion
@@ -30,15 +82,27 @@ public class Player : NetworkBehaviour
 
     public override void OnStartClient()
     {
-        DodgeballNetworkManager dodgeballNetworkManager = (DodgeballNetworkManager)NetworkManager.singleton;
-        foreach (PlayerConnection playerConnection in dodgeballNetworkManager.PlayerConnections)
-            if (playerConnection.netId == connectionNetId)
-            {
-                connection = playerConnection;
-                break;
-            }
-
+        room = (Room)NetworkManager.singleton;
+        data = FindPlayerData();
+        if (!NetworkServer.active)
+            room.AddPlayer(this);
         ClientPlayerSpawned?.Invoke(this);
+    }
+
+    [Client]
+    private PlayerData FindPlayerData()
+    {
+        foreach (Connection connection in room.Connections)
+            if (connection.netId == ConnectionNetId)
+                return connection.PlayerData;
+        Debug.LogError("No Player found in FindPlayerData().");
+        return null;
+    }
+
+    public override void OnStopClient()
+    {
+        if (!NetworkServer.active)
+            room.RemovePlayer(this);
     }
 
     #endregion Client

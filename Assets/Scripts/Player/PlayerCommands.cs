@@ -2,61 +2,136 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+// Methods: SetServerInputEnabled
 public class PlayerCommands : NetworkBehaviour
 {
+    [SyncVar(hook = nameof(HandleServerInputEnabledUpdated))]
+    private bool isServerInputEnabled = false;
+    private bool isClientInputEnabled = true;
     private Camera mainCamera = null;
-    private PlayerMovement playerMovement = null;
+    private PlayerMovement playerMovement;
+    private PlayerArm playerArm;
     [SerializeField] private ThrowPowerBar throwPowerBarPrefab = null;
-    private PlayerDodgeballThrower playerArm = null;
+    private ThrowPowerBar throwPowerBar;
 
-    private void Start()
+    private void Awake()
     {
-        mainCamera = Camera.main;
         playerMovement = GetComponent<PlayerMovement>();
-        playerArm = GetComponent<PlayerDodgeballThrower>();
+        playerArm = GetComponent<PlayerArm>();
+        mainCamera = Camera.main;
     }
+
+    private void OnEnable()
+    {
+        SubscribeEvents();
+    }
+
+    private void OnDisable()
+    {
+        UnsubscribeEvents();
+    }
+
+    #region Server
+
+    [Server]
+    public void SetServerInputEnabled(bool enabled)
+    {
+        isServerInputEnabled = enabled;
+    }
+
+    #endregion
 
     #region Client
 
     [ClientCallback]
     private void Update()
     {
-        if (!Application.isFocused || !hasAuthority) { return; }
-        Vector2 mousePosition = Mouse.current.position.ReadValue();
-        if (Mouse.current.rightButton.wasPressedThisFrame)
-        {
-            MoveTowards(mousePosition);
-        }
-        if (Mouse.current.leftButton.wasPressedThisFrame)
-        {
-            StartThrow();
-        }
-        if (Mouse.current.leftButton.wasReleasedThisFrame)
-        {
-            ReleaseThrow(mousePosition);
-        }
+        if (!Application.isFocused || !hasAuthority ||
+            !isServerInputEnabled || !isClientInputEnabled) { return; }
+        HandleInput();
     }
 
     [Client]
-    private void MoveTowards(Vector2 mousePosition)
+    private void HandleInput()
     {
+        CheckMoveTowards();
+        CheckStartThrow();
+        CheckReleaseThrow();
+    }
+
+    [Client]
+    private void CheckMoveTowards()
+    {
+        if (!Mouse.current.rightButton.wasPressedThisFrame) { return; }
+        Vector2 mousePosition = Mouse.current.position.ReadValue();
         Vector2 point = mainCamera.ScreenToWorldPoint(mousePosition);
+        MoveTowards(point);
+    }
+
+    [Client]
+    private void MoveTowards(Vector2 point)
+    {
         playerMovement.CmdMoveTowards(point);
-        playerMovement.CliMoveTowards(point);
+    }
+
+    [Client]
+    private void CheckStartThrow()
+    {
+        if (!Mouse.current.leftButton.wasPressedThisFrame) { return; }
+        StartThrow();
     }
 
     [Client]
     private void StartThrow()
     {
         playerArm.CmdStartThrow();
-        Instantiate(throwPowerBarPrefab, Vector3.zero, Quaternion.identity);
+        throwPowerBar = Instantiate(throwPowerBarPrefab, Vector3.zero, Quaternion.identity);
     }
 
     [Client]
-    private void ReleaseThrow(Vector2 mousePosition)
+    private void CheckReleaseThrow()
     {
+        if (!Mouse.current.leftButton.wasReleasedThisFrame) { return; }
+        Vector2 mousePosition = Mouse.current.position.ReadValue();
         Vector2 throwAtPoint = mainCamera.ScreenToWorldPoint(mousePosition);
+        ReleaseThrow(throwAtPoint);
+    }
+
+    [Client]
+    private void ReleaseThrow(Vector2 throwAtPoint)
+    {
         playerArm.CmdReleaseThrow(throwAtPoint);
+    }
+
+    [Client]
+    private void HandleServerInputEnabledUpdated(bool _oldServerInputEnabled, bool _newServerInputEnabled)
+    {
+        DestroyThrowPowerBar();
+    }
+
+    private void DestroyThrowPowerBar()
+    {
+        if (throwPowerBar != null)
+            Destroy(throwPowerBar.gameObject);
+    }
+
+    [ClientCallback]
+    private void SubscribeEvents()
+    {
+        GameOverUI.ClientGameOverUIToggled += HandleGameOverUIToggled;
+    }
+
+    [Client]
+    private void HandleGameOverUIToggled(bool isToggledOn)
+    {
+        isClientInputEnabled = !isToggledOn;
+        DestroyThrowPowerBar();
+    }
+
+    [ClientCallback]
+    private void UnsubscribeEvents()
+    {
+        GameOverUI.ClientGameOverUIToggled -= HandleGameOverUIToggled;
     }
 
     #endregion

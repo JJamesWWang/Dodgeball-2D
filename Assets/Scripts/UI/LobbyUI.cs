@@ -1,142 +1,160 @@
-﻿using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
+using UnityEngine;
+using UnityEngine.UI;
 using Mirror;
 using TMPro;
-using UnityEngine.UI;
 
-public class LobbyUI : MonoBehaviour
+public class LobbyUI : NetworkBehaviour
 {
+    private Room room;
+    private PlayerData localPlayerData;
     [SerializeField] private GameObject lobbyUIParent;
     [SerializeField] private TMP_Text leftTeamPlayersText;
     [SerializeField] private TMP_Text rightTeamPlayersText;
-    [SerializeField] private Button joinLeftTeamButton;
-    [SerializeField] private Button joinRightTeamButton;
     [SerializeField] private TMP_InputField usernameInput;
     [SerializeField] private Button startButton;
-    [SerializeField] private GameState gameState;
-    private DodgeballNetworkManager dodgeballNetworkManager;
-    private PlayerConnection playerConnection;
 
-    private void Start()
+    #region General
+
+    private void OnEnable()
     {
-        dodgeballNetworkManager = (DodgeballNetworkManager)NetworkManager.singleton;
-        if (NetworkServer.active)
-            startButton.gameObject.SetActive(true);
-        MatchTracker.ClientMatchStarted += HandleMatchStarted;
-        MatchTracker.ClientMatchEnded += HandleMatchEnded;
-        PlayerConnection.ClientLocalPlayerConnected += HandleLocalPlayerConnected;
-        PlayerConnection.ClientPlayerConnected += HandlePlayerConnected;
-        PlayerConnection.ClientPlayerDisconnected += HandlePlayerDisconnected;
-        PlayerConnection.ClientPlayerInfoUpdated += HandlePlayerInfoUpdated;
+        SubscribeEvents();
     }
 
-    private void OnDestroy()
+    private void OnDisable()
     {
-        MatchTracker.ClientMatchStarted -= HandleMatchStarted;
-        MatchTracker.ClientMatchEnded -= HandleMatchEnded;
-        PlayerConnection.ClientLocalPlayerConnected -= HandleLocalPlayerConnected;
-        PlayerConnection.ClientPlayerConnected -= HandlePlayerConnected;
-        PlayerConnection.ClientPlayerDisconnected -= HandlePlayerDisconnected;
-        PlayerConnection.ClientPlayerInfoUpdated -= HandlePlayerInfoUpdated;
-    }
-
-    private void Update()
-    {
-        if (Keyboard.current.escapeKey.wasPressedThisFrame)
-        {
-            lobbyUIParent.gameObject.SetActive(!lobbyUIParent.gameObject.activeSelf);
-        }
-    }
-
-    private void HandleMatchStarted()
-    {
-        lobbyUIParent.gameObject.SetActive(false);
-        joinLeftTeamButton.gameObject.SetActive(false);
-        joinRightTeamButton.gameObject.SetActive(false);
-    }
-
-    private void HandleMatchEnded(bool _isLeftTeamWin)
-    {
-        lobbyUIParent.gameObject.SetActive(true);
-        joinLeftTeamButton.gameObject.SetActive(true);
-        joinRightTeamButton.gameObject.SetActive(true);
-    }
-
-    private void HandleLocalPlayerConnected(PlayerConnection connection)
-    {
-        playerConnection = connection;
-        InitLobbyUI();
-    }
-
-    private void HandlePlayerConnected(PlayerConnection connection)
-    {
-        ConstructPlayersText();
-    }
-
-    private void HandlePlayerDisconnected(PlayerConnection connection)
-    {
-        ConstructPlayersText();
-    }
-
-    private void InitLobbyUI()
-    {
-        ConstructPlayersText();
-        usernameInput.text = playerConnection.Username;
-    }
-
-    private void ConstructPlayersText()
-    {
-        leftTeamPlayersText.text = "";
-        rightTeamPlayersText.text = "";
-        foreach (PlayerConnection connection in dodgeballNetworkManager.PlayerConnections)
-            AddToPlayersText(connection);
-    }
-
-    private void AddToPlayersText(PlayerConnection connection)
-    {
-        if (connection.IsLeftTeam)
-            leftTeamPlayersText.text += $"{connection.Username}\n";
-        else
-            rightTeamPlayersText.text += $"{connection.Username}\n";
-    }
-
-    private void HandlePlayerInfoUpdated(uint _netId, string _propertyName, object _value)
-    {
-        ConstructPlayersText();
-    }
-
-    public void HandleJoinLeftTeamClick()
-    {
-        playerConnection.CmdSetIsLeftTeam(true);
-    }
-
-    public void HandleJoinRightTeamClick()
-    {
-        playerConnection.CmdSetIsLeftTeam(false);
-    }
-
-    public void HandleSaveClick()
-    {
-        string username = usernameInput.text;
-        playerConnection.CmdSetUsername(username);
+        UnsubscribeEvents();
     }
 
     public void HandleLeaveClick()
     {
-        if (NetworkServer.active)
-            if (NetworkClient.isConnected)
-                dodgeballNetworkManager.StopHost();
-            else
-                dodgeballNetworkManager.StopServer();
-        else
-            dodgeballNetworkManager.StopClient();
-        SceneManager.LoadScene(0);
+        room.Disconnect();
     }
 
+    #endregion
+
+    #region Server
+
+    [Server]
     public void HandleStartClick()
     {
-        gameState.StartGame();
+        room.ServerChangeScene(room.GameplayScene);
     }
+
+    #endregion
+
+    #region Client
+
+    public override void OnStartClient()
+    {
+        room = (Room)NetworkManager.singleton;
+        if (NetworkServer.active)
+            startButton.gameObject.SetActive(true);
+        CheckInit();
+    }
+
+    [Client]
+    private void CheckInit()
+    {
+        var connection = Connection.LocalConnection;
+        if (connection != null)
+            Init(connection);
+    }
+
+    [Client]
+    private void Init(Connection connection)
+    {
+        localPlayerData = connection.PlayerData;
+        ConstructPlayersText();
+        usernameInput.text = localPlayerData.Username;
+    }
+
+    [Client]
+    private void ConstructPlayersText()
+    {
+        leftTeamPlayersText.text = "";
+        rightTeamPlayersText.text = "";
+        foreach (Connection connection in room.Connections)
+            AddToPlayersText(connection);
+    }
+
+    [Client]
+    private void AddToPlayersText(Connection connection)
+    {
+        var playerData = connection.PlayerData;
+        if (playerData.IsLeftTeam)
+            leftTeamPlayersText.text += $"{playerData.Username}\n";
+        else if (playerData.IsRightTeam)
+            rightTeamPlayersText.text += $"{playerData.Username}\n";
+    }
+
+    [Client]
+    public void HandleJoinLeftTeamClick()
+    {
+        localPlayerData.CmdSetTeam(Team.Left);
+    }
+
+    [Client]
+    public void HandleSpectateClick()
+    {
+        localPlayerData.CmdSetTeam(Team.Spectator);
+    }
+
+    [Client]
+    public void HandleJoinRightTeamClick()
+    {
+        localPlayerData.CmdSetTeam(Team.Right);
+    }
+
+    [Client]
+    public void HandleSaveClick()
+    {
+        string username = usernameInput.text;
+        localPlayerData.CmdSetUsername(username);
+    }
+
+    [ClientCallback]
+    private void SubscribeEvents()
+    {
+        Connection.ClientLocalConnected += HandleLocalPlayerConnected;
+        Connection.ClientConnected += HandlePlayerConnected;
+        Connection.ClientDisconnected += HandlePlayerDisconnected;
+        PlayerData.ClientPlayerDataUpdated += HandlePlayerDataUpdated;
+    }
+
+    [Client]
+    private void HandleLocalPlayerConnected(Connection connection)
+    {
+        Init(connection);
+    }
+
+    [Client]
+    private void HandlePlayerConnected(Connection connection)
+    {
+        ConstructPlayersText();
+    }
+
+    [Client]
+    private void HandlePlayerDisconnected(Connection connection)
+    {
+        ConstructPlayersText();
+    }
+
+    [Client]
+    private void HandlePlayerDataUpdated(uint _netId, string _propertyName, object _value)
+    {
+        if (room != null)
+            ConstructPlayersText();
+    }
+
+    [ClientCallback]
+    private void UnsubscribeEvents()
+    {
+        Connection.ClientLocalConnected -= HandleLocalPlayerConnected;
+        Connection.ClientConnected -= HandlePlayerConnected;
+        Connection.ClientDisconnected -= HandlePlayerDisconnected;
+        PlayerData.ClientPlayerDataUpdated -= HandlePlayerDataUpdated;
+    }
+
+    #endregion
 
 }

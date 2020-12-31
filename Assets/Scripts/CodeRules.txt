@@ -1,0 +1,24 @@
+1. No using GetComponent<> on another object unless you have to (such as when GameObjects are passed by Mirror).
+    Reason: This could expose public fields that otherwise should remain hidden (treat components as private information).
+    Fix: Create a method in the class you are accessing to follow the Law of Demeter. Use composition when necessary, but even try to avoid that.
+2. Use var only when it is absolutely redundant to state the class name (foreach loops, GetComponent<>, the variable name is the same name as the class name).
+3. Public methods and variables should have a <summary> and serialized fields a [Tooltip()] if their usage is not obvious. Classes should have comments that list public properties, events, and methods.
+4. Avoid using {} with if/else, for/foreach statements. You should be able to get enough done with one line, and if you can't, make a helper method.
+5. One blank line between each method; one for logical separation as well
+6. Some vocabulary:
+    Handle -> an event
+    Calculate -> a value
+    Check -> check if conditions are met & do something if they are (if applicable)
+    Show -> set ui elements visible
+7. Imports in order: UnityEngine, Mirror, System, <...>
+8. Class instance fields order:
+    1) Private variables in order of relevance to core function
+    2) Public variables in order of relevance to core function
+    3) Public static Actions, server before client
+9. Methods order:
+    General before Server before Client always
+    1) Awake, Start, OnDestroy, OnStartClient/Authority/Server, OnStopClient/Authority/Server
+    2) Public methods that can be called
+    3) Private methods immediately after they are called
+    4) Unity event handling
+    5) Event subscribing, handling (in order of subscribed), unsubscribing, and SyncVar hooks respectively

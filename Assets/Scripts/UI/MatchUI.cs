@@ -4,27 +4,18 @@ using TMPro;
 public class MatchUI : MonoBehaviour
 {
     private float timeLeft;
-    [SerializeField] private GameObject matchUIParent;
     [SerializeField] private TMP_Text leftTeamScoreText;
     [SerializeField] private TMP_Text rightTeamScoreText;
-    [SerializeField] private TMP_Text leftTeamWinsText;
-    [SerializeField] private TMP_Text rightTeamWinsText;
     [SerializeField] private TMP_Text countdownText;
 
-    private void Start()
+    private void OnEnable()
     {
-        MatchTracker.ClientMatchStarted += HandleMatchStarted;
-        MatchTracker.ClientMatchEnded += HandleMatchEnded;
-        ScoreTracker.ClientScoreUpdated += HandleScoreUpdated;
-        RoundTracker.ClientCountdownStarted += HandleCountdownStarted;
+        SubscribeEvents();
     }
 
-    private void OnDestroy()
+    private void OnDisable()
     {
-        MatchTracker.ClientMatchStarted -= HandleMatchStarted;
-        MatchTracker.ClientMatchEnded -= HandleMatchEnded;
-        ScoreTracker.ClientScoreUpdated -= HandleScoreUpdated;
-        RoundTracker.ClientCountdownStarted -= HandleCountdownStarted;
+        UnsubscribeEvents();
     }
 
     private void Update()
@@ -44,19 +35,17 @@ public class MatchUI : MonoBehaviour
             countdownText.gameObject.SetActive(false);
     }
 
-    private void HandleMatchStarted()
+    private void SubscribeEvents()
     {
-        leftTeamWinsText.gameObject.SetActive(false);
-        rightTeamWinsText.gameObject.SetActive(false);
-        matchUIParent.gameObject.SetActive(true);
+        RoundTracker.ClientCountdownStarted += HandleCountdownStarted;
+        ScoreTracker.ClientScoreUpdated += HandleScoreUpdated;
     }
 
-    private void HandleMatchEnded(bool isLeftTeamWin)
+    private void HandleCountdownStarted(float timeBetweenRounds)
     {
-        if (isLeftTeamWin)
-            leftTeamWinsText.gameObject.SetActive(true);
-        else
-            rightTeamWinsText.gameObject.SetActive(true);
+        timeLeft = timeBetweenRounds;
+        countdownText.text = timeBetweenRounds.ToString();
+        countdownText.gameObject.SetActive(true);
     }
 
     private void HandleScoreUpdated(int leftTeamScore, int rightTeamScore)
@@ -65,11 +54,10 @@ public class MatchUI : MonoBehaviour
         rightTeamScoreText.text = rightTeamScore.ToString();
     }
 
-    private void HandleCountdownStarted(float timeBetweenRounds)
+    private void UnsubscribeEvents()
     {
-        timeLeft = timeBetweenRounds;
-        countdownText.text = timeBetweenRounds.ToString();
-        countdownText.gameObject.SetActive(true);
+        RoundTracker.ClientCountdownStarted -= HandleCountdownStarted;
+        ScoreTracker.ClientScoreUpdated -= HandleScoreUpdated;
     }
 
 }

@@ -127,7 +127,6 @@ MonoBehaviour:
   syncInterval: 0.1
   leftTeamPlayers: []
   rightTeamPlayers: []
-  playerPrefab: {fileID: 6415630031527748310, guid: b6ea555d69052f447899817abb60dd5f, type: 3}
 --- !u!114 &2360796140888744061
 MonoBehaviour:
   m_ObjectHideFlags: 0
