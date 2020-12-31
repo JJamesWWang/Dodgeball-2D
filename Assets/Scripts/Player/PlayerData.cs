@@ -2,24 +2,29 @@ using UnityEngine;
 using Mirror;
 using System;
 
-// Properties: IsLeftTeam, IsRightTeam, Username, IsSpectator
+public enum Team
+{
+    Left = 0,
+    Right = 1,
+    Spectator
+}
+
+// Properties: Team, IsLeftTeam, IsRightTeam, IsSpectator, Username
 // Events: ClientPlayerDataUpdated
 // Methods: CmdSetUsername, CmdSetIsLeftTeam, CmdSetIsSpectator, [Server] SetUsername, [Server] SetIsLeftTeam, [Server] SetIsSpectator
-// Note: When a team is updated, IsLeftTeam will be used as the property name.
 public class PlayerData : NetworkBehaviour
 {
-    [SyncVar(hook = nameof(HandleTeamUpdated))]
-    private bool isLeftTeam;
-    [SyncVar(hook = nameof(HandleUsernameUpdated))]
-    private string username;
     // Temporarily serialized for debugging purposes
-    [SyncVar(hook = nameof(HandleSpectatorUpdated))]
-    [SerializeField] private bool isSpectator = false;
+    [SyncVar(hook = nameof(HandleTeamUpdated))]
+    [SerializeField] private Team team;
+    [SyncVar(hook = nameof(HandleUsernameUpdated))]
+    [SerializeField] private string username;
 
-    public bool IsLeftTeam { get { return isLeftTeam; } }
-    public bool IsRightTeam { get { return !isLeftTeam; } }
+    public Team Team { get { return team; } }
+    public bool IsLeftTeam { get { return team == Team.Left; } }
+    public bool IsRightTeam { get { return team == Team.Right; } }
+    public bool IsSpectator { get { return team == Team.Spectator; } }
     public string Username { get { return username; } }
-    public bool IsSpectator { get { return isSpectator; } }
 
     /// <summary> uint: connectionNetId, string: propertyName, object: propertyValue  </summary>
     public static event Action<uint, string, object> ClientPlayerDataUpdated;
@@ -27,9 +32,9 @@ public class PlayerData : NetworkBehaviour
     #region Server
 
     [Command]
-    public void CmdSetIsLeftTeam(bool value)
+    public void CmdSetTeam(Team team)
     {
-        SetIsLeftTeam(value);
+        SetTeam(team);
     }
 
     [Command]
@@ -39,16 +44,10 @@ public class PlayerData : NetworkBehaviour
         SetUsername(name);
     }
 
-    [Command]
-    public void CmdSetIsSpectator(bool value)
-    {
-        SetIsSpectator(value);
-    }
-
     [Server]
-    public void SetIsLeftTeam(bool value)
+    public void SetTeam(Team team)
     {
-        isLeftTeam = value;
+        this.team = team;
     }
 
     [Server]
@@ -57,32 +56,20 @@ public class PlayerData : NetworkBehaviour
         username = name;
     }
 
-    [Server]
-    public void SetIsSpectator(bool value)
-    {
-        isSpectator = value;
-    }
-
     #endregion
 
     #region Client
 
     [Client]
-    private void HandleTeamUpdated(bool _oldIsLeftTeam, bool newIsLeftTeam)
+    private void HandleTeamUpdated(Team _oldTeam, Team newTeam)
     {
-        ClientPlayerDataUpdated?.Invoke(netId, nameof(IsLeftTeam), newIsLeftTeam);
+        ClientPlayerDataUpdated?.Invoke(netId, nameof(Team), newTeam);
     }
 
     [Client]
     private void HandleUsernameUpdated(string _oldName, string newName)
     {
         ClientPlayerDataUpdated?.Invoke(netId, nameof(Username), newName);
-    }
-
-    [Client]
-    private void HandleSpectatorUpdated(bool _oldIsSpectator, bool newIsSpectator)
-    {
-        ClientPlayerDataUpdated?.Invoke(netId, nameof(IsSpectator), newIsSpectator);
     }
 
     #endregion

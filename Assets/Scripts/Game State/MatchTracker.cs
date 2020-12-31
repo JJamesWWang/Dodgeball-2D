@@ -3,7 +3,7 @@ using Mirror;
 using System;
 
 // Events: ServerMatchStarted, ServerMatchEnded, ClientMatchEnded
-// Methods: [Server] StartMatch, [Server] ResetMatch, 
+// Methods: [Server] StartMatch, [Server] ResetMatch, [Server] EndMatch
 public class MatchTracker : NetworkBehaviour
 {
     private RoundTracker roundTracker;
@@ -48,14 +48,22 @@ public class MatchTracker : NetworkBehaviour
     }
 
     [Server]
+    public void EndMatch(bool isLeftTeamWin)
+    {
+        ServerMatchEnded?.Invoke();
+        InvokeMatchEnded(isLeftTeamWin);
+        ResetMatch();
+    }
+
+    [Server]
     private void SubscribeEvents()
     {
-        RoundTracker.ServerRoundOver += HandleRoundEnded;
+        RoundTracker.ServerRoundOver += HandleRoundOver;
         ScoreTracker.ServerScoreUpdated += HandleScoreUpdated;
     }
 
     [Server]
-    private void HandleRoundEnded(bool isLeftTeamWin)
+    private void HandleRoundOver(bool isLeftTeamWin)
     {
         IncrementScore(isLeftTeamWin);
         if (GameState.Instance.IsInPlay)
@@ -81,9 +89,7 @@ public class MatchTracker : NetworkBehaviour
     private void CheckMatchOver(int leftTeamScore, int rightTeamScore)
     {
         if (!IsMatchOver(leftTeamScore, rightTeamScore)) { return; }
-        ServerMatchEnded?.Invoke();
-        InvokeMatchEnded(IsLeftTeamWin(leftTeamScore, rightTeamScore));
-        ResetMatch();
+        EndMatch(IsLeftTeamWin(leftTeamScore, rightTeamScore));
     }
 
     [Server]
@@ -103,7 +109,7 @@ public class MatchTracker : NetworkBehaviour
     [Server]
     private void UnsubscribeEvents()
     {
-        RoundTracker.ServerRoundOver -= HandleRoundEnded;
+        RoundTracker.ServerRoundOver -= HandleRoundOver;
         ScoreTracker.ServerScoreUpdated -= HandleScoreUpdated;
     }
 

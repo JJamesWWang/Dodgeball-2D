@@ -58,19 +58,19 @@ public class Dodgeball : NetworkBehaviour
     private void HandleCollision(Collision2D collision)
     {
         var collidedObject = collision.collider.gameObject;
-        if (CollidedWithPlayer(collidedObject) || BouncedMaxTimes())
+        if (IsPlayerCollision(collidedObject) || IsLastBounce())
             DestroySelf();
         timesBounced += 1;
     }
 
     [Server]
-    private bool CollidedWithPlayer(GameObject collidedObject)
+    private bool IsPlayerCollision(GameObject collidedObject)
     {
         return collidedObject.layer == LayerMask.NameToLayer("Player");
     }
 
     [Server]
-    private bool BouncedMaxTimes()
+    private bool IsLastBounce()
     {
         return timesBounced >= maxBounces;
     }

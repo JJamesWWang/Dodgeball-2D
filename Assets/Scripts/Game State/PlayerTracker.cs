@@ -10,8 +10,9 @@ using System.Collections.ObjectModel;
 public class PlayerTracker : NetworkBehaviour
 {
     private Room room;
-    private List<Player> leftTeamPlayers = new List<Player>();
-    private List<Player> rightTeamPlayers = new List<Player>();
+    // Temporarily serialized for debugging purposes
+    [SerializeField] private List<Player> leftTeamPlayers = new List<Player>();
+    [SerializeField] private List<Player> rightTeamPlayers = new List<Player>();
 
     public ReadOnlyCollection<Player> LeftTeamPlayers { get { return leftTeamPlayers.AsReadOnly(); } }
     public ReadOnlyCollection<Player> RightTeamPlayers { get { return rightTeamPlayers.AsReadOnly(); } }
@@ -130,13 +131,42 @@ public class PlayerTracker : NetworkBehaviour
     [Server]
     private void HandlePlayerDisconnected(Player player)
     {
-        EliminatePlayer(player);
+
+        if (IsATeamEmpty(out int rightTeamPlayerCount))
+            GameState.Instance.EndGame(rightTeamPlayerCount == 0);
+        else
+            EliminateDisconnectedPlayer(player);
+    }
+
+    private bool IsATeamEmpty(out int rightTeamPlayerCount)
+    {
+        int leftTeamPlayerCount = CountPlayersOfTeam(Team.Left);
+        rightTeamPlayerCount = CountPlayersOfTeam(Team.Right);
+        return leftTeamPlayerCount == 0 || rightTeamPlayerCount == 0;
+    }
+
+    [Server]
+    private int CountPlayersOfTeam(Team team)
+    {
+        int playerCount = 0;
+        foreach (Player player in room.Players)
+            if (player.Team == team)
+                playerCount += 1;
+        return playerCount;
+    }
+
+    [Server]
+    private void EliminateDisconnectedPlayer(Player player)
+    {
+        RemovePlayer(player);
+        ServerPlayerEliminated?.Invoke(player);
     }
 
     [Server]
     private void UnsubscribeEvents()
     {
         Player.ServerPlayerHit -= HandlePlayerHit;
+        Player.ServerPlayerDisconnected -= HandlePlayerDisconnected;
     }
 
     #endregion

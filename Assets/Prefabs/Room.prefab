@@ -60,7 +60,9 @@ MonoBehaviour:
   playerPrefab: {fileID: 2356974901408827918, guid: b6ea555d69052f447899817abb60dd5f, type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 0
-  spawnPrefabs: []
+  spawnPrefabs:
+  - {fileID: 2360796140888744060, guid: 34a5cb0d3505b7746a57a385aa9daf1a, type: 3}
+  - {fileID: 210691854058136062, guid: 8e63d0319e3d1fc43b1d7b611d4561f3, type: 3}
   showRoomGUI: 0
   minPlayers: 10
   roomPlayerPrefab: {fileID: 4534741638958361608, guid: 12b7eb62d3e8d1a40b43a6f58c1a6279, type: 3}
@@ -69,7 +71,11 @@ MonoBehaviour:
   _allPlayersReady: 0
   roomSlots: []
   clientIndex: 0
+  map1Prefab: {fileID: 210691854058136063, guid: 8e63d0319e3d1fc43b1d7b611d4561f3, type: 3}
+  gameStatePrefab: {fileID: 4631898463801848574, guid: 34a5cb0d3505b7746a57a385aa9daf1a, type: 3}
   timeToWaitForAllPlayersToConnect: 5
+  connections: []
+  players: []
 --- !u!114 &8480245606784881957
 MonoBehaviour:
   m_ObjectHideFlags: 0

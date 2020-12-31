@@ -2,10 +2,12 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// Methods: TargetSetInputEnabled
+// Methods: SetServerInputEnabled
 public class PlayerCommands : NetworkBehaviour
 {
-    private bool inputEnabled = false;
+    [SyncVar(hook = nameof(HandleServerInputEnabledUpdated))]
+    private bool isServerInputEnabled = false;
+    private bool isClientInputEnabled = true;
     private Camera mainCamera = null;
     private PlayerMovement playerMovement;
     private PlayerArm playerArm;
@@ -19,12 +21,35 @@ public class PlayerCommands : NetworkBehaviour
         mainCamera = Camera.main;
     }
 
+    #region Server
+
+    [Server]
+    public void SetServerInputEnabled(bool enabled)
+    {
+        isServerInputEnabled = enabled;
+    }
+
+    #endregion
+
     #region Client
+
+    [Client]
+    public override void OnStartClient()
+    {
+        SubscribeEvents();
+    }
+
+    [Client]
+    public override void OnStopClient()
+    {
+        UnsubscribeEvents();
+    }
 
     [ClientCallback]
     private void Update()
     {
-        if (!Application.isFocused || !hasAuthority || !inputEnabled) { return; }
+        if (!Application.isFocused || !hasAuthority ||
+            !isServerInputEnabled || !isClientInputEnabled) { return; }
         HandleInput();
     }
 
@@ -80,12 +105,35 @@ public class PlayerCommands : NetworkBehaviour
         playerArm.CmdReleaseThrow(throwAtPoint);
     }
 
-    [TargetRpc]
-    public void TargetSetInputEnabled(bool enabled)
+    [Client]
+    private void HandleServerInputEnabledUpdated(bool _oldServerInputEnabled, bool _newServerInputEnabled)
     {
-        inputEnabled = enabled;
+        DestroyThrowPowerBar();
+    }
+
+    private void DestroyThrowPowerBar()
+    {
         if (throwPowerBar != null)
             Destroy(throwPowerBar.gameObject);
+    }
+
+    [Client]
+    private void SubscribeEvents()
+    {
+        GameOverUI.ClientGameOverUIToggled += HandleGameOverUIToggled;
+    }
+
+    [Client]
+    private void HandleGameOverUIToggled(bool isToggledOn)
+    {
+        isClientInputEnabled = !isToggledOn;
+        DestroyThrowPowerBar();
+    }
+
+    [Client]
+    private void UnsubscribeEvents()
+    {
+        GameOverUI.ClientGameOverUIToggled -= HandleGameOverUIToggled;
     }
 
     #endregion

@@ -4,10 +4,10 @@
 // Methods: Contains
 public class Bounds : MonoBehaviour
 {
-    [SerializeField] private float leftBound;
-    [SerializeField] private float rightBound;
-    [SerializeField] private float bottomBound;
-    [SerializeField] private float topBound;
+    [SerializeField] private float leftBound = 0f;
+    [SerializeField] private float rightBound = 0f;
+    [SerializeField] private float bottomBound = 0f;
+    [SerializeField] private float topBound = 0f;
 
     public float LeftBound { get { return leftBound; } }
     public float RightBound { get { return rightBound; } }
@@ -19,6 +19,19 @@ public class Bounds : MonoBehaviour
 
     public bool Contains(Vector2 point)
     {
-        return point.x < RightBound && point.x > LeftBound && point.y < TopBound && point.y > BottomBound;
+        return point.x < RightBound && point.x > LeftBound &&
+            point.y < TopBound && point.y > BottomBound;
+    }
+
+    private void Start()
+    {
+        if (!AreBoundsSet())
+            Debug.LogWarning("Bounds set to 0.");
+    }
+
+    private bool AreBoundsSet()
+    {
+        return leftBound != 0f || rightBound != 0f ||
+            bottomBound != 0f || topBound != 0f;
     }
 }

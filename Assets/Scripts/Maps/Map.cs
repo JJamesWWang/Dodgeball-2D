@@ -25,6 +25,11 @@ public class Map : MonoBehaviour
             Instance = this;
     }
 
+    private void OnDestroy()
+    {
+        Instance = null;
+    }
+
     public Transform GetSpawnPoint(bool isLeftTeam)
     {
         if (isLeftTeam)

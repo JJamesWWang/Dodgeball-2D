@@ -74,7 +74,7 @@ public class LobbyUI : NetworkBehaviour
         var playerData = connection.PlayerData;
         if (playerData.IsLeftTeam)
             leftTeamPlayersText.text += $"{playerData.Username}\n";
-        else
+        else if (playerData.IsRightTeam)
             rightTeamPlayersText.text += $"{playerData.Username}\n";
     }
 
@@ -86,21 +86,19 @@ public class LobbyUI : NetworkBehaviour
     [Client]
     public void HandleJoinLeftTeamClick()
     {
-        localPlayerData.CmdSetIsLeftTeam(true);
-        localPlayerData.CmdSetIsSpectator(false);
+        localPlayerData.CmdSetTeam(Team.Left);
     }
 
     [Client]
     public void HandleSpectateClick()
     {
-        localPlayerData.CmdSetIsSpectator(true);
+        localPlayerData.CmdSetTeam(Team.Spectator);
     }
 
     [Client]
     public void HandleJoinRightTeamClick()
     {
-        localPlayerData.CmdSetIsLeftTeam(false);
-        localPlayerData.CmdSetIsSpectator(false);
+        localPlayerData.CmdSetTeam(Team.Right);
     }
 
     [Client]

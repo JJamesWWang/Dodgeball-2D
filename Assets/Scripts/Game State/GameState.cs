@@ -4,7 +4,7 @@ using System;
 
 // Properties: static Instance, IsInPlay 
 // Events: ServerGameStateReady
-// Methods: [Server] StartGame
+// Methods: [Server] StartGame, [Server] EndGame
 public class GameState : NetworkBehaviour
 {
     private MatchTracker matchTracker;
@@ -18,11 +18,16 @@ public class GameState : NetworkBehaviour
     private void Awake()
     {
         if (Instance != null && Instance != this)
-            Destroy(this);
+            Destroy(gameObject);
         else
             Instance = this;
 
         matchTracker = GetComponent<MatchTracker>();
+    }
+
+    private void OnDestroy()
+    {
+        Instance = null;
     }
 
     private void Start()
@@ -62,6 +67,12 @@ public class GameState : NetworkBehaviour
             else
                 rightTeamPlayerCount += 1;
         return leftTeamPlayerCount > 0 && rightTeamPlayerCount > 0;
+    }
+
+    [Server]
+    public void EndGame(bool isLeftTeamWin)
+    {
+        matchTracker.EndMatch(isLeftTeamWin);
     }
 
     private void SubscribeEvents()

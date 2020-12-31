@@ -1,9 +1,11 @@
-﻿using Mirror;
-using TMPro;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using Mirror;
+using System;
+using TMPro;
 
+// Events: ClientToggled
 public class GameOverUI : MonoBehaviour
 {
     private Room room;
@@ -12,6 +14,9 @@ public class GameOverUI : MonoBehaviour
     [SerializeField] private GameObject gameOverPanel;
     [SerializeField] private TMP_Text waitingForHostText;
     [SerializeField] private Button restartButton;
+
+    /// <summary> bool: isToggledOn </summary>
+    public static event Action<bool> ClientGameOverUIToggled;
 
     private void Awake()
     {
@@ -33,7 +38,13 @@ public class GameOverUI : MonoBehaviour
     private void Update()
     {
         if (Keyboard.current.escapeKey.wasPressedThisFrame)
-            gameOverPanel.SetActive(!gameOverPanel.activeSelf);
+            ToggleGameOverUI();
+    }
+
+    private void ToggleGameOverUI()
+    {
+        gameOverPanel.SetActive(!gameOverPanel.activeSelf);
+        ClientGameOverUIToggled?.Invoke(gameOverPanel.activeSelf);
     }
 
     public void HandleRestartClicked()
@@ -59,7 +70,8 @@ public class GameOverUI : MonoBehaviour
     private void ShowGameOverPanel(bool isLeftTeamWin)
     {
         ShowWinnerText(isLeftTeamWin);
-        waitingForHostText.gameObject.SetActive(true);
+        if (!NetworkServer.active)
+            waitingForHostText.gameObject.SetActive(true);
         gameOverPanel.SetActive(true);
     }
 

@@ -9,8 +9,9 @@ using System.Collections.ObjectModel;
 public class Room : NetworkRoomManager
 {
     [SerializeField] private float timeToWaitForAllPlayersToConnect = 5f;
-    private List<Connection> connections = new List<Connection>();
-    private List<Player> players = new List<Player>();
+    // Temporarily serialized for debugging purposes
+    [SerializeField] private List<Connection> connections = new List<Connection>();
+    [SerializeField] private List<Player> players = new List<Player>();
 
     public ReadOnlyCollection<Connection> Connections { get { return connections.AsReadOnly(); } }
     public ReadOnlyCollection<Player> Players { get { return players.AsReadOnly(); } }
@@ -90,10 +91,18 @@ public class Room : NetworkRoomManager
     {
         var playerData = connection.PlayerData;
         var playerNumber = Connections.Count + 1;
-        playerData.SetIsLeftTeam(playerNumber % 2 == 1);
+        SetPlayerTeam(playerData, playerNumber);
         playerData.SetUsername($"Player {playerNumber}");
+    }
+
+    private void SetPlayerTeam(PlayerData playerData, int playerNumber)
+    {
         if (!IsSceneActive(RoomScene))
-            playerData.SetIsSpectator(true);
+            playerData.SetTeam(Team.Spectator);
+        else if (playerNumber % 2 == 1)
+            playerData.SetTeam(Team.Left);
+        else
+            playerData.SetTeam(Team.Right);
     }
 
     public override GameObject OnRoomServerCreateGamePlayer(NetworkConnection conn, GameObject roomPlayer)

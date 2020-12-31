@@ -6,7 +6,7 @@ public class PlayerMovement : NetworkBehaviour
 {
     private Player player;
     private Vector2 destination;
-    private bool reachedDestination = true;
+    private bool hasReachedDestination = true;
     [SerializeField] private float movementSpeed = 160f;
     [SerializeField] private float angularRotationSpeed = 15f;
     [Tooltip("If the Player is within this distance, it will stop moving.")]
@@ -37,19 +37,19 @@ public class PlayerMovement : NetworkBehaviour
     private void SetDestination(Vector2 point)
     {
         destination = point;
-        reachedDestination = false;
+        hasReachedDestination = false;
     }
 
     [Server]
     public void StopMovement()
     {
-        reachedDestination = true;
+        hasReachedDestination = true;
     }
 
     [ServerCallback]
     private void Update()
     {
-        if (reachedDestination) { return; }
+        if (hasReachedDestination) { return; }
         MoveTowardsDestination();
         RotateTowardsDestination();
         CheckReachedDestination();
@@ -80,7 +80,7 @@ public class PlayerMovement : NetworkBehaviour
         Vector2 position = transform.position;
         Vector2 distanceToDestination = destination - position;
         if (distanceToDestination.sqrMagnitude < stopDistance * stopDistance)
-            reachedDestination = true;
+            hasReachedDestination = true;
     }
 
     #endregion

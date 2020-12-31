@@ -2,13 +2,14 @@ using UnityEngine;
 using Mirror;
 using System;
 
-// Properties: ConnectionNetId, Username, IsLeftTeam, IsRightTeam, IsSpectator
+// Properties: ConnectionNetId, Team, IsLeftTeam, IsRightTeam, IsSpectator, Username, 
 // Events: ServerPlayerHit, ServerPlayerDisconnected, ClientPlayerSpawned
 // Methods: [Server] SetConnection, [Server] EnableInput, [Server] DisableInput, 
 public class Player : NetworkBehaviour
 {
+    // Temporarily serialized for debugging purposes
     [SyncVar]
-    private uint connectionNetId;
+    [SerializeField] private uint connectionNetId;
     private PlayerData data;
     private PlayerCommands commands;
     private PlayerMovement movement;
@@ -16,10 +17,12 @@ public class Player : NetworkBehaviour
     private Room room;
 
     public uint ConnectionNetId { get { return connectionNetId; } }
-    public string Username { get { return data.Username; } }
+    public Team Team { get { return data.Team; } }
     public bool IsLeftTeam { get { return data.IsLeftTeam; } }
     public bool IsRightTeam { get { return data.IsRightTeam; } }
     public bool IsSpectator { get { return data.IsSpectator; } }
+    public string Username { get { return data.Username; } }
+
 
     public static event Action<Player> ServerPlayerHit;
     public static event Action<Player> ServerPlayerDisconnected;
@@ -56,13 +59,13 @@ public class Player : NetworkBehaviour
     [Server]
     public void EnableInput()
     {
-        commands.TargetSetInputEnabled(true);
+        commands.SetServerInputEnabled(true);
     }
 
     [Server]
     public void DisableInput()
     {
-        commands.TargetSetInputEnabled(false);
+        commands.SetServerInputEnabled(false);
         movement.StopMovement();
         arm.StopThrow();
     }

@@ -32,6 +32,7 @@ public class RoundTracker : NetworkBehaviour
     public override void OnStopServer()
     {
         UnsubscribeEvents();
+        StopAllCoroutines();
     }
 
     [Server]
