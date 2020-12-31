@@ -46,7 +46,7 @@ public class PlayerMovement : NetworkBehaviour
         hasReachedDestination = true;
     }
 
-    [ServerCallback]
+    [Server]
     private void Update()
     {
         if (hasReachedDestination) { return; }

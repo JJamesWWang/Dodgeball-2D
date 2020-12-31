@@ -5,12 +5,12 @@ public class PlayerUI : MonoBehaviour
     [SerializeField] private UsernameText usernameTextPrefab;
     [SerializeField] private Canvas canvas;
 
-    private void Awake()
+    private void OnEnable()
     {
         SubscribeEvents();
     }
 
-    private void OnDestroy()
+    private void OnDisable()
     {
         UnsubscribeEvents();
     }

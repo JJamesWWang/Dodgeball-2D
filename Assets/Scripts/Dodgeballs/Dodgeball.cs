@@ -20,7 +20,7 @@ public class Dodgeball : NetworkBehaviour
 
     #region Server
 
-    [ServerCallback]
+    [Server]
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -34,7 +34,7 @@ public class Dodgeball : NetworkBehaviour
         body.velocity = velocity;
     }
 
-    [ServerCallback]
+    [Server]
     private void Update()
     {
         if (!spriteRenderer.isVisible)
@@ -48,7 +48,7 @@ public class Dodgeball : NetworkBehaviour
         ServerDodgeballDespawned?.Invoke(this);
     }
 
-    [ServerCallback]
+    [Server]
     private void OnCollisionEnter2D(Collision2D collision)
     {
         HandleCollision(collision);

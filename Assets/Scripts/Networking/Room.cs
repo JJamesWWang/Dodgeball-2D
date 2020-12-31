@@ -1,6 +1,5 @@
 using UnityEngine;
 using Mirror;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -8,7 +7,6 @@ using System.Collections.ObjectModel;
 // Methods: AddConnection, RemoveConnection, AddPlayer, RemovePlayer, Disconnect
 public class Room : NetworkRoomManager
 {
-    [SerializeField] private float timeToWaitForAllPlayersToConnect = 5f;
     // Temporarily serialized for debugging purposes
     [SerializeField] private List<Connection> connections = new List<Connection>();
     [SerializeField] private List<Player> players = new List<Player>();
@@ -52,16 +50,6 @@ public class Room : NetworkRoomManager
     #endregion
 
     #region Server
-
-    public override void OnRoomStartServer()
-    {
-        SubscribeEvents();
-    }
-
-    public override void OnRoomStopServer()
-    {
-        UnsubscribeEvents();
-    }
 
     public override void OnServerConnect(NetworkConnection conn)
     {
@@ -118,44 +106,6 @@ public class Room : NetworkRoomManager
         var player = Instantiate(playerPrefab, new Vector3(5000f, 0f, 0f), Quaternion.identity).GetComponent<Player>();
         player.SetConnection(connection);
         return player;
-    }
-
-    [Server]
-    private void SubscribeEvents()
-    {
-        GameState.ServerGameStateReady += HandleGameStateReady;
-    }
-
-    [Server]
-    private void HandleGameStateReady()
-    {
-        StartCoroutine(StartGame());
-    }
-
-    [Server]
-    private IEnumerator StartGame()
-    {
-        yield return WaitForAllPlayersToConnect();
-        GameState.Instance.StartGame();
-    }
-
-    [Server]
-    private IEnumerator WaitForAllPlayersToConnect()
-    {
-        int secondsPassed = 0;
-        while (secondsPassed < timeToWaitForAllPlayersToConnect)
-        {
-            if (Players.Count == Connections.Count)
-                break;
-            secondsPassed += 1;
-            yield return new WaitForSeconds(1f);
-        }
-    }
-
-    [Server]
-    private void UnsubscribeEvents()
-    {
-        GameState.ServerGameStateReady -= HandleGameStateReady;
     }
 
     #endregion

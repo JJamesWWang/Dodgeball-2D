@@ -1,19 +1,17 @@
 using UnityEngine;
 using Mirror;
-using System;
+using System.Collections;
 
 // Properties: static Instance, IsInPlay 
-// Events: ServerGameStateReady
 // Methods: [Server] StartGame, [Server] EndGame
 public class GameState : NetworkBehaviour
 {
-    private MatchTracker matchTracker;
     private Room room;
+    private MatchTracker matchTracker;
+    [SerializeField] private float timeToWaitForAllPlayersToConnect = 5f;
 
     public static GameState Instance { get; private set; }
     public bool IsInPlay { get; private set; }
-
-    public static Action ServerGameStateReady;
 
     private void Awake()
     {
@@ -33,27 +31,41 @@ public class GameState : NetworkBehaviour
     private void Start()
     {
         room = (Room)NetworkManager.singleton;
-        ServerGameStateReady?.Invoke();
+        StartCoroutine(StartGame());
     }
 
-    #region Server
-
-    public override void OnStartServer()
+    private void OnEnable()
     {
         SubscribeEvents();
     }
 
-    public override void OnStopServer()
+    private void OnDisable()
     {
         UnsubscribeEvents();
     }
 
+    #region Server
+
     [Server]
-    public void StartGame()
+    private IEnumerator StartGame()
     {
+        yield return WaitForAllPlayersToConnect();
         // Temporarily disabled for easier debugging
-        //if (IsValidTeamComposition())
+        //if (IsValidTeamComposition()gg)
         matchTracker.StartMatch();
+    }
+
+    [Server]
+    private IEnumerator WaitForAllPlayersToConnect()
+    {
+        int secondsPassed = 0;
+        while (secondsPassed < timeToWaitForAllPlayersToConnect)
+        {
+            if (room.Players.Count == room.Connections.Count)
+                break;
+            secondsPassed += 1;
+            yield return new WaitForSeconds(1f);
+        }
     }
 
     [Server]
@@ -70,14 +82,16 @@ public class GameState : NetworkBehaviour
     }
 
     [Server]
-    public void EndGame(bool isLeftTeamWin)
+    private void EndGame(bool isLeftTeamWin)
     {
         matchTracker.EndMatch(isLeftTeamWin);
     }
 
+    [Server]
     private void SubscribeEvents()
     {
         MatchTracker.ServerMatchStarted += HandleMatchStarted;
+        PlayerTracker.ServerATeamLeft += HandleATeamLeft;
         MatchTracker.ServerMatchEnded += HandleMatchEnded;
     }
 
@@ -88,14 +102,22 @@ public class GameState : NetworkBehaviour
     }
 
     [Server]
+    private void HandleATeamLeft(bool isLeftTeam)
+    {
+        EndGame(!isLeftTeam);
+    }
+
+    [Server]
     private void HandleMatchEnded()
     {
         IsInPlay = false;
     }
 
+    [Server]
     private void UnsubscribeEvents()
     {
         MatchTracker.ServerMatchStarted -= HandleMatchStarted;
+        PlayerTracker.ServerATeamLeft -= HandleATeamLeft;
         MatchTracker.ServerMatchEnded -= HandleMatchEnded;
     }
 

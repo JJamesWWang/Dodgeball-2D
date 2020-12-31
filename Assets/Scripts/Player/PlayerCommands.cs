@@ -21,6 +21,16 @@ public class PlayerCommands : NetworkBehaviour
         mainCamera = Camera.main;
     }
 
+    private void OnEnable()
+    {
+        SubscribeEvents();
+    }
+
+    private void OnDisable()
+    {
+        UnsubscribeEvents();
+    }
+
     #region Server
 
     [Server]
@@ -32,18 +42,6 @@ public class PlayerCommands : NetworkBehaviour
     #endregion
 
     #region Client
-
-    [Client]
-    public override void OnStartClient()
-    {
-        SubscribeEvents();
-    }
-
-    [Client]
-    public override void OnStopClient()
-    {
-        UnsubscribeEvents();
-    }
 
     [ClientCallback]
     private void Update()
@@ -117,7 +115,7 @@ public class PlayerCommands : NetworkBehaviour
             Destroy(throwPowerBar.gameObject);
     }
 
-    [Client]
+    [ClientCallback]
     private void SubscribeEvents()
     {
         GameOverUI.ClientGameOverUIToggled += HandleGameOverUIToggled;
@@ -130,7 +128,7 @@ public class PlayerCommands : NetworkBehaviour
         DestroyThrowPowerBar();
     }
 
-    [Client]
+    [ClientCallback]
     private void UnsubscribeEvents()
     {
         GameOverUI.ClientGameOverUIToggled -= HandleGameOverUIToggled;

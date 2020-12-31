@@ -8,12 +8,12 @@ public class MatchUI : MonoBehaviour
     [SerializeField] private TMP_Text rightTeamScoreText;
     [SerializeField] private TMP_Text countdownText;
 
-    private void Awake()
+    private void OnEnable()
     {
         SubscribeEvents();
     }
 
-    private void OnDestroy()
+    private void OnDisable()
     {
         UnsubscribeEvents();
     }

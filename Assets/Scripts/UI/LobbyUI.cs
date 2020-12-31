@@ -15,6 +15,16 @@ public class LobbyUI : NetworkBehaviour
 
     #region General
 
+    private void OnEnable()
+    {
+        SubscribeEvents();
+    }
+
+    private void OnDisable()
+    {
+        UnsubscribeEvents();
+    }
+
     public void HandleLeaveClick()
     {
         room.Disconnect();
@@ -40,7 +50,6 @@ public class LobbyUI : NetworkBehaviour
         if (NetworkServer.active)
             startButton.gameObject.SetActive(true);
         CheckInit();
-        SubscribeEvents();
     }
 
     [Client]
@@ -78,11 +87,6 @@ public class LobbyUI : NetworkBehaviour
             rightTeamPlayersText.text += $"{playerData.Username}\n";
     }
 
-    public override void OnStopClient()
-    {
-        UnsubscribeEvents();
-    }
-
     [Client]
     public void HandleJoinLeftTeamClick()
     {
@@ -108,7 +112,7 @@ public class LobbyUI : NetworkBehaviour
         localPlayerData.CmdSetUsername(username);
     }
 
-    [Client]
+    [ClientCallback]
     private void SubscribeEvents()
     {
         Connection.ClientLocalConnected += HandleLocalPlayerConnected;
@@ -138,10 +142,11 @@ public class LobbyUI : NetworkBehaviour
     [Client]
     private void HandlePlayerDataUpdated(uint _netId, string _propertyName, object _value)
     {
-        ConstructPlayersText();
+        if (room != null)
+            ConstructPlayersText();
     }
 
-    [Client]
+    [ClientCallback]
     private void UnsubscribeEvents()
     {
         Connection.ClientLocalConnected -= HandleLocalPlayerConnected;

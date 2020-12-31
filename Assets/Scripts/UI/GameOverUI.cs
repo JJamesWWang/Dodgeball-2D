@@ -18,12 +18,12 @@ public class GameOverUI : MonoBehaviour
     /// <summary> bool: isToggledOn </summary>
     public static event Action<bool> ClientGameOverUIToggled;
 
-    private void Awake()
+    private void OnEnable()
     {
         SubscribeEvents();
     }
 
-    private void OnDestroy()
+    private void OnDisable()
     {
         UnsubscribeEvents();
     }

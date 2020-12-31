@@ -22,18 +22,18 @@ public class RoundTracker : NetworkBehaviour
         dodgeballTracker = GetComponent<DodgeballTracker>();
     }
 
-    #region Server
-
-    public override void OnStartServer()
+    private void OnEnable()
     {
         SubscribeEvents();
     }
 
-    public override void OnStopServer()
+    private void OnDisable()
     {
         UnsubscribeEvents();
         StopAllCoroutines();
     }
+
+    #region Server
 
     [Server]
     public void StartRound()

@@ -22,16 +22,17 @@ public class MatchTracker : NetworkBehaviour
         scoreTracker = GetComponent<ScoreTracker>();
     }
 
-    #region Server
-
-    public override void OnStartServer()
+    private void OnEnable()
     {
         SubscribeEvents();
     }
-    public override void OnStopServer()
+
+    private void OnDisable()
     {
         UnsubscribeEvents();
     }
+
+    #region Server
 
     [Server]
     public void StartMatch()

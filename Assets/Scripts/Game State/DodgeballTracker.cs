@@ -7,6 +7,15 @@ public class DodgeballTracker : NetworkBehaviour
 {
     [SerializeField] private List<Dodgeball> dodgeballs = new List<Dodgeball>();
 
+    private void OnEnable()
+    {
+        SubscribeEvents();
+    }
+    private void OnDisable()
+    {
+        UnsubscribeEvents();
+    }
+
     #region Server
 
     [Server]
@@ -15,16 +24,6 @@ public class DodgeballTracker : NetworkBehaviour
         foreach (Dodgeball dodgeball in dodgeballs)
             NetworkServer.Destroy(dodgeball.gameObject);
         dodgeballs.Clear();
-    }
-
-    public override void OnStartServer()
-    {
-        SubscribeEvents();
-    }
-
-    public override void OnStopServer()
-    {
-        UnsubscribeEvents();
     }
 
     [Server]

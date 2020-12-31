@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 // Properties: LeftTeamPlayers, RightTeamPlayers
-// Events: ServerPlayerEliminated
+// Events: ServerPlayerEliminated, ServerATeamLeft
 // Methods: [Server] SpawnPlayers, [Server] DespawnPlayers
 public class PlayerTracker : NetworkBehaviour
 {
@@ -17,25 +17,26 @@ public class PlayerTracker : NetworkBehaviour
     public ReadOnlyCollection<Player> LeftTeamPlayers { get { return leftTeamPlayers.AsReadOnly(); } }
     public ReadOnlyCollection<Player> RightTeamPlayers { get { return rightTeamPlayers.AsReadOnly(); } }
 
-    /// <summary> Player: Player that was eliminated </summary>
     public static event Action<Player> ServerPlayerEliminated;
+    /// <summary> bool: isLeftTeam </summary>
+    public static event Action<bool> ServerATeamLeft;
 
     private void Start()
     {
         room = (Room)NetworkManager.singleton;
     }
 
-    #region Server
-
-    public override void OnStartServer()
+    private void OnEnable()
     {
         SubscribeEvents();
     }
 
-    public override void OnStopServer()
+    private void OnDisable()
     {
         UnsubscribeEvents();
     }
+
+    #region Server
 
     [Server]
     public void SpawnPlayers()
@@ -132,16 +133,17 @@ public class PlayerTracker : NetworkBehaviour
     private void HandlePlayerDisconnected(Player player)
     {
 
-        if (IsATeamEmpty(out int rightTeamPlayerCount))
-            GameState.Instance.EndGame(rightTeamPlayerCount == 0);
+        if (IsATeamEmpty(out int leftTeamPlayerCount))
+            ServerATeamLeft?.Invoke(leftTeamPlayerCount == 0);
         else
             EliminateDisconnectedPlayer(player);
     }
 
-    private bool IsATeamEmpty(out int rightTeamPlayerCount)
+    [Server]
+    private bool IsATeamEmpty(out int leftTeamPlayerCount)
     {
-        int leftTeamPlayerCount = CountPlayersOfTeam(Team.Left);
-        rightTeamPlayerCount = CountPlayersOfTeam(Team.Right);
+        leftTeamPlayerCount = CountPlayersOfTeam(Team.Left);
+        int rightTeamPlayerCount = CountPlayersOfTeam(Team.Right);
         return leftTeamPlayerCount == 0 || rightTeamPlayerCount == 0;
     }
 
