@@ -1,7 +1,10 @@
+using System.Data.Common;
 using UnityEngine;
 using UnityEngine.UI;
 using Mirror;
 using TMPro;
+using Steamworks;
+using Steamworks.Data;
 
 public class LobbyUI : NetworkBehaviour
 {
@@ -119,6 +122,8 @@ public class LobbyUI : NetworkBehaviour
         Connection.ClientConnected += HandlePlayerConnected;
         Connection.ClientDisconnected += HandlePlayerDisconnected;
         PlayerData.ClientPlayerDataUpdated += HandlePlayerDataUpdated;
+        SteamMatchmaking.OnLobbyMemberJoined += HandleLobbyMemberJoined;
+        SteamMatchmaking.OnLobbyMemberDisconnected += HandleLobbyMemberDisconnected;
     }
 
     [Client]
@@ -146,6 +151,18 @@ public class LobbyUI : NetworkBehaviour
             ConstructPlayersText();
     }
 
+    [Client]
+    private void HandleLobbyMemberJoined(Lobby lobby, Friend friend)
+    {
+        ConstructPlayersText();
+    }
+
+    [Client]
+    private void HandleLobbyMemberDisconnected(Lobby lobby, Friend friend)
+    {
+        ConstructPlayersText();
+    }
+
     [ClientCallback]
     private void UnsubscribeEvents()
     {
@@ -153,6 +170,8 @@ public class LobbyUI : NetworkBehaviour
         Connection.ClientConnected -= HandlePlayerConnected;
         Connection.ClientDisconnected -= HandlePlayerDisconnected;
         PlayerData.ClientPlayerDataUpdated -= HandlePlayerDataUpdated;
+        SteamMatchmaking.OnLobbyMemberJoined -= HandleLobbyMemberJoined;
+        SteamMatchmaking.OnLobbyMemberDisconnected -= HandleLobbyMemberDisconnected;
     }
 
     #endregion

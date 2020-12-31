@@ -43,7 +43,7 @@ public class Room : NetworkRoomManager
                 StopHost();
             else
                 StopServer();
-        else
+        else if (NetworkClient.isConnected)
             StopClient();
     }
 
