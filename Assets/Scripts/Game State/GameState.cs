@@ -3,7 +3,7 @@ using Mirror;
 using System.Collections;
 
 // Properties: static Instance, IsInPlay 
-// Methods: [Server] StartGame, [Server] EndGame
+// Methods: [Server] StartGame, [Server] EndGame, static IsValidTeamComposition
 public class GameState : NetworkBehaviour
 {
     private Room room;
@@ -69,16 +69,24 @@ public class GameState : NetworkBehaviour
     }
 
     [Server]
-    private bool IsValidTeamComposition()
+    public static bool IsValidTeamComposition()
     {
-        int leftTeamPlayerCount = 0;
-        int rightTeamPlayerCount = 0;
-        foreach (Player player in room.Players)
-            if (player.IsLeftTeam)
-                leftTeamPlayerCount += 1;
-            else
-                rightTeamPlayerCount += 1;
-        return leftTeamPlayerCount > 0 && rightTeamPlayerCount > 0;
+        return CountConnectionsOfTeam(Team.Left) > 0 &&
+            CountConnectionsOfTeam(Team.Right) > 0;
+    }
+
+    [Server]
+    private static int CountConnectionsOfTeam(Team team)
+    {
+        Room room = (Room)NetworkManager.singleton;
+        int connectionCount = 0;
+        foreach (Connection connection in room.Connections)
+        {
+            var playerData = connection.PlayerData;
+            if (playerData.Team == team)
+                connectionCount += 1;
+        }
+        return connectionCount;
     }
 
     [Server]

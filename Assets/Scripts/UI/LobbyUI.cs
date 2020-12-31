@@ -40,7 +40,8 @@ public class LobbyUI : NetworkBehaviour
     [Server]
     public void HandleStartClick()
     {
-        room.ServerChangeScene(room.GameplayScene);
+        if (GameState.IsValidTeamComposition())
+            room.ServerChangeScene(room.GameplayScene);
     }
 
     #endregion
