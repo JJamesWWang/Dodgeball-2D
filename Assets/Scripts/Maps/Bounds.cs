@@ -19,8 +19,8 @@ public class Bounds : MonoBehaviour
 
     public bool Contains(Vector2 point)
     {
-        return point.x < RightBound && point.x > LeftBound &&
-            point.y < TopBound && point.y > BottomBound;
+        return point.x <= RightBound && point.x >= LeftBound &&
+            point.y <= TopBound && point.y >= BottomBound;
     }
 
     private void Start()

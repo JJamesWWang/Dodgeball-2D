@@ -10,11 +10,17 @@ public class PlayerMovement : NetworkBehaviour
     [SerializeField] private float movementSpeed = 160f;
     [SerializeField] private float angularRotationSpeed = 15f;
     [Tooltip("If the Player is within this distance, it will stop moving.")]
+    private Bounds bounds;
     [SerializeField] private float stopDistance = 1f;
 
     private void Awake()
     {
         player = GetComponent<Player>();
+    }
+
+    private void Start()
+    {
+        bounds = player.IsLeftTeam ? Map.Instance.LeftTeamBounds : Map.Instance.RightTeamBounds;
     }
 
     #region Server
@@ -28,16 +34,66 @@ public class PlayerMovement : NetworkBehaviour
     [Server]
     private void MoveTowards(Vector2 point)
     {
-        Bounds movementBounds = player.IsLeftTeam ? Map.Instance.LeftTeamBounds : Map.Instance.RightTeamBounds;
-        if (movementBounds.Contains(point))
+        if (bounds.Contains(point))
             SetDestination(point);
+        else
+            SetBoundedDestination(point);
     }
 
     [Server]
-    private void SetDestination(Vector2 point)
+    private void SetDestination(Vector2 destinationPoint)
     {
-        destination = point;
+        destination = destinationPoint;
         hasReachedDestination = false;
+    }
+
+    [Server]
+    private void SetBoundedDestination(Vector2 destinationPoint)
+    {
+        Vector2 intersectionWithYBound = CalculateIntersectionWithYBound(destinationPoint);
+        Vector2 intersectionWithXBound = CalculateIntersectionWithXBound(destinationPoint);
+        if (bounds.Contains(intersectionWithYBound))
+            SetDestination(intersectionWithYBound);
+        else
+            SetDestination(intersectionWithXBound);
+    }
+
+    [Server]
+    private Vector2 CalculateIntersectionWithYBound(Vector2 destinationPoint)
+    {
+        Vector2 startPoint = transform.position;
+        Vector2 vectorToPoint = destinationPoint - startPoint;
+        float boundY = vectorToPoint.y > 0 ? bounds.TopBound : bounds.BottomBound;
+        float slope = vectorToPoint.y / vectorToPoint.x;
+        return startPoint + CalculateYBoundedVector(startPoint.y, boundY, slope);
+    }
+
+    [Server]
+    private Vector2 CalculateYBoundedVector(float startY, float stopY, float slope)
+    {
+        float distance = stopY - startY;
+        float x = distance / slope;
+        float y = distance;
+        return new Vector2(x, y);
+    }
+
+    [Server]
+    private Vector2 CalculateIntersectionWithXBound(Vector2 destinationPoint)
+    {
+        Vector2 startPoint = transform.position;
+        Vector2 vectorToPoint = destinationPoint - startPoint;
+        float boundX = vectorToPoint.x > 0 ? bounds.RightBound : bounds.LeftBound;
+        float slope = vectorToPoint.y / vectorToPoint.x;
+        return startPoint + CalculateXBoundedVector(startPoint.x, boundX, slope);
+    }
+
+    [Server]
+    private Vector2 CalculateXBoundedVector(float startX, float stopX, float slope)
+    {
+        float distance = stopX - startX;
+        float y = slope * distance;
+        float x = distance;
+        return new Vector2(x, y);
     }
 
     [Server]
@@ -61,6 +117,8 @@ public class PlayerMovement : NetworkBehaviour
         Vector2 position = transform.position;
         Vector2 destinationDirection = (destination - position).normalized;
         position += destinationDirection * movementSpeed * Time.deltaTime;
+        position.x = Mathf.Clamp(position.x, bounds.LeftBound, bounds.RightBound);
+        position.y = Mathf.Clamp(position.y, bounds.BottomBound, bounds.TopBound);
         transform.position = position;
     }
 
