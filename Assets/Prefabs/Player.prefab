@@ -13,11 +13,12 @@ GameObject:
   - component: {fileID: 818675958302017184}
   - component: {fileID: 5956679931081848945}
   - component: {fileID: 4691361984766331481}
+  - component: {fileID: 4940290690527262684}
   - component: {fileID: 4194847636255113913}
   - component: {fileID: 6415630031527748310}
   - component: {fileID: 4579051569387153554}
-  - component: {fileID: 2356974901920539626}
   - component: {fileID: 216935844735843815}
+  - component: {fileID: 2356974901920539626}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -121,8 +122,8 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   clientAuthority: 0
-  localPositionSensitivity: 0.01
-  localRotationSensitivity: 0.01
+  localPositionSensitivity: 0.05
+  localRotationSensitivity: 0.1
   localScaleSensitivity: 0.01
 --- !u!50 &4691361984766331481
 Rigidbody2D:
@@ -145,6 +146,28 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &4940290690527262684
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2356974901408827918}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab2cbc52526ea384ba280d13cd1a57b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0
+  target: {fileID: 4691361984766331481}
+  clientAuthority: 0
+  syncVelocity: 1
+  clearVelocity: 0
+  velocitySensitivity: 0
+  syncAngularVelocity: 1
+  clearAngularVelocity: 0
+  angularVelocitySensitivity: 0
 --- !u!70 &4194847636255113913
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -175,6 +198,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
+  connectionNetId: 0
 --- !u!114 &4579051569387153554
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -190,6 +214,26 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   throwPowerBarPrefab: {fileID: 3987415130367406730, guid: e6ac0e403ebebcb43a04987224408034, type: 3}
+--- !u!114 &216935844735843815
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2356974901408827918}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7bcc6bb83d911f4cb2075026083a892, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  dodgeballPrefab: {fileID: -7800583326932366743, guid: 7b8a0500c4770994bb0b97770e438523, type: 3}
+  minimumThrowSpeed: 100
+  maximumThrowSpeed: 500
+  throwPowerFrequency: 2
+  offsetDistance: 24
+  throwCooldown: 0.5
 --- !u!114 &2356974901920539626
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -207,23 +251,3 @@ MonoBehaviour:
   movementSpeed: 160
   angularRotationSpeed: 15
   stopDistance: 1
---- !u!114 &216935844735843815
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2356974901408827918}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c7bcc6bb83d911f4cb2075026083a892, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  minimumThrowSpeed: 100
-  maximumThrowSpeed: 500
-  throwPowerFrequency: 2
-  offsetDistance: 24
-  throwCooldown: 0.5
-  dodgeballPrefab: {fileID: -7800583326932366743, guid: 7b8a0500c4770994bb0b97770e438523, type: 3}

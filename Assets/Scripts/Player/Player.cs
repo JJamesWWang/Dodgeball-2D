@@ -70,7 +70,7 @@ public class Player : NetworkBehaviour
         arm.StopThrow();
     }
 
-    [Server]
+    [ServerCallback]
     private void OnCollisionEnter2D(Collision2D other)
     {
         ServerPlayerHit?.Invoke(this);

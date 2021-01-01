@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 85076300178066080}
   - component: {fileID: 7199319167396979962}
   - component: {fileID: 1948692392303664385}
+  - component: {fileID: 1452066890536259933}
   - component: {fileID: 4425521090656955028}
   - component: {fileID: 2551525166871386757}
   - component: {fileID: -7800583326932366743}
@@ -118,9 +119,31 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   clientAuthority: 0
-  localPositionSensitivity: 0.01
-  localRotationSensitivity: 0.01
+  localPositionSensitivity: 0.05
+  localRotationSensitivity: 1
   localScaleSensitivity: 0.01
+--- !u!114 &1452066890536259933
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 85076300178066087}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab2cbc52526ea384ba280d13cd1a57b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0
+  target: {fileID: 4425521090656955028}
+  clientAuthority: 0
+  syncVelocity: 1
+  clearVelocity: 0
+  velocitySensitivity: 0.05
+  syncAngularVelocity: 0
+  clearAngularVelocity: 1
+  angularVelocitySensitivity: 1
 --- !u!50 &4425521090656955028
 Rigidbody2D:
   serializedVersion: 4
