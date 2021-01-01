@@ -18,6 +18,7 @@ public class PlayerMovement : NetworkBehaviour
         player = GetComponent<Player>();
     }
 
+    [ServerCallback]
     private void Start()
     {
         bounds = player.IsLeftTeam ? Map.Instance.LeftTeamBounds : Map.Instance.RightTeamBounds;
@@ -102,7 +103,7 @@ public class PlayerMovement : NetworkBehaviour
         hasReachedDestination = true;
     }
 
-    [Server]
+    [ServerCallback]
     private void Update()
     {
         if (hasReachedDestination) { return; }

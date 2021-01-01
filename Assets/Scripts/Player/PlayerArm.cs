@@ -21,7 +21,7 @@ public class PlayerArm : NetworkBehaviour
     public float ThrowPowerPeriod { get { return 1 / throwPowerFrequency; } }
     public float TimeTo100Percent { get { return ThrowPowerPeriod / 2f; } }
 
-    [Server]
+    [ServerCallback]
     private void Update()
     {
         cooldownTimer -= Time.deltaTime;

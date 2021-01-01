@@ -28,6 +28,7 @@ public class GameState : NetworkBehaviour
         Instance = null;
     }
 
+    [ServerCallback]
     private void Start()
     {
         room = (Room)NetworkManager.singleton;
@@ -95,7 +96,7 @@ public class GameState : NetworkBehaviour
         matchTracker.EndMatch(isLeftTeamWin);
     }
 
-    [Server]
+    [ServerCallback]
     private void SubscribeEvents()
     {
         MatchTracker.ServerMatchStarted += HandleMatchStarted;
@@ -121,7 +122,7 @@ public class GameState : NetworkBehaviour
         IsInPlay = false;
     }
 
-    [Server]
+    [ServerCallback]
     private void UnsubscribeEvents()
     {
         MatchTracker.ServerMatchStarted -= HandleMatchStarted;

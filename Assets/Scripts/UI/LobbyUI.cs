@@ -149,7 +149,7 @@ public class LobbyUI : NetworkBehaviour
         ConstructPlayersText();
     }
 
-    [Client]
+    [ClientCallback]
     private void HandlePlayerDisconnected(Connection connection)
     {
         ConstructPlayersText();

@@ -51,7 +51,7 @@ public class RoundTracker : NetworkBehaviour
         playerTracker.SpawnPlayers();
     }
 
-    [Server]
+    [ServerCallback]
     private void SubscribeEvents()
     {
         PlayerTracker.ServerPlayerEliminated += HandlePlayerEliminated;
@@ -71,7 +71,7 @@ public class RoundTracker : NetworkBehaviour
                 playerTracker.RightTeamPlayers.Count == 0;
     }
 
-    [Server]
+    [ServerCallback]
     private void UnsubscribeEvents()
     {
         PlayerTracker.ServerPlayerEliminated -= HandlePlayerEliminated;

@@ -26,7 +26,7 @@ public class DodgeballTracker : NetworkBehaviour
         dodgeballs.Clear();
     }
 
-    [Server]
+    [ServerCallback]
     private void SubscribeEvents()
     {
         Dodgeball.ServerDodgeballSpawned += HandleDodgeballSpawned;
@@ -45,7 +45,7 @@ public class DodgeballTracker : NetworkBehaviour
         dodgeballs.Remove(dodgeball);
     }
 
-    [Server]
+    [ServerCallback]
     private void UnsubscribeEvents()
     {
         Dodgeball.ServerDodgeballSpawned -= HandleDodgeballSpawned;

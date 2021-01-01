@@ -56,7 +56,7 @@ public class MatchTracker : NetworkBehaviour
         ResetMatch();
     }
 
-    [Server]
+    [ServerCallback]
     private void SubscribeEvents()
     {
         RoundTracker.ServerRoundOver += HandleRoundOver;
@@ -107,7 +107,7 @@ public class MatchTracker : NetworkBehaviour
         return leftTeamScore == scoreToWin;
     }
 
-    [Server]
+    [ServerCallback]
     private void UnsubscribeEvents()
     {
         RoundTracker.ServerRoundOver -= HandleRoundOver;

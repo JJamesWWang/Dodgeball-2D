@@ -98,7 +98,7 @@ public class PlayerTracker : NetworkBehaviour
         player.DisableInput();
     }
 
-    [Server]
+    [ServerCallback]
     private void SubscribeEvents()
     {
         Player.ServerPlayerHit += HandlePlayerHit;
@@ -164,7 +164,7 @@ public class PlayerTracker : NetworkBehaviour
         ServerPlayerEliminated?.Invoke(player);
     }
 
-    [Server]
+    [ServerCallback]
     private void UnsubscribeEvents()
     {
         Player.ServerPlayerHit -= HandlePlayerHit;
