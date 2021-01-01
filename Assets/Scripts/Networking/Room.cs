@@ -1,9 +1,11 @@
 using UnityEngine;
 using Mirror;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 // Properties: Connections, Players
+// Events: ClientConnected, ClientDisconnected
 // Methods: AddConnection, RemoveConnection, AddPlayer, RemovePlayer, Disconnect
 public class Room : NetworkRoomManager
 {
@@ -13,6 +15,9 @@ public class Room : NetworkRoomManager
 
     public ReadOnlyCollection<Connection> Connections { get { return connections.AsReadOnly(); } }
     public ReadOnlyCollection<Player> Players { get { return players.AsReadOnly(); } }
+
+    public static event Action ClientConnected;
+    public static event Action ClientDisconnected;
 
     #region General
 
@@ -83,6 +88,7 @@ public class Room : NetworkRoomManager
         playerData.SetUsername($"Player {playerNumber}");
     }
 
+    [Server]
     private void SetPlayerTeam(PlayerData playerData, int playerNumber)
     {
         if (!IsSceneActive(RoomScene))
@@ -106,6 +112,20 @@ public class Room : NetworkRoomManager
         var player = Instantiate(playerPrefab, new Vector3(5000f, 0f, 0f), Quaternion.identity).GetComponent<Player>();
         player.SetConnection(connection);
         return player;
+    }
+
+    #endregion
+
+    #region Client
+
+    public override void OnRoomClientConnect(NetworkConnection conn)
+    {
+        ClientConnected?.Invoke();
+    }
+
+    public override void OnRoomClientDisconnect(NetworkConnection conn)
+    {
+        ClientDisconnected?.Invoke();
     }
 
     #endregion

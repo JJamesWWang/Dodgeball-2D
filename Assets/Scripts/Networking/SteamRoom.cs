@@ -1,11 +1,20 @@
 ﻿using UnityEngine;
+using Mirror;
+using System;
 using Steamworks;
 using Steamworks.Data;
-using Mirror;
 
+// Properties: Lobby 
+// Events: HostStarted, HostStopped, ClientGameLobbyJoinRequested, ClientLobbyEntered
 public class SteamRoom : Room
 {
     private Lobby lobby;
+
+    public Lobby Lobby { get { return lobby; } }
+
+    public static event Action ClientCreateLobbyAttempted;
+    public static event Action ClientCreateLobbyFailed;
+    public static event Action ClientGameLobbyJoinRequested;
 
     private void OnEnable()
     {
@@ -17,10 +26,12 @@ public class SteamRoom : Room
         UnsubscribeEvents();
     }
 
-    public override void OnRoomStartHost()
+    #region Server
+
+    public void CreateSteamLobby()
     {
-        base.OnRoomStartHost();
         SteamMatchmaking.CreateLobbyAsync(maxConnections);
+        ClientCreateLobbyAttempted?.Invoke();
     }
 
     public override void OnRoomStopHost()
@@ -29,27 +40,31 @@ public class SteamRoom : Room
         lobby.Leave();
     }
 
+    #endregion Server
+
     private void SubscribeEvents()
     {
         SteamMatchmaking.OnLobbyCreated += HandleLobbyCreated;
         SteamFriends.OnGameLobbyJoinRequested += HandleGameLobbyJoinRequested;
         SteamMatchmaking.OnLobbyEntered += HandleLobbyEntered;
-        SteamMatchmaking.OnLobbyMemberJoined += HandleLobbyMemberJoined;
     }
 
     // Server
     private void HandleLobbyCreated(Result result, Lobby lobby)
     {
         Debug.Log($"Created Lobby with result {result}.");
-        if (result != Result.OK) { return; }
+        if (result != Result.OK)
+        {
+            Disconnect();
+            ClientCreateLobbyFailed?.Invoke();
+            return;
+        }
         this.lobby = SetUpLobby(lobby);
-        Debug.Log("Lobby successfully created.");
-        Debug.Log($"Player ID: {SteamClient.SteamId}");
-        Debug.Log($"Lobby ID: {lobby.Id}");
+        StartHost();
     }
 
-    // Server
     private Lobby SetUpLobby(Lobby lobby)
+    // Server
     {
         lobby.SetFriendsOnly();
         var steamId = SteamClient.SteamId.ToString();
@@ -60,29 +75,19 @@ public class SteamRoom : Room
     // Client
     private void HandleGameLobbyJoinRequested(Lobby lobby, SteamId steamId)
     {
-        if (NetworkServer.active)
-            return;
         Debug.Log("Game Lobby join requested.");
+        if (NetworkServer.active || NetworkClient.isConnected) { return; }
         SteamMatchmaking.JoinLobbyAsync(lobby.Id);
+        ClientGameLobbyJoinRequested?.Invoke();
     }
 
     // Client
     private void HandleLobbyEntered(Lobby lobby)
     {
-        if (NetworkServer.active)
-            return;
+        if (NetworkServer.active) { return; }
         Debug.Log("Lobby entered.");
         networkAddress = lobby.GetData(nameof(networkAddress));
         StartClient();
-    }
-
-    // Client - Temporarily see what this does
-    private void HandleLobbyMemberJoined(Lobby lobby, Friend friend)
-    {
-        if (NetworkServer.active)
-            return;
-        Debug.Log($"Lobby member joined with friend ID: {friend.Id}");
-        SteamFriends.SetPlayedWith(friend.Id);
     }
 
     private void UnsubscribeEvents()
@@ -90,6 +95,6 @@ public class SteamRoom : Room
         SteamMatchmaking.OnLobbyCreated -= HandleLobbyCreated;
         SteamFriends.OnGameLobbyJoinRequested -= HandleGameLobbyJoinRequested;
         SteamMatchmaking.OnLobbyEntered -= HandleLobbyEntered;
-        SteamMatchmaking.OnLobbyMemberJoined -= HandleLobbyMemberJoined;
     }
+
 }

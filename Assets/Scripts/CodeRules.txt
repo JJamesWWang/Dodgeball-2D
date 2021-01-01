@@ -9,8 +9,8 @@
     Handle -> an event
     Calculate -> a value
     Check -> check if conditions are met & do something if they are (if applicable)
-    Show -> set ui elements visible
-7. Imports in order: UnityEngine, Mirror, System, <...>
+    Show -> set ui elements visible <--> Hide -> set ui elements invisible
+7. Imports in order: UnityEngine, Mirror, System, Steamworks, <...>
 8. Class instance fields order:
     1) Private variables in order of relevance to core function
     2) Public variables in order of relevance to core function

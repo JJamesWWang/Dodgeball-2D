@@ -5,9 +5,6 @@ using TMPro;
 
 public class LocalhostUI : MonoBehaviour
 {
-    private string defaultIPAddressText;
-    private string connectingIPAddressText = "Connecting...";
-    private string invalidIPAddressText = "Invalid IP Address.";
     private Room room;
 
     [SerializeField] private GameObject buttonsParent;
@@ -15,29 +12,47 @@ public class LocalhostUI : MonoBehaviour
     [SerializeField] private TMP_Text enterIPAddressText;
     [SerializeField] private TMP_InputField enterIPAddressInput;
 
-    private void Start()
+    [Header("Status Messages")]
+    [SerializeField] private string defaultIPAddressMessage = "Enter IP Address:";
+    [SerializeField] private string connectingIPAddressMessage = "Connecting...";
+    [SerializeField] private string invalidIPAddressMessage = "Invalid IP Address.";
+    [SerializeField] private string connectedToIPAddressMessage = "Connected!";
+    [SerializeField] private string failedToConnectToIPAddressMessage = "Failed to connect.";
+
+
+    private void OnEnable()
     {
-        defaultIPAddressText = enterIPAddressText.text;
-        room = (Room)NetworkManager.singleton;
+        SubscribeEvents();
     }
 
-    public void HandleServerClick()
+    private void OnDisable()
+    {
+        UnsubscribeEvents();
+    }
+
+    private void Start()
+    {
+        room = (Room)NetworkManager.singleton;
+        enterIPAddressText.text = defaultIPAddressMessage;
+    }
+
+    public void HandleServerClicked()
     {
         room.StartServer();
     }
 
-    public void HandleHostClick()
+    public void HandleHostClicked()
     {
         room.StartHost();
     }
 
-    public void HandleClientClick()
+    public void HandleClientClicked()
     {
         enterIPAddressParent.SetActive(true);
         buttonsParent.SetActive(false);
     }
 
-    public void HandleEnterIPAddressConnect()
+    public void HandleEnterIPAddressConnectClicked()
     {
         string enteredIPAddress = enterIPAddressInput.text;
         bool isValidIPAddress = IsValidIPAddress(enteredIPAddress);
@@ -57,9 +72,9 @@ public class LocalhostUI : MonoBehaviour
     private void UpdateIPAddressText(bool isValidIPAddress)
     {
         if (isValidIPAddress)
-            enterIPAddressText.text = connectingIPAddressText;
+            enterIPAddressText.text = connectingIPAddressMessage;
         else
-            enterIPAddressText.text = invalidIPAddressText;
+            enterIPAddressText.text = invalidIPAddressMessage;
     }
 
     private void ConnectToIPAddress(string ipAddress)
@@ -68,10 +83,32 @@ public class LocalhostUI : MonoBehaviour
         room.StartClient();
     }
 
-    public void HandleEnterIPAddressClose()
+    public void HandleEnterIPAddressCloseClicked()
     {
-        enterIPAddressText.text = defaultIPAddressText;
+        enterIPAddressText.text = defaultIPAddressMessage;
         enterIPAddressParent.SetActive(false);
         buttonsParent.SetActive(true);
+    }
+
+    private void SubscribeEvents()
+    {
+        Room.ClientConnected += HandleClientConnected;
+        Room.ClientDisconnected += HandleClientDisconnected;
+    }
+
+    private void HandleClientConnected()
+    {
+        enterIPAddressText.text = connectedToIPAddressMessage;
+    }
+
+    private void HandleClientDisconnected()
+    {
+        enterIPAddressText.text = failedToConnectToIPAddressMessage;
+    }
+
+    private void UnsubscribeEvents()
+    {
+        Room.ClientConnected -= HandleClientConnected;
+        Room.ClientDisconnected -= HandleClientDisconnected;
     }
 }

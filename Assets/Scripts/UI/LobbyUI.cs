@@ -10,9 +10,9 @@ public class LobbyUI : NetworkBehaviour
 {
     private Room room;
     private PlayerData localPlayerData;
-    [SerializeField] private GameObject lobbyUIParent;
     [SerializeField] private TMP_Text leftTeamPlayersText;
     [SerializeField] private TMP_Text rightTeamPlayersText;
+    [SerializeField] private Button inviteFriendButton;
     [SerializeField] private TMP_InputField usernameInput;
     [SerializeField] private Button startButton;
 
@@ -28,7 +28,7 @@ public class LobbyUI : NetworkBehaviour
         UnsubscribeEvents();
     }
 
-    public void HandleLeaveClick()
+    public void HandleLeaveClicked()
     {
         room.Disconnect();
     }
@@ -38,7 +38,7 @@ public class LobbyUI : NetworkBehaviour
     #region Server
 
     [Server]
-    public void HandleStartClick()
+    public void HandleStartClicked()
     {
         if (GameState.IsValidTeamComposition())
             room.ServerChangeScene(room.GameplayScene);
@@ -53,6 +53,8 @@ public class LobbyUI : NetworkBehaviour
         room = (Room)NetworkManager.singleton;
         if (NetworkServer.active)
             startButton.gameObject.SetActive(true);
+        if (NetworkManager.singleton is SteamRoom)
+            inviteFriendButton.gameObject.SetActive(true);
         CheckInit();
     }
 
@@ -75,6 +77,7 @@ public class LobbyUI : NetworkBehaviour
     [Client]
     private void ConstructPlayersText()
     {
+        if (room == null) { return; }
         leftTeamPlayersText.text = "";
         rightTeamPlayersText.text = "";
         foreach (Connection connection in room.Connections)
@@ -92,25 +95,32 @@ public class LobbyUI : NetworkBehaviour
     }
 
     [Client]
-    public void HandleJoinLeftTeamClick()
+    public void HandleJoinLeftTeamClicked()
     {
         localPlayerData.CmdSetTeam(Team.Left);
     }
 
     [Client]
-    public void HandleSpectateClick()
+    public void HandleSpectateClicked()
     {
         localPlayerData.CmdSetTeam(Team.Spectator);
     }
 
     [Client]
-    public void HandleJoinRightTeamClick()
+    public void HandleInviteFriendClicked()
+    {
+        SteamRoom steamRoom = (SteamRoom)room;
+        SteamFriends.OpenGameInviteOverlay(steamRoom.Lobby.Id);
+    }
+
+    [Client]
+    public void HandleJoinRightTeamClicked()
     {
         localPlayerData.CmdSetTeam(Team.Right);
     }
 
     [Client]
-    public void HandleSaveClick()
+    public void HandleSaveClicked()
     {
         string username = usernameInput.text;
         localPlayerData.CmdSetUsername(username);
@@ -148,8 +158,7 @@ public class LobbyUI : NetworkBehaviour
     [Client]
     private void HandlePlayerDataUpdated(uint _netId, string _propertyName, object _value)
     {
-        if (room != null)
-            ConstructPlayersText();
+        ConstructPlayersText();
     }
 
     [Client]
