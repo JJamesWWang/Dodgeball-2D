@@ -40,8 +40,9 @@ public class LobbyUI : NetworkBehaviour
     [Server]
     public void HandleStartClicked()
     {
-        if (GameState.IsValidTeamComposition())
-            room.ServerChangeScene(room.GameplayScene);
+        // Temporarily disabling for easier testing
+        //if (GameState.IsValidTeamComposition())
+        room.ServerChangeScene(room.GameplayScene);
     }
 
     #endregion

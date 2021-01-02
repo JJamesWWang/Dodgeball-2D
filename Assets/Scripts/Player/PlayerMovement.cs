@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Data;
+using UnityEngine;
 using Mirror;
 
 // Methods: CmdMoveTowards, StopMovement
@@ -21,7 +22,13 @@ public class PlayerMovement : NetworkBehaviour
     [ServerCallback]
     private void Start()
     {
-        bounds = player.IsLeftTeam ? Map.Instance.LeftTeamBounds : Map.Instance.RightTeamBounds;
+        var playerSpriteRenderer = player.GetComponent<SpriteRenderer>();
+        float xOffset = playerSpriteRenderer.bounds.size.x / 2f;
+        float yOffset = playerSpriteRenderer.bounds.size.y / 2f;
+        Bounds teamBounds = player.IsLeftTeam ? Map.Instance.LeftTeamBounds : Map.Instance.RightTeamBounds;
+        bounds = Bounds.AddComponent(gameObject,
+            teamBounds.LeftBound + xOffset, teamBounds.RightBound - xOffset,
+            teamBounds.BottomBound + yOffset, teamBounds.TopBound + yOffset);
     }
 
     #region Server
@@ -131,6 +138,7 @@ public class PlayerMovement : NetworkBehaviour
         float theta = Mathf.Atan2(vectorToDestination.y, vectorToDestination.x) * Mathf.Rad2Deg;
         Quaternion rotatedZAxis = Quaternion.AngleAxis(theta, Vector3.forward);
         transform.rotation = Quaternion.Slerp(transform.rotation, rotatedZAxis, angularRotationSpeed * Time.deltaTime);
+        Debug.Log($"Destination theta:; {theta}, Rotation: {rotatedZAxis}");
     }
 
     [Server]
@@ -138,6 +146,7 @@ public class PlayerMovement : NetworkBehaviour
     {
         Vector2 position = transform.position;
         Vector2 distanceToDestination = destination - position;
+        Vector2 vectorToDestination = destination - position;
         if (distanceToDestination.sqrMagnitude < stopDistance * stopDistance)
             hasReachedDestination = true;
     }

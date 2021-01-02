@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
+using Mirror;
 
 // Properties: LeftBound, RightBound, TopBound, BottomBound, BoundWidth, BoundHeight
-// Methods: Contains
+// Methods: static AddComponent, Contains
 public class Bounds : MonoBehaviour
 {
     [SerializeField] private float leftBound = 0f;
@@ -16,6 +17,16 @@ public class Bounds : MonoBehaviour
 
     public float BoundWidth { get { return rightBound - leftBound; } }
     public float BoundHeight { get { return topBound - bottomBound; } }
+
+    public static Bounds AddComponent(GameObject gameObject, float leftBound, float rightBound, float bottomBound, float topBound)
+    {
+        Bounds bounds = gameObject.AddComponent<Bounds>();
+        bounds.leftBound = leftBound;
+        bounds.rightBound = rightBound;
+        bounds.bottomBound = bottomBound;
+        bounds.topBound = topBound;
+        return bounds;
+    }
 
     public bool Contains(Vector2 point)
     {

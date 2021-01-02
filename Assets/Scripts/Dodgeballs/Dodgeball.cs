@@ -3,14 +3,16 @@ using Mirror;
 using System;
 
 // Events: ServerDodgeballSpawned, ServerDodgeballDespawned
-// Methods: [Server] SetVelocity
+// Methods: [Server] SetPosition, [Server] SetVelocity
 public class Dodgeball : NetworkBehaviour
 {
-    [Tooltip("Number of bounces before Dodgeball disappears.")]
     private Rigidbody2D body;
+    [Tooltip("Number of bounces before Dodgeball disappears.")]
     [SerializeField] private int maxBounces = 3;
     private int timesBounced = 0;
-    private SpriteRenderer spriteRenderer;
+    private SpriteRenderer visibilityChecker;
+    private bool hasCrossedMiddleOnce;
+    private Vector2 spawnPosition;
 
     /// <summary> Invoked whenever a Dodgeball is instantiated </summary>
     public static event Action<Dodgeball> ServerDodgeballSpawned;
@@ -23,9 +25,16 @@ public class Dodgeball : NetworkBehaviour
     [ServerCallback]
     private void Awake()
     {
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        visibilityChecker = GetComponent<SpriteRenderer>();
         body = GetComponent<Rigidbody2D>();
+        spawnPosition = transform.position;
         ServerDodgeballSpawned?.Invoke(this);
+    }
+
+    [Server]
+    public void SetPosition(Vector2 position)
+    {
+        transform.position = position;
     }
 
     [Server]
@@ -37,8 +46,27 @@ public class Dodgeball : NetworkBehaviour
     [ServerCallback]
     private void Update()
     {
-        if (!spriteRenderer.isVisible)
+        if (!visibilityChecker.isVisible || HasCrossedMiddleTwice())
             DestroySelf();
+        CheckCrossedMiddleOnce();
+    }
+
+    [Server]
+    private bool HasCrossedMiddleTwice()
+    {
+        float startSide = Mathf.Sign(spawnPosition.x);
+        float currentSide = Mathf.Sign(transform.position.x);
+        float movingDirection = Mathf.Sign(body.velocity.x);
+        return hasCrossedMiddleOnce && startSide == currentSide && startSide == movingDirection;
+    }
+
+    private void CheckCrossedMiddleOnce()
+    {
+        if (hasCrossedMiddleOnce) { return; }
+        float startSide = Mathf.Sign(spawnPosition.x);
+        float currentSide = Mathf.Sign(transform.position.x);
+        if (startSide != currentSide)
+            hasCrossedMiddleOnce = true;
     }
 
     [Server]

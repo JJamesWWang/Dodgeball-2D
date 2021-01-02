@@ -50,8 +50,10 @@ public class PlayerArm : NetworkBehaviour
     private void ThrowDodgeball(Vector2 throwAtPoint)
     {
         Vector2 throwFromPoint = CalculateThrowFromPoint(throwAtPoint);
-        Dodgeball dodgeball = Instantiate(dodgeballPrefab, throwFromPoint, Quaternion.identity);
         Vector2 throwVelocity = CalculateThrowVelocity(throwFromPoint, throwAtPoint);
+        // Spawn position is important for Dodgeball; set it at the Player and then offset it.
+        Dodgeball dodgeball = Instantiate(dodgeballPrefab, transform.position, Quaternion.identity);
+        dodgeball.SetPosition(throwFromPoint);
         dodgeball.SetVelocity(throwVelocity);
         NetworkServer.Spawn(dodgeball.gameObject);
     }
