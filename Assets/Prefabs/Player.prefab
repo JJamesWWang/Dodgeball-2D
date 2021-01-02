@@ -202,6 +202,8 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.016666
   connectionNetId: 0
+  teamsConfig: {fileID: 11400000, guid: 4052489421253dd49acf812ffc6a6a0f, type: 2}
+  color: {r: 0, g: 0, b: 0, a: 0}
 --- !u!114 &4579051569387153554
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -253,7 +255,7 @@ MonoBehaviour:
   syncInterval: 0.1
   movementSpeed: 160
   angularRotationSpeed: 15
-  stopDistance: 1
+  stopDistance: 2
 --- !u!114 &4638326161940945010
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -266,9 +268,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 134d0c1529fb8c94db1dc1d3b9db5901, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.01666
   spritesToColor:
   - {fileID: 4869748297095513570}
   color: {r: 1, g: 1, b: 1, a: 1}
+  teamsConfig: {fileID: 11400000, guid: 4052489421253dd49acf812ffc6a6a0f, type: 2}
 --- !u!1 &7950453726962232658
 GameObject:
   m_ObjectHideFlags: 0

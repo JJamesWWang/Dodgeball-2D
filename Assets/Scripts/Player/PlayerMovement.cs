@@ -1,10 +1,7 @@
-﻿using System.Data;
-using UnityEngine;
+﻿using UnityEngine;
 using Mirror;
 
 // Methods: CmdMoveTowards, StopMovement
-[RequireComponent(typeof(Player))]
-[RequireComponent(typeof(SpriteRenderer))]
 public class PlayerMovement : NetworkBehaviour
 {
     private Player player;
@@ -14,6 +11,7 @@ public class PlayerMovement : NetworkBehaviour
     [SerializeField] private float movementSpeed = 160f;
     [SerializeField] private float angularRotationSpeed = 15f;
 
+    private Map map;
     private Bounds bounds;
     [Tooltip("If the Player is within this distance to its destination, it will stop moving.")]
     [SerializeField] private float stopDistance = 1f;
@@ -26,6 +24,7 @@ public class PlayerMovement : NetworkBehaviour
     [ServerCallback]
     private void Start()
     {
+        map = FindObjectOfType<Map>();
         SetMovementBounds();
     }
 
@@ -35,7 +34,7 @@ public class PlayerMovement : NetworkBehaviour
         var playerHitbox = player.GetComponent<CapsuleCollider2D>();
         float xOffset = playerHitbox.size.x / 2f;
         float yOffset = playerHitbox.size.y / 2f;
-        Bounds teamBounds = player.IsLeftTeam ? Map.Instance.LeftTeamBounds : Map.Instance.RightTeamBounds;
+        Bounds teamBounds = player.IsLeftTeam ? map.LeftTeamBounds : map.RightTeamBounds;
         bounds = Bounds.AddComponent(gameObject,
             teamBounds.LeftBound + xOffset, teamBounds.RightBound - xOffset,
             teamBounds.BottomBound + yOffset, teamBounds.TopBound - yOffset);

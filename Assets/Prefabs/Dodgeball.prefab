@@ -209,6 +209,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 134d0c1529fb8c94db1dc1d3b9db5901, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.016666
   spritesToColor:
   - {fileID: 85076300178066080}
   color: {r: 1, g: 1, b: 1, a: 0}
+  teamsConfig: {fileID: 11400000, guid: 4052489421253dd49acf812ffc6a6a0f, type: 2}

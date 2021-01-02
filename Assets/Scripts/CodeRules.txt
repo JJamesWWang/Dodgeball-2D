@@ -5,18 +5,19 @@
 3. Public methods and variables should have a <summary> and serialized fields a [Tooltip()] if their usage is not obvious. Classes should have comments that list public properties, events, and methods.
 4. Avoid using {} with if/else, for/foreach statements. You should be able to get enough done with one line, and if you can't, make a helper method.
 5. One blank line between each method; one for logical separation as well
-6. Some vocabulary:
+6. When invoking events for both the client and server, invoke the *client* first and then the server event.
+7. Some vocabulary:
     Handle -> an event
     Calculate -> a value
     Check -> check if conditions are met & do something if they are (if applicable)
     Show -> set ui elements visible <--> Hide -> set ui elements invisible
-7. Imports in order: UnityEngine, Mirror, System, Steamworks, <...>
-8. Class instance fields order:
+8. Imports in order: UnityEngine, Mirror, System, Steamworks, <...>
+9. Class instance fields order:
     1) Private variables in order of relevance to core function
     2) Public variables in order of relevance to core function
     3) Public static Actions, server before client
-9. Methods order:
-    General before Server before Client always
+10. Methods order:
+    In general, Server code before Client
     1) Awake, Start, OnDestroy, OnStartClient/Authority/Server, OnStopClient/Authority/Server
     2) Public methods that can be called
     3) Private methods immediately after they are called

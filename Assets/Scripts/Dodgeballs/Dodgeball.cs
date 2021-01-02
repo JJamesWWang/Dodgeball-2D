@@ -58,7 +58,7 @@ public class Dodgeball : NetworkBehaviour
     }
 
     [ServerCallback]
-    private void FixedUpdate()
+    private void Update()
     {
         if (!visibilityChecker.isVisible || HasCrossedMiddleTwice())
             DestroySelf();

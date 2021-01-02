@@ -8,6 +8,7 @@ public class SpriteColorer : NetworkBehaviour
     [SerializeField] private SpriteRenderer[] spritesToColor;
     [SyncVar]
     [SerializeField] private Color color;
+    [SerializeField] private TeamsConfig teamsConfig;
 
     public Color Color { get { return color; } }
 
@@ -26,9 +27,9 @@ public class SpriteColorer : NetworkBehaviour
     public void SetTeamColor(Team team)
     {
         if (team == Team.Left)
-            color = GameState.Instance.LeftTeamColor;
+            color = teamsConfig.LeftTeamColor;
         else if (team == Team.Right)
-            color = GameState.Instance.RightTeamColor;
+            color = teamsConfig.RightTeamColor;
         SetColor(color);
     }
 }

@@ -2,7 +2,6 @@ using UnityEngine;
 using Mirror;
 using System.Collections;
 
-// Properties: static Instance, IsInPlay, LeftTeamColor, RightTeamColor
 // Methods: [Server] StartGame, [Server] EndGame, static IsValidTeamComposition
 public class GameState : NetworkBehaviour
 {
@@ -10,29 +9,11 @@ public class GameState : NetworkBehaviour
     private MatchTracker matchTracker;
     [SerializeField] private float timeToWaitForAllPlayersToConnect = 5f;
 
-    // Temporarily hardcoding team colors
-    [Header("Team Colors")]
-    [SerializeField] private Color leftTeamColor;
-    [SerializeField] private Color rightTeamColor;
 
-    public static GameState Instance { get; private set; }
-    public bool IsInPlay { get; private set; }
-    public Color LeftTeamColor { get { return leftTeamColor; } }
-    public Color RightTeamColor { get { return rightTeamColor; } }
-
+    [ServerCallback]
     private void Awake()
     {
-        if (Instance != null && Instance != this)
-            Destroy(gameObject);
-        else
-            Instance = this;
-
         matchTracker = GetComponent<MatchTracker>();
-    }
-
-    private void OnDestroy()
-    {
-        Instance = null;
     }
 
     [ServerCallback]
@@ -106,15 +87,7 @@ public class GameState : NetworkBehaviour
     [ServerCallback]
     private void SubscribeEvents()
     {
-        MatchTracker.ServerMatchStarted += HandleMatchStarted;
         PlayerTracker.ServerATeamLeft += HandleATeamLeft;
-        MatchTracker.ServerMatchEnded += HandleMatchEnded;
-    }
-
-    [Server]
-    private void HandleMatchStarted()
-    {
-        IsInPlay = true;
     }
 
     [Server]
@@ -123,18 +96,10 @@ public class GameState : NetworkBehaviour
         EndGame(!isLeftTeam);
     }
 
-    [Server]
-    private void HandleMatchEnded()
-    {
-        IsInPlay = false;
-    }
-
     [ServerCallback]
     private void UnsubscribeEvents()
     {
-        MatchTracker.ServerMatchStarted -= HandleMatchStarted;
         PlayerTracker.ServerATeamLeft -= HandleATeamLeft;
-        MatchTracker.ServerMatchEnded -= HandleMatchEnded;
     }
 
     #endregion

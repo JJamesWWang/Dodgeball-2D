@@ -12,24 +12,9 @@ public class Map : MonoBehaviour
     private int leftTeamSpawnIndex;
     private int rightTeamSpawnIndex;
 
-
-    public static Map Instance { get; private set; }
     public Bounds LeftTeamBounds { get { return leftTeamBounds; } }
     public Bounds RightTeamBounds { get { return rightTeamBounds; } }
     public Bounds ArenaBounds { get { return arenaBounds; } }
-
-    private void Awake()
-    {
-        if (Instance != null && Instance != this)
-            Destroy(this);
-        else
-            Instance = this;
-    }
-
-    private void OnDestroy()
-    {
-        Instance = null;
-    }
 
     public Transform GetSpawnPoint(bool isLeftTeam)
     {

@@ -3,18 +3,19 @@ using Mirror;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 
 // Properties: ActivePlayers, LeftTeamActivePlayers, RightTeamActivePlayers
 // Events: ServerPlayerEliminated, ServerATeamLeft
 // Methods: [Server] SpawnPlayers, [Server] DespawnPlayers, [Server] EnablePlayerInput, [Server] DisablePlayerInput
 public class PlayerTracker : NetworkBehaviour
 {
-    private Room room;
+
     // Temporarily serialized for debugging purposes
     [SerializeField] private List<Player> activePlayers = new List<Player>();
     [SerializeField] private List<Player> leftTeamActivePlayers = new List<Player>();
     [SerializeField] private List<Player> rightTeamActivePlayers = new List<Player>();
+    private Room room;
+    private Map map;
 
     /// <summary> Players that haven't been eliminated. </summary>
     public ReadOnlyCollection<Player> ActivePlayers { get { return activePlayers.AsReadOnly(); } }
@@ -28,6 +29,7 @@ public class PlayerTracker : NetworkBehaviour
     private void Start()
     {
         room = (Room)NetworkManager.singleton;
+        map = FindObjectOfType<Map>();
     }
 
     private void OnEnable()
@@ -61,7 +63,7 @@ public class PlayerTracker : NetworkBehaviour
     [Server]
     private Vector2 GetPlayerSpawnPoint(Player player)
     {
-        Transform spawnPoint = Map.Instance.GetSpawnPoint(player.IsLeftTeam);
+        Transform spawnPoint = map.GetSpawnPoint(player.IsLeftTeam);
         return spawnPoint.position;
     }
 

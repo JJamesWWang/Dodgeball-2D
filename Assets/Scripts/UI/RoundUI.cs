@@ -44,6 +44,7 @@ public class RoundUI : MonoBehaviour
         RoundTracker.ClientCountdownStarted += HandleCountdownStarted;
         ScoreTracker.ClientScoreUpdated += HandleScoreUpdated;
         RoundTracker.ClientRoundOver += HandleRoundOver;
+        MatchTracker.ClientMatchEnded += HandleMatchEnded;
     }
 
     private void HandleMatchStarted()
@@ -74,12 +75,19 @@ public class RoundUI : MonoBehaviour
             rightTeamWinsText.gameObject.SetActive(true);
     }
 
+    private void HandleMatchEnded(bool _isLeftTeamWin)
+    {
+        leftTeamWinsText.gameObject.SetActive(false);
+        rightTeamWinsText.gameObject.SetActive(false);
+    }
+
     private void UnsubscribeEvents()
     {
         MatchTracker.ClientMatchStarted -= HandleMatchStarted;
         RoundTracker.ClientCountdownStarted -= HandleCountdownStarted;
         ScoreTracker.ClientScoreUpdated -= HandleScoreUpdated;
         RoundTracker.ClientRoundOver -= HandleRoundOver;
+        MatchTracker.ClientMatchEnded -= HandleMatchEnded;
     }
 
 }

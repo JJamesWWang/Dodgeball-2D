@@ -12,6 +12,7 @@ public class Player : NetworkBehaviour
     [SerializeField] private uint connectionNetId;
     private PlayerData data;
     [SyncVar]
+    [SerializeField] private TeamsConfig teamsConfig;
     [SerializeField] private Color color;
     private PlayerCommands commands;
     private PlayerMovement movement;
@@ -66,9 +67,9 @@ public class Player : NetworkBehaviour
     private void SetColor()
     {
         if (IsLeftTeam)
-            spriteColorer.SetColor(GameState.Instance.LeftTeamColor);
+            spriteColorer.SetColor(teamsConfig.LeftTeamColor);
         else if (IsRightTeam)
-            spriteColorer.SetColor(GameState.Instance.RightTeamColor);
+            spriteColorer.SetColor(teamsConfig.RightTeamColor);
     }
 
     [Server]

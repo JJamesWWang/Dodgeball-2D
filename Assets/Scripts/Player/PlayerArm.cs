@@ -3,7 +3,6 @@ using Mirror;
 
 // Properties: ThrowPowerFrequency, ThrowPowerPeriod, TimeTo100Percent
 // Methods: CmdStartThrow, CmdReleaseThrow, [Server] StopThrow
-[RequireComponent(typeof(Player))]
 public class PlayerArm : NetworkBehaviour
 {
     private Player player;

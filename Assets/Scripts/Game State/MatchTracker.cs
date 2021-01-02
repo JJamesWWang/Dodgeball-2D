@@ -6,6 +6,7 @@ using System;
 // Methods: [Server] StartMatch, [Server] ResetMatch, [Server] EndMatch
 public class MatchTracker : NetworkBehaviour
 {
+    private bool isOver;
     private RoundTracker roundTracker;
     private PlayerTracker playerTracker;
     private ScoreTracker scoreTracker;
@@ -40,8 +41,8 @@ public class MatchTracker : NetworkBehaviour
     {
         scoreTracker.ResetScore();
         roundTracker.StartRound();
+        RpcInvokeMatchStarted();
         ServerMatchStarted?.Invoke();
-        InvokeMatchStarted();
     }
 
     [Server]
@@ -54,8 +55,8 @@ public class MatchTracker : NetworkBehaviour
     public void EndMatch(bool isLeftTeamWin)
     {
         ResetMatch();
+        RpcInvokeMatchEnded(isLeftTeamWin);
         ServerMatchEnded?.Invoke();
-        InvokeMatchEnded(isLeftTeamWin);
     }
 
     [ServerCallback]
@@ -69,7 +70,7 @@ public class MatchTracker : NetworkBehaviour
     private void HandleRoundOver(bool isLeftTeamWin)
     {
         IncrementScore(isLeftTeamWin);
-        if (GameState.Instance.IsInPlay)
+        if (!isOver)
             roundTracker.StartRound();
     }
 
@@ -92,6 +93,7 @@ public class MatchTracker : NetworkBehaviour
     private void CheckMatchOver(int leftTeamScore, int rightTeamScore)
     {
         if (!IsMatchOver(leftTeamScore, rightTeamScore)) { return; }
+        isOver = true;
         EndMatch(IsLeftTeamWin(leftTeamScore, rightTeamScore));
     }
 
@@ -121,13 +123,13 @@ public class MatchTracker : NetworkBehaviour
     #region Client
 
     [ClientRpc]
-    private void InvokeMatchStarted()
+    private void RpcInvokeMatchStarted()
     {
         ClientMatchStarted?.Invoke();
     }
 
     [ClientRpc]
-    private void InvokeMatchEnded(bool isLeftTeamWin)
+    private void RpcInvokeMatchEnded(bool isLeftTeamWin)
     {
         ClientMatchEnded?.Invoke(isLeftTeamWin);
     }

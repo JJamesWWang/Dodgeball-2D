@@ -50,7 +50,7 @@ public class RoundTracker : NetworkBehaviour
     {
         yield return new WaitForSeconds(timeToShowWinner);
         playerTracker.SpawnPlayers();
-        InvokeCountdownStarted();
+        RpcInvokeCountdownStarted();
         yield return new WaitForSeconds(timeToStartRound);
         playerTracker.EnablePlayerInput();
     }
@@ -67,8 +67,9 @@ public class RoundTracker : NetworkBehaviour
     {
         if (IsRoundOver())
         {
+            // Invoke client first, otherwise UI will overlap
+            RpcInvokeRoundOver(player.IsRightTeam);
             ServerRoundOver?.Invoke(player.IsRightTeam);
-            InvokeRoundOver(player.IsRightTeam);
         }
     }
 
@@ -97,13 +98,13 @@ public class RoundTracker : NetworkBehaviour
     #region Client
 
     [ClientRpc]
-    private void InvokeCountdownStarted()
+    private void RpcInvokeCountdownStarted()
     {
         ClientCountdownStarted?.Invoke(timeToStartRound);
     }
 
     [ClientRpc]
-    private void InvokeRoundOver(bool isLeftTeamWin)
+    private void RpcInvokeRoundOver(bool isLeftTeamWin)
     {
         ClientRoundOver?.Invoke(isLeftTeamWin);
     }
