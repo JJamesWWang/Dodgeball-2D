@@ -2,7 +2,7 @@
 using Mirror;
 using System;
 
-// Events: ServerMatchStarted, ServerMatchEnded, ClientMatchEnded
+// Events: ServerMatchStarted, ServerMatchEnded, ClientMatchStarted, ClientMatchEnded
 // Methods: [Server] StartMatch, [Server] ResetMatch, [Server] EndMatch
 public class MatchTracker : NetworkBehaviour
 {
@@ -12,6 +12,7 @@ public class MatchTracker : NetworkBehaviour
 
     public static event Action ServerMatchStarted;
     public static event Action ServerMatchEnded;
+    public static event Action ClientMatchStarted;
     /// <summary> bool: isLeftTeamWin </summary>
     public static event Action<bool> ClientMatchEnded;
 
@@ -40,6 +41,7 @@ public class MatchTracker : NetworkBehaviour
         scoreTracker.ResetScore();
         roundTracker.StartRound();
         ServerMatchStarted?.Invoke();
+        InvokeMatchStarted();
     }
 
     [Server]
@@ -51,9 +53,9 @@ public class MatchTracker : NetworkBehaviour
     [Server]
     public void EndMatch(bool isLeftTeamWin)
     {
+        ResetMatch();
         ServerMatchEnded?.Invoke();
         InvokeMatchEnded(isLeftTeamWin);
-        ResetMatch();
     }
 
     [ServerCallback]
@@ -117,6 +119,12 @@ public class MatchTracker : NetworkBehaviour
     #endregion
 
     #region Client
+
+    [ClientRpc]
+    private void InvokeMatchStarted()
+    {
+        ClientMatchStarted?.Invoke();
+    }
 
     [ClientRpc]
     private void InvokeMatchEnded(bool isLeftTeamWin)

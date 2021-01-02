@@ -15,7 +15,7 @@ public class PlayerMovement : NetworkBehaviour
     [SerializeField] private float angularRotationSpeed = 15f;
 
     private Bounds bounds;
-    [Tooltip("If the Player is within this distance, it will stop moving.")]
+    [Tooltip("If the Player is within this distance to its destination, it will stop moving.")]
     [SerializeField] private float stopDistance = 1f;
 
     private void Awake()
@@ -31,13 +31,14 @@ public class PlayerMovement : NetworkBehaviour
 
     private void SetMovementBounds()
     {
-        var playerSprite = player.GetComponent<SpriteRenderer>();
-        float xOffset = playerSprite.size.x / 2f;
-        float yOffset = playerSprite.size.y / 2f;
+        // Offset bounds a little bit to avoid Players getting hit by their own Dodgeball when it bounces across the middle line.
+        var playerHitbox = player.GetComponent<CapsuleCollider2D>();
+        float xOffset = playerHitbox.size.x / 2f;
+        float yOffset = playerHitbox.size.y / 2f;
         Bounds teamBounds = player.IsLeftTeam ? Map.Instance.LeftTeamBounds : Map.Instance.RightTeamBounds;
         bounds = Bounds.AddComponent(gameObject,
             teamBounds.LeftBound + xOffset, teamBounds.RightBound - xOffset,
-            teamBounds.BottomBound + yOffset, teamBounds.TopBound + yOffset);
+            teamBounds.BottomBound + yOffset, teamBounds.TopBound - yOffset);
     }
 
     #region Server
@@ -120,7 +121,7 @@ public class PlayerMovement : NetworkBehaviour
     }
 
     [ServerCallback]
-    private void Update()
+    private void FixedUpdate()
     {
         if (hasReachedDestination) { return; }
         MoveTowardsDestination();

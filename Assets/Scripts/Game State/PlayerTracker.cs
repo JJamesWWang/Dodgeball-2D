@@ -3,19 +3,23 @@ using Mirror;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
-// Properties: LeftTeamPlayers, RightTeamPlayers
+// Properties: ActivePlayers, LeftTeamActivePlayers, RightTeamActivePlayers
 // Events: ServerPlayerEliminated, ServerATeamLeft
-// Methods: [Server] SpawnPlayers, [Server] DespawnPlayers
+// Methods: [Server] SpawnPlayers, [Server] DespawnPlayers, [Server] EnablePlayerInput, [Server] DisablePlayerInput
 public class PlayerTracker : NetworkBehaviour
 {
     private Room room;
     // Temporarily serialized for debugging purposes
-    [SerializeField] private List<Player> leftTeamPlayers = new List<Player>();
-    [SerializeField] private List<Player> rightTeamPlayers = new List<Player>();
+    [SerializeField] private List<Player> activePlayers = new List<Player>();
+    [SerializeField] private List<Player> leftTeamActivePlayers = new List<Player>();
+    [SerializeField] private List<Player> rightTeamActivePlayers = new List<Player>();
 
-    public ReadOnlyCollection<Player> LeftTeamPlayers { get { return leftTeamPlayers.AsReadOnly(); } }
-    public ReadOnlyCollection<Player> RightTeamPlayers { get { return rightTeamPlayers.AsReadOnly(); } }
+    /// <summary> Players that haven't been eliminated. </summary>
+    public ReadOnlyCollection<Player> ActivePlayers { get { return activePlayers.AsReadOnly(); } }
+    public ReadOnlyCollection<Player> LeftTeamActivePlayers { get { return leftTeamActivePlayers.AsReadOnly(); } }
+    public ReadOnlyCollection<Player> RightTeamActivePlayers { get { return rightTeamActivePlayers.AsReadOnly(); } }
 
     public static event Action<Player> ServerPlayerEliminated;
     /// <summary> bool: isLeftTeam </summary>
@@ -51,7 +55,6 @@ public class PlayerTracker : NetworkBehaviour
     {
         player.transform.position = GetPlayerSpawnPoint(player);
         player.transform.localEulerAngles = GetPlayerSpawnRotation(player);
-        player.EnableInput();
         AddPlayer(player);
     }
 
@@ -73,22 +76,21 @@ public class PlayerTracker : NetworkBehaviour
     [Server]
     private void AddPlayer(Player player)
     {
+        activePlayers.Add(player);
         if (player.IsLeftTeam)
-            leftTeamPlayers.Add(player);
+            leftTeamActivePlayers.Add(player);
         else
-            rightTeamPlayers.Add(player);
+            rightTeamActivePlayers.Add(player);
     }
 
     [Server]
     public void DespawnPlayers()
     {
         // Temporarily set player to out of nowhere
-        foreach (Player player in LeftTeamPlayers)
+        foreach (Player player in ActivePlayers)
             DespawnPlayer(player);
-        foreach (Player player in RightTeamPlayers)
-            DespawnPlayer(player);
-        leftTeamPlayers.Clear();
-        rightTeamPlayers.Clear();
+        leftTeamActivePlayers.Clear();
+        rightTeamActivePlayers.Clear();
     }
 
     [Server]
@@ -96,6 +98,22 @@ public class PlayerTracker : NetworkBehaviour
     {
         player.transform.position = new Vector2(5000, 0);
         player.DisableInput();
+    }
+
+    /// <summary> Enables input for all players</summary>
+    [Server]
+    public void EnablePlayerInput()
+    {
+        foreach (Player player in ActivePlayers)
+            player.EnableInput();
+    }
+
+    /// <summary> Disables input for all players</summary>
+    [Server]
+    public void DisablePlayerInput()
+    {
+        foreach (Player player in ActivePlayers)
+            player.DisableInput();
     }
 
     [ServerCallback]
@@ -123,10 +141,11 @@ public class PlayerTracker : NetworkBehaviour
     [Server]
     private void RemovePlayer(Player player)
     {
+        activePlayers.Remove(player);
         if (player.IsLeftTeam)
-            leftTeamPlayers.Remove(player);
+            leftTeamActivePlayers.Remove(player);
         else
-            rightTeamPlayers.Remove(player);
+            rightTeamActivePlayers.Remove(player);
     }
 
     [Server]

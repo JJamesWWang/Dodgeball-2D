@@ -3,18 +3,20 @@ using Mirror;
 using System;
 using System.Collections;
 
-// Events: ServerRoundOver, ClientCountdownStarted
+// Events: ServerRoundOver, ClientCountdownStarted, ClientRoundOver
 // Methods: [Server] StartRound
 public class RoundTracker : NetworkBehaviour
 {
     private PlayerTracker playerTracker;
     private DodgeballTracker dodgeballTracker;
-    [SerializeField] private float timeBetweenRounds = 3f;
+    [SerializeField] private float timeToShowWinner = 2f;
+    [SerializeField] private float timeToStartRound = 3f;
 
     /// <summary> bool: isLeftTeamWin </summary>
     public static event Action<bool> ServerRoundOver;
     /// <summary> float: timeBetweenRounds </summary>
     public static event Action<float> ClientCountdownStarted;
+    public static event Action<bool> ClientRoundOver;
 
     private void Awake()
     {
@@ -40,42 +42,54 @@ public class RoundTracker : NetworkBehaviour
     {
         playerTracker.DespawnPlayers();
         dodgeballTracker.DespawnDodgeballs();
-        StartCoroutine(SpawnPlayersAfterWaitTime());
+        StartCoroutine(SpawnPlayers());
     }
 
     [Server]
-    private IEnumerator SpawnPlayersAfterWaitTime()
+    private IEnumerator SpawnPlayers()
     {
-        yield return new WaitForSeconds(timeBetweenRounds);
+        yield return new WaitForSeconds(timeToShowWinner);
         playerTracker.SpawnPlayers();
-        yield return new WaitForSeconds(timeBetweenRounds);
         InvokeCountdownStarted();
+        yield return new WaitForSeconds(timeToStartRound);
+        playerTracker.EnablePlayerInput();
     }
 
     [ServerCallback]
     private void SubscribeEvents()
     {
         PlayerTracker.ServerPlayerEliminated += HandlePlayerEliminated;
+        MatchTracker.ServerMatchEnded += HandleMatchEnded;
     }
 
     [Server]
     private void HandlePlayerEliminated(Player player)
     {
         if (IsRoundOver())
+        {
             ServerRoundOver?.Invoke(player.IsRightTeam);
+            InvokeRoundOver(player.IsRightTeam);
+        }
     }
 
     [Server]
     private bool IsRoundOver()
     {
-        return playerTracker.LeftTeamPlayers.Count == 0 ||
-                playerTracker.RightTeamPlayers.Count == 0;
+        return playerTracker.LeftTeamActivePlayers.Count == 0 ||
+                playerTracker.RightTeamActivePlayers.Count == 0;
+    }
+
+    [Server]
+    private void HandleMatchEnded()
+    {
+        StopAllCoroutines();
     }
 
     [ServerCallback]
     private void UnsubscribeEvents()
     {
         PlayerTracker.ServerPlayerEliminated -= HandlePlayerEliminated;
+        MatchTracker.ServerMatchEnded -= HandleMatchEnded;
     }
 
     #endregion Server
@@ -85,7 +99,13 @@ public class RoundTracker : NetworkBehaviour
     [ClientRpc]
     private void InvokeCountdownStarted()
     {
-        ClientCountdownStarted?.Invoke(timeBetweenRounds);
+        ClientCountdownStarted?.Invoke(timeToStartRound);
+    }
+
+    [ClientRpc]
+    private void InvokeRoundOver(bool isLeftTeamWin)
+    {
+        ClientRoundOver?.Invoke(isLeftTeamWin);
     }
 
     #endregion

@@ -1,12 +1,15 @@
 ﻿using UnityEngine;
 using TMPro;
 
-public class MatchUI : MonoBehaviour
+public class RoundUI : MonoBehaviour
 {
     private float timeLeft;
     [SerializeField] private TMP_Text leftTeamScoreText;
     [SerializeField] private TMP_Text rightTeamScoreText;
+    [SerializeField] private TMP_Text waitingForPlayersText;
     [SerializeField] private TMP_Text countdownText;
+    [SerializeField] private TMP_Text leftTeamWinsText;
+    [SerializeField] private TMP_Text rightTeamWinsText;
 
     private void OnEnable()
     {
@@ -37,8 +40,15 @@ public class MatchUI : MonoBehaviour
 
     private void SubscribeEvents()
     {
+        MatchTracker.ClientMatchStarted += HandleMatchStarted;
         RoundTracker.ClientCountdownStarted += HandleCountdownStarted;
         ScoreTracker.ClientScoreUpdated += HandleScoreUpdated;
+        RoundTracker.ClientRoundOver += HandleRoundOver;
+    }
+
+    private void HandleMatchStarted()
+    {
+        waitingForPlayersText.gameObject.SetActive(false);
     }
 
     private void HandleCountdownStarted(float timeBetweenRounds)
@@ -46,6 +56,8 @@ public class MatchUI : MonoBehaviour
         timeLeft = timeBetweenRounds;
         countdownText.text = timeBetweenRounds.ToString();
         countdownText.gameObject.SetActive(true);
+        leftTeamWinsText.gameObject.SetActive(false);
+        rightTeamWinsText.gameObject.SetActive(false);
     }
 
     private void HandleScoreUpdated(int leftTeamScore, int rightTeamScore)
@@ -54,10 +66,20 @@ public class MatchUI : MonoBehaviour
         rightTeamScoreText.text = rightTeamScore.ToString();
     }
 
+    private void HandleRoundOver(bool isLeftTeamWin)
+    {
+        if (isLeftTeamWin)
+            leftTeamWinsText.gameObject.SetActive(true);
+        else
+            rightTeamWinsText.gameObject.SetActive(true);
+    }
+
     private void UnsubscribeEvents()
     {
+        MatchTracker.ClientMatchStarted -= HandleMatchStarted;
         RoundTracker.ClientCountdownStarted -= HandleCountdownStarted;
         ScoreTracker.ClientScoreUpdated -= HandleScoreUpdated;
+        RoundTracker.ClientRoundOver -= HandleRoundOver;
     }
 
 }
