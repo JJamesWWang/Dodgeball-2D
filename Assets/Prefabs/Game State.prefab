@@ -67,6 +67,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
+  timeToWaitForAllPlayersToConnect: 5
 --- !u!114 &2360796140888744032
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -140,7 +141,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
-  syncInterval: 0.1
+  syncInterval: 0.016666
   scoreToWin: 11
   leftTeamScore: 0
   rightTeamScore: 0

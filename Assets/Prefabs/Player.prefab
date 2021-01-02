@@ -120,7 +120,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
-  syncInterval: 0
+  syncInterval: 0.016666
   clientAuthority: 0
   localPositionSensitivity: 0.05
   localRotationSensitivity: 0.1
@@ -159,7 +159,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
-  syncInterval: 0
+  syncInterval: 0.016666
   target: {fileID: 4691361984766331481}
   clientAuthority: 0
   syncVelocity: 1
@@ -197,7 +197,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
-  syncInterval: 0.1
+  syncInterval: 0.016666
   connectionNetId: 0
 --- !u!114 &4579051569387153554
 MonoBehaviour:
@@ -212,7 +212,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
-  syncInterval: 0.1
+  syncInterval: 0.016666
   throwPowerBarPrefab: {fileID: 3987415130367406730, guid: e6ac0e403ebebcb43a04987224408034, type: 3}
 --- !u!114 &216935844735843815
 MonoBehaviour:

@@ -4,18 +4,19 @@
 // Methods: GetSpawnPoint
 public class Map : MonoBehaviour
 {
-    [SerializeField] private Bounds _leftTeamBounds;
-    [SerializeField] private Bounds _rightTeamBounds;
-    [SerializeField] private Bounds _arenaBounds;
-    [SerializeField] private Transform _leftTeamSpawnPoint;
-    [SerializeField] private Transform _rightTeamSpawnPoint;
+    [SerializeField] private Bounds leftTeamBounds;
+    [SerializeField] private Bounds rightTeamBounds;
+    [SerializeField] private Bounds arenaBounds;
+    [SerializeField] private Transform[] leftTeamSpawnPoints;
+    [SerializeField] private Transform[] rightTeamSpawnPoints;
+    private int leftTeamSpawnIndex;
+    private int rightTeamSpawnIndex;
+
 
     public static Map Instance { get; private set; }
-    public Bounds LeftTeamBounds { get { return _leftTeamBounds; } }
-    public Bounds RightTeamBounds { get { return _rightTeamBounds; } }
-    public Bounds ArenaBounds { get { return _arenaBounds; } }
-    public Transform LeftTeamSpawnPoint { get { return _leftTeamSpawnPoint; } }
-    public Transform RightTeamSpawnPoint { get { return _rightTeamSpawnPoint; } }
+    public Bounds LeftTeamBounds { get { return leftTeamBounds; } }
+    public Bounds RightTeamBounds { get { return rightTeamBounds; } }
+    public Bounds ArenaBounds { get { return arenaBounds; } }
 
     private void Awake()
     {
@@ -33,9 +34,31 @@ public class Map : MonoBehaviour
     public Transform GetSpawnPoint(bool isLeftTeam)
     {
         if (isLeftTeam)
-            return _leftTeamSpawnPoint;
+            return GetLeftTeamSpawnPoint();
         else
-            return _rightTeamSpawnPoint;
+            return GetRightTeamSpawnPoint();
+    }
+
+    private Transform GetLeftTeamSpawnPoint()
+    {
+        Transform spawnPoint = leftTeamSpawnPoints[leftTeamSpawnIndex];
+        IncrementSpawnIndex(true);
+        return spawnPoint;
+    }
+
+    private Transform GetRightTeamSpawnPoint()
+    {
+        Transform spawnPoint = rightTeamSpawnPoints[rightTeamSpawnIndex];
+        IncrementSpawnIndex(false);
+        return spawnPoint;
+    }
+
+    private void IncrementSpawnIndex(bool isLeftTeam)
+    {
+        if (isLeftTeam)
+            leftTeamSpawnIndex = (leftTeamSpawnIndex + 1) % leftTeamSpawnPoints.Length;
+        else
+            rightTeamSpawnIndex = (rightTeamSpawnIndex + 1) % rightTeamSpawnPoints.Length;
     }
 
 }
