@@ -3,6 +3,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using Mirror;
 using System;
+using System.Collections;
 using TMPro;
 
 // Events: ClientToggled
@@ -14,6 +15,8 @@ public class GameOverUI : MonoBehaviour
     [SerializeField] private GameObject gameOverPanel;
     [SerializeField] private TMP_Text waitingForHostText;
     [SerializeField] private Button restartButton;
+    [SerializeField] private Button disconnectButton;
+    [SerializeField] private float timeToDelayShowDisconnectButton = 3f;
 
     /// <summary> bool: isToggledOn </summary>
     public static event Action<bool> ClientGameOverUIToggled;
@@ -73,6 +76,14 @@ public class GameOverUI : MonoBehaviour
         if (!NetworkServer.active)
             waitingForHostText.gameObject.SetActive(true);
         gameOverPanel.SetActive(true);
+        StartCoroutine(DelayShowDisconnectButton());
+    }
+
+    private IEnumerator DelayShowDisconnectButton()
+    {
+        disconnectButton.gameObject.SetActive(false);
+        yield return new WaitForSeconds(timeToDelayShowDisconnectButton);
+        disconnectButton.gameObject.SetActive(true);
     }
 
     private void ShowWinnerText(bool isLeftTeamWin)

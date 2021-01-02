@@ -132,11 +132,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 7743170002655751920, guid: 65aa81b7d9f92a1439b6dd40105480b7, type: 3}
       propertyPath: m_Name
-      value: EventSystem
+      value: Event System
       objectReference: {fileID: 0}
     - target: {fileID: 7743170002655751925, guid: 65aa81b7d9f92a1439b6dd40105480b7, type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7743170002655751925, guid: 65aa81b7d9f92a1439b6dd40105480b7, type: 3}
       propertyPath: m_LocalPosition.x
@@ -189,7 +189,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2360796140888744034, guid: 34a5cb0d3505b7746a57a385aa9daf1a, type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2360796140888744034, guid: 34a5cb0d3505b7746a57a385aa9daf1a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -319,7 +319,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6909332025815704004, guid: 52d20645b75e4ce4d97311990c04e6b4, type: 3}
       propertyPath: m_RootOrder
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6909332025815704004, guid: 52d20645b75e4ce4d97311990c04e6b4, type: 3}
       propertyPath: m_LocalPosition.x

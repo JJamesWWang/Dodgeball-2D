@@ -1,14 +1,13 @@
 using UnityEngine;
 using TMPro;
 
-// Methods: SetPlayer
+// Methods: SetPlayer, SetText
 public class PlayerFollowingText : MonoBehaviour
 {
     private Player player;
     private RectTransform rect;
     private TMP_Text text;
-    [SerializeField] private Vector2 offset = new Vector2(0f, 30f);
-    [SerializeField] private bool clientOnly;
+    [SerializeField] private Vector2 offset;
 
     private void Awake()
     {

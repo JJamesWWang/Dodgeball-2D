@@ -47,9 +47,30 @@ public class PlayerTracker : NetworkBehaviour
     [Server]
     public void SpawnPlayers()
     {
+        ClearNullPlayers();
         foreach (Player player in room.Players)
             if (!player.IsSpectator)
                 SpawnPlayer(player);
+    }
+
+    // More of a safety check, theoretically this should never do anything.
+    [Server]
+    private void ClearNullPlayers()
+    {
+        foreach (Player player in activePlayers)
+            RemoveNullPlayer(activePlayers, player);
+        foreach (Player player in leftTeamActivePlayers)
+            RemoveNullPlayer(leftTeamActivePlayers, player);
+        foreach (Player player in rightTeamActivePlayers)
+            RemoveNullPlayer(rightTeamActivePlayers, player);
+    }
+
+    [Server]
+    private void RemoveNullPlayer(List<Player> playerList, Player player)
+    {
+        if (player != null) { return; }
+        Debug.LogError("Player was null. Removed null Player.");
+        playerList.Remove(player);
     }
 
     [Server]
@@ -88,6 +109,7 @@ public class PlayerTracker : NetworkBehaviour
     [Server]
     public void DespawnPlayers()
     {
+        ClearNullPlayers();
         // Temporarily set player to out of nowhere
         foreach (Player player in ActivePlayers)
             DespawnPlayer(player);
@@ -106,6 +128,7 @@ public class PlayerTracker : NetworkBehaviour
     [Server]
     public void EnablePlayerInput()
     {
+        ClearNullPlayers();
         foreach (Player player in ActivePlayers)
             player.EnableInput();
     }
@@ -114,6 +137,7 @@ public class PlayerTracker : NetworkBehaviour
     [Server]
     public void DisablePlayerInput()
     {
+        ClearNullPlayers();
         foreach (Player player in ActivePlayers)
             player.DisableInput();
     }

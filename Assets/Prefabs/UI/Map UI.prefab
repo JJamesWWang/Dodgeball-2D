@@ -411,6 +411,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6909332025815704004}
+  - component: {fileID: 4291125496038893092}
   m_Layer: 0
   m_Name: Map UI
   m_TagString: Untagged
@@ -435,6 +436,22 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4291125496038893092
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5744572487684280271}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc654f29862fc2643b948f772ebb9e68, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  showPing: 1
+  position: {x: 5, y: 5}
+  fontSize: 12
+  textColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!1 &7385495079409327493
 GameObject:
   m_ObjectHideFlags: 0
@@ -1343,6 +1360,8 @@ MonoBehaviour:
   gameOverPanel: {fileID: 7385495081135866882}
   waitingForHostText: {fileID: 7385495080005372079}
   restartButton: {fileID: 7385495080116416705}
+  disconnectButton: {fileID: 7385495080763107285}
+  timeToDelayShowDisconnectButton: 3
 --- !u!1 &7385495080464211321
 GameObject:
   m_ObjectHideFlags: 0

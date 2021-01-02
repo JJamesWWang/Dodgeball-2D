@@ -40,11 +40,19 @@ public class RoundUI : MonoBehaviour
 
     private void SubscribeEvents()
     {
+        Connection.ClientLocalConnected += HandleLocalConnected;
         MatchTracker.ClientMatchStarted += HandleMatchStarted;
         RoundTracker.ClientCountdownStarted += HandleCountdownStarted;
         ScoreTracker.ClientScoreUpdated += HandleScoreUpdated;
         RoundTracker.ClientRoundOver += HandleRoundOver;
         MatchTracker.ClientMatchEnded += HandleMatchEnded;
+    }
+
+    private void HandleLocalConnected(Connection localConnection)
+    {
+        var playerData = localConnection.PlayerData;
+        if (playerData.IsSpectator)
+            waitingForPlayersText.gameObject.SetActive(false);
     }
 
     private void HandleMatchStarted()
@@ -83,6 +91,7 @@ public class RoundUI : MonoBehaviour
 
     private void UnsubscribeEvents()
     {
+        Connection.ClientLocalConnected -= HandleLocalConnected;
         MatchTracker.ClientMatchStarted -= HandleMatchStarted;
         RoundTracker.ClientCountdownStarted -= HandleCountdownStarted;
         ScoreTracker.ClientScoreUpdated -= HandleScoreUpdated;

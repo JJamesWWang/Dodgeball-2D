@@ -9,6 +9,7 @@ public class GameState : NetworkBehaviour
     private MatchTracker matchTracker;
     [SerializeField] private float timeToWaitForAllPlayersToConnect = 5f;
 
+    public bool IsInPlay { get; private set; }
 
     [ServerCallback]
     private void Awake()
@@ -31,6 +32,7 @@ public class GameState : NetworkBehaviour
     private void OnDisable()
     {
         UnsubscribeEvents();
+        StopAllCoroutines();
     }
 
     #region Server
@@ -87,7 +89,15 @@ public class GameState : NetworkBehaviour
     [ServerCallback]
     private void SubscribeEvents()
     {
+        MatchTracker.ServerMatchStarted += HandleMatchStarted;
         PlayerTracker.ServerATeamLeft += HandleATeamLeft;
+        MatchTracker.ServerMatchEnded += HandleMatchEnded;
+    }
+
+    [Server]
+    private void HandleMatchStarted()
+    {
+        IsInPlay = true;
     }
 
     [Server]
@@ -96,10 +106,18 @@ public class GameState : NetworkBehaviour
         EndGame(!isLeftTeam);
     }
 
+    [Server]
+    private void HandleMatchEnded()
+    {
+        IsInPlay = false;
+    }
+
     [ServerCallback]
     private void UnsubscribeEvents()
     {
+        MatchTracker.ServerMatchStarted += HandleMatchStarted;
         PlayerTracker.ServerATeamLeft -= HandleATeamLeft;
+        MatchTracker.ServerMatchEnded += HandleMatchEnded;
     }
 
     #endregion

@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 
+// Methods: SetPlayer
 public class PlayerFollowingImage : MonoBehaviour
 {
     private Player player;
     private RectTransform rect;
     [SerializeField] private Vector2 offset;
-    [SerializeField] private bool clientOnly;
 
     private void Awake()
     {
