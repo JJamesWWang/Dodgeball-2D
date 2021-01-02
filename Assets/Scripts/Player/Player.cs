@@ -11,9 +11,12 @@ public class Player : NetworkBehaviour
     [SyncVar]
     [SerializeField] private uint connectionNetId;
     private PlayerData data;
+    [SyncVar]
+    [SerializeField] private Color color;
     private PlayerCommands commands;
     private PlayerMovement movement;
     private PlayerArm arm;
+    private SpriteColorer spriteColorer;
     private Room room;
 
     public uint ConnectionNetId { get { return connectionNetId; } }
@@ -22,6 +25,7 @@ public class Player : NetworkBehaviour
     public bool IsRightTeam { get { return data.IsRightTeam; } }
     public bool IsSpectator { get { return data.IsSpectator; } }
     public string Username { get { return data.Username; } }
+    public Color Color { get { return spriteColorer.Color; } }
 
 
     public static event Action<Player> ServerPlayerHit;
@@ -33,6 +37,7 @@ public class Player : NetworkBehaviour
         commands = GetComponent<PlayerCommands>();
         movement = GetComponent<PlayerMovement>();
         arm = GetComponent<PlayerArm>();
+        spriteColorer = GetComponent<SpriteColorer>();
     }
 
     #region Server
@@ -54,6 +59,16 @@ public class Player : NetworkBehaviour
     {
         connectionNetId = connection.netId;
         data = connection.PlayerData;
+        SetColor();
+    }
+
+    [Server]
+    private void SetColor()
+    {
+        if (IsLeftTeam)
+            spriteColorer.SetColor(GameState.Instance.LeftTeamColor);
+        else if (IsRightTeam)
+            spriteColorer.SetColor(GameState.Instance.RightTeamColor);
     }
 
     [Server]

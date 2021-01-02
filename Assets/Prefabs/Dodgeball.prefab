@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 4425521090656955028}
   - component: {fileID: 2551525166871386757}
   - component: {fileID: -7800583326932366743}
+  - component: {fileID: 3060532634496033258}
   m_Layer: 9
   m_Name: Dodgeball
   m_TagString: Untagged
@@ -196,3 +197,18 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   maxBounces: 3
+--- !u!114 &3060532634496033258
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 85076300178066087}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 134d0c1529fb8c94db1dc1d3b9db5901, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spritesToColor:
+  - {fileID: 85076300178066080}
+  color: {r: 1, g: 1, b: 1, a: 0}

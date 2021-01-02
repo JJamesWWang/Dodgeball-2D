@@ -2,7 +2,7 @@ using UnityEngine;
 using Mirror;
 using System.Collections;
 
-// Properties: static Instance, IsInPlay 
+// Properties: static Instance, IsInPlay, LeftTeamColor, RightTeamColor
 // Methods: [Server] StartGame, [Server] EndGame, static IsValidTeamComposition
 public class GameState : NetworkBehaviour
 {
@@ -10,8 +10,15 @@ public class GameState : NetworkBehaviour
     private MatchTracker matchTracker;
     [SerializeField] private float timeToWaitForAllPlayersToConnect = 5f;
 
+    // Temporarily hardcoding team colors
+    [Header("Team Colors")]
+    [SerializeField] private Color leftTeamColor;
+    [SerializeField] private Color rightTeamColor;
+
     public static GameState Instance { get; private set; }
     public bool IsInPlay { get; private set; }
+    public Color LeftTeamColor { get { return leftTeamColor; } }
+    public Color RightTeamColor { get { return rightTeamColor; } }
 
     private void Awake()
     {
@@ -52,7 +59,7 @@ public class GameState : NetworkBehaviour
     {
         yield return WaitForAllPlayersToConnect();
         // Temporarily disabled for easier debugging
-        //if (IsValidTeamComposition()gg)
+        //if (IsValidTeamComposition())
         matchTracker.StartMatch();
     }
 

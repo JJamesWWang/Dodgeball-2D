@@ -68,6 +68,8 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   timeToWaitForAllPlayersToConnect: 5
+  leftTeamColor: {r: 0.59607846, g: 0, b: 0, a: 1}
+  rightTeamColor: {r: 0, g: 0.4862745, b: 1, a: 1}
 --- !u!114 &2360796140888744032
 MonoBehaviour:
   m_ObjectHideFlags: 0

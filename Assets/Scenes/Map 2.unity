@@ -292,6 +292,10 @@ PrefabInstance:
       propertyPath: sceneId
       value: 1313042445
       objectReference: {fileID: 0}
+    - target: {fileID: 2360796140888744035, guid: 34a5cb0d3505b7746a57a385aa9daf1a, type: 3}
+      propertyPath: m_AssetId
+      value: 34a5cb0d3505b7746a57a385aa9daf1a
+      objectReference: {fileID: 0}
     - target: {fileID: 2360796140888744060, guid: 34a5cb0d3505b7746a57a385aa9daf1a, type: 3}
       propertyPath: m_Name
       value: Game State

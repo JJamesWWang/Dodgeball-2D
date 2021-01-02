@@ -3,8 +3,10 @@ using Mirror;
 
 // Properties: ThrowPowerFrequency, ThrowPowerPeriod, TimeTo100Percent
 // Methods: CmdStartThrow, CmdReleaseThrow, [Server] StopThrow
+[RequireComponent(typeof(Player))]
 public class PlayerArm : NetworkBehaviour
 {
+    private Player player;
     [SerializeField] private Dodgeball dodgeballPrefab = null;
     private bool hasThrowStarted = false;
     private float throwStartTime = 0f;
@@ -20,6 +22,12 @@ public class PlayerArm : NetworkBehaviour
     public float ThrowPowerFrequency { get { return throwPowerFrequency; } }
     public float ThrowPowerPeriod { get { return 1 / throwPowerFrequency; } }
     public float TimeTo100Percent { get { return ThrowPowerPeriod / 2f; } }
+
+    [ServerCallback]
+    private void Start()
+    {
+        player = GetComponent<Player>();
+    }
 
     [ServerCallback]
     private void Update()
@@ -55,6 +63,7 @@ public class PlayerArm : NetworkBehaviour
         Dodgeball dodgeball = Instantiate(dodgeballPrefab, transform.position, Quaternion.identity);
         dodgeball.SetPosition(throwFromPoint);
         dodgeball.SetVelocity(throwVelocity);
+        dodgeball.SetTeam(player.Team);
         NetworkServer.Spawn(dodgeball.gameObject);
     }
 

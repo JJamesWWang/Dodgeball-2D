@@ -46,9 +46,10 @@ public class RoundTracker : NetworkBehaviour
     [Server]
     private IEnumerator SpawnPlayersAfterWaitTime()
     {
-        InvokeCountdownStarted();
         yield return new WaitForSeconds(timeBetweenRounds);
         playerTracker.SpawnPlayers();
+        yield return new WaitForSeconds(timeBetweenRounds);
+        InvokeCountdownStarted();
     }
 
     [ServerCallback]

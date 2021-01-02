@@ -3,7 +3,7 @@ using Mirror;
 using System;
 
 // Events: ServerDodgeballSpawned, ServerDodgeballDespawned
-// Methods: [Server] SetPosition, [Server] SetVelocity
+// Methods: [Server] SetPosition, [Server] SetVelocity, [Server] SetTeam
 public class Dodgeball : NetworkBehaviour
 {
     private Rigidbody2D body;
@@ -13,6 +13,7 @@ public class Dodgeball : NetworkBehaviour
     private SpriteRenderer visibilityChecker;
     private bool hasCrossedMiddleOnce;
     private Vector2 spawnPosition;
+    private SpriteColorer spriteColorer;
 
     /// <summary> Invoked whenever a Dodgeball is instantiated </summary>
     public static event Action<Dodgeball> ServerDodgeballSpawned;
@@ -27,6 +28,7 @@ public class Dodgeball : NetworkBehaviour
     {
         visibilityChecker = GetComponent<SpriteRenderer>();
         body = GetComponent<Rigidbody2D>();
+        spriteColorer = GetComponent<SpriteColorer>();
         spawnPosition = transform.position;
         ServerDodgeballSpawned?.Invoke(this);
     }
@@ -41,6 +43,18 @@ public class Dodgeball : NetworkBehaviour
     public void SetVelocity(Vector2 velocity)
     {
         body.velocity = velocity;
+    }
+
+    [Server]
+    public void SetTeam(Team team)
+    {
+        SetColor(team);
+    }
+
+    [Server]
+    private void SetColor(Team team)
+    {
+        spriteColorer.SetTeamColor(team);
     }
 
     [ServerCallback]

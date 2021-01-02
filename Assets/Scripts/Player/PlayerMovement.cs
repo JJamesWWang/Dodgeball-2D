@@ -3,15 +3,19 @@ using UnityEngine;
 using Mirror;
 
 // Methods: CmdMoveTowards, StopMovement
+[RequireComponent(typeof(Player))]
+[RequireComponent(typeof(SpriteRenderer))]
 public class PlayerMovement : NetworkBehaviour
 {
     private Player player;
     private Vector2 destination;
     private bool hasReachedDestination = true;
+    [Header("Movement")]
     [SerializeField] private float movementSpeed = 160f;
     [SerializeField] private float angularRotationSpeed = 15f;
-    [Tooltip("If the Player is within this distance, it will stop moving.")]
+
     private Bounds bounds;
+    [Tooltip("If the Player is within this distance, it will stop moving.")]
     [SerializeField] private float stopDistance = 1f;
 
     private void Awake()
@@ -22,9 +26,14 @@ public class PlayerMovement : NetworkBehaviour
     [ServerCallback]
     private void Start()
     {
-        var playerSpriteRenderer = player.GetComponent<SpriteRenderer>();
-        float xOffset = playerSpriteRenderer.bounds.size.x / 2f;
-        float yOffset = playerSpriteRenderer.bounds.size.y / 2f;
+        SetMovementBounds();
+    }
+
+    private void SetMovementBounds()
+    {
+        var playerSprite = player.GetComponent<SpriteRenderer>();
+        float xOffset = playerSprite.size.x / 2f;
+        float yOffset = playerSprite.size.y / 2f;
         Bounds teamBounds = player.IsLeftTeam ? Map.Instance.LeftTeamBounds : Map.Instance.RightTeamBounds;
         bounds = Bounds.AddComponent(gameObject,
             teamBounds.LeftBound + xOffset, teamBounds.RightBound - xOffset,
@@ -138,7 +147,6 @@ public class PlayerMovement : NetworkBehaviour
         float theta = Mathf.Atan2(vectorToDestination.y, vectorToDestination.x) * Mathf.Rad2Deg;
         Quaternion rotatedZAxis = Quaternion.AngleAxis(theta, Vector3.forward);
         transform.rotation = Quaternion.Slerp(transform.rotation, rotatedZAxis, angularRotationSpeed * Time.deltaTime);
-        Debug.Log($"Destination theta:; {theta}, Rotation: {rotatedZAxis}");
     }
 
     [Server]

@@ -131,6 +131,50 @@ PrefabInstance:
       propertyPath: m_Name
       value: Map 2
       objectReference: {fileID: 0}
+    - target: {fileID: 210691854058136063, guid: 8e63d0319e3d1fc43b1d7b611d4561f3, type: 3}
+      propertyPath: arenaBounds
+      value: 
+      objectReference: {fileID: 6056265513560584045}
+    - target: {fileID: 210691854058136063, guid: 8e63d0319e3d1fc43b1d7b611d4561f3, type: 3}
+      propertyPath: leftTeamBounds
+      value: 
+      objectReference: {fileID: 6056265512947946583}
+    - target: {fileID: 210691854058136063, guid: 8e63d0319e3d1fc43b1d7b611d4561f3, type: 3}
+      propertyPath: rightTeamBounds
+      value: 
+      objectReference: {fileID: 6056265514410191057}
+    - target: {fileID: 210691854058136063, guid: 8e63d0319e3d1fc43b1d7b611d4561f3, type: 3}
+      propertyPath: leftTeamSpawnPoints.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 210691854058136063, guid: 8e63d0319e3d1fc43b1d7b611d4561f3, type: 3}
+      propertyPath: rightTeamSpawnPoints.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 210691854058136063, guid: 8e63d0319e3d1fc43b1d7b611d4561f3, type: 3}
+      propertyPath: leftTeamSpawnPoints.Array.data[0]
+      value: 
+      objectReference: {fileID: 6056265514984761905}
+    - target: {fileID: 210691854058136063, guid: 8e63d0319e3d1fc43b1d7b611d4561f3, type: 3}
+      propertyPath: leftTeamSpawnPoints.Array.data[1]
+      value: 
+      objectReference: {fileID: 5034687517359464840}
+    - target: {fileID: 210691854058136063, guid: 8e63d0319e3d1fc43b1d7b611d4561f3, type: 3}
+      propertyPath: leftTeamSpawnPoints.Array.data[2]
+      value: 
+      objectReference: {fileID: 6795612054756859741}
+    - target: {fileID: 210691854058136063, guid: 8e63d0319e3d1fc43b1d7b611d4561f3, type: 3}
+      propertyPath: rightTeamSpawnPoints.Array.data[0]
+      value: 
+      objectReference: {fileID: 6056265514956323949}
+    - target: {fileID: 210691854058136063, guid: 8e63d0319e3d1fc43b1d7b611d4561f3, type: 3}
+      propertyPath: rightTeamSpawnPoints.Array.data[1]
+      value: 
+      objectReference: {fileID: 8527206990610190149}
+    - target: {fileID: 210691854058136063, guid: 8e63d0319e3d1fc43b1d7b611d4561f3, type: 3}
+      propertyPath: rightTeamSpawnPoints.Array.data[2]
+      value: 
+      objectReference: {fileID: 7147173266538573456}
     - target: {fileID: 695988566864000594, guid: 8e63d0319e3d1fc43b1d7b611d4561f3, type: 3}
       propertyPath: m_LocalScale.x
       value: 9
@@ -153,3 +197,66 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8e63d0319e3d1fc43b1d7b611d4561f3, type: 3}
+--- !u!114 &6056265512947946583 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 210691853422161578, guid: 8e63d0319e3d1fc43b1d7b611d4561f3, type: 3}
+  m_PrefabInstance: {fileID: 6260190924567870205}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d543506f0bb34b34a95713b09f75bfc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6056265514410191057 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 210691852060578348, guid: 8e63d0319e3d1fc43b1d7b611d4561f3, type: 3}
+  m_PrefabInstance: {fileID: 6260190924567870205}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d543506f0bb34b34a95713b09f75bfc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6056265513560584045 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 210691853916820880, guid: 8e63d0319e3d1fc43b1d7b611d4561f3, type: 3}
+  m_PrefabInstance: {fileID: 6260190924567870205}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d543506f0bb34b34a95713b09f75bfc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &6056265514984761905 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 210691852525932748, guid: 8e63d0319e3d1fc43b1d7b611d4561f3, type: 3}
+  m_PrefabInstance: {fileID: 6260190924567870205}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &5034687517359464840 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1386659969053498229, guid: 8e63d0319e3d1fc43b1d7b611d4561f3, type: 3}
+  m_PrefabInstance: {fileID: 6260190924567870205}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &6795612054756859741 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 625568596211852704, guid: 8e63d0319e3d1fc43b1d7b611d4561f3, type: 3}
+  m_PrefabInstance: {fileID: 6260190924567870205}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &6056265514956323949 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 210691852487526032, guid: 8e63d0319e3d1fc43b1d7b611d4561f3, type: 3}
+  m_PrefabInstance: {fileID: 6260190924567870205}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8527206990610190149 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2357093369734346168, guid: 8e63d0319e3d1fc43b1d7b611d4561f3, type: 3}
+  m_PrefabInstance: {fileID: 6260190924567870205}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &7147173266538573456 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3877447880105972845, guid: 8e63d0319e3d1fc43b1d7b611d4561f3, type: 3}
+  m_PrefabInstance: {fileID: 6260190924567870205}
+  m_PrefabAsset: {fileID: 0}
