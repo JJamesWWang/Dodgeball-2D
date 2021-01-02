@@ -881,8 +881,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b928b5275dfe58e4f88084ec714e73a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  usernameTextPrefab: {fileID: 5388429365022295471, guid: d24bdd14bfb218447a319b93e81c1b7c, type: 3}
   canvas: {fileID: 7385495080954251763}
+  usernameTextPrefab: {fileID: 5388429365022295471, guid: d24bdd14bfb218447a319b93e81c1b7c, type: 3}
+  leftTeamPlayerIndicatorPrefab: {fileID: 8195947798548663765, guid: 0165d9bf620d5474e8a45882f25fbd2d, type: 3}
+  rightTeamPlayerIndicatorPrefab: {fileID: 3685757850087422776, guid: 52c1e8500988db348a3fb442def2d523, type: 3}
 --- !u!1 &7385495080005372048
 GameObject:
   m_ObjectHideFlags: 0

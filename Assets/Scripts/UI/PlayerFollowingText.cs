@@ -2,12 +2,13 @@ using UnityEngine;
 using TMPro;
 
 // Methods: SetPlayer
-public class UsernameText : MonoBehaviour
+public class PlayerFollowingText : MonoBehaviour
 {
     private Player player;
     private RectTransform rect;
     private TMP_Text text;
     [SerializeField] private Vector2 offset = new Vector2(0f, 30f);
+    [SerializeField] private bool clientOnly;
 
     private void Awake()
     {
@@ -17,7 +18,11 @@ public class UsernameText : MonoBehaviour
     public void SetPlayer(Player playerToFollow)
     {
         player = playerToFollow;
-        text.text = player.Username;
+    }
+
+    public void SetText(string text)
+    {
+        this.text.text = text;
     }
 
     private void LateUpdate()

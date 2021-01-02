@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Teams Config
   m_EditorClassIdentifier: 
   leftTeamColor: {r: 0.6, g: 0, b: 0, a: 1}
-  rightTeamColor: {r: 0, g: 0.4862745, b: 1, a: 1}
+  rightTeamColor: {r: 0, g: 0.29176456, b: 0.6, a: 1}

@@ -2,8 +2,10 @@
 
 public class PlayerUI : MonoBehaviour
 {
-    [SerializeField] private UsernameText usernameTextPrefab;
     [SerializeField] private Canvas canvas;
+    [SerializeField] private PlayerFollowingText usernameTextPrefab;
+    [SerializeField] private PlayerFollowingImage leftTeamPlayerIndicatorPrefab;
+    [SerializeField] private PlayerFollowingImage rightTeamPlayerIndicatorPrefab;
 
     private void OnEnable()
     {
@@ -22,9 +24,34 @@ public class PlayerUI : MonoBehaviour
 
     private void HandlePlayerSpawned(Player player)
     {
-        UsernameText usernameText = Instantiate(usernameTextPrefab, Vector3.zero, Quaternion.identity);
+        CreateUsernameText(player);
+        if (player.IsLocalPlayer)
+            CreatePlayerIndicator(player);
+
+    }
+
+    private void CreateUsernameText(Player player)
+    {
+        PlayerFollowingText usernameText = Instantiate(usernameTextPrefab);
         usernameText.SetPlayer(player);
+        usernameText.SetText(player.Username);
         usernameText.transform.SetParent(canvas.transform);
+    }
+
+    private void CreatePlayerIndicator(Player player)
+    {
+        if (player.IsSpectator) { return; }
+        PlayerFollowingImage playerIndicator = InstantiatePlayerIndicator(player);
+        playerIndicator.SetPlayer(player);
+        playerIndicator.transform.SetParent(canvas.transform);
+    }
+
+    private PlayerFollowingImage InstantiatePlayerIndicator(Player player)
+    {
+        if (player.IsLeftTeam)
+            return Instantiate(leftTeamPlayerIndicatorPrefab);
+        else
+            return Instantiate(rightTeamPlayerIndicatorPrefab);
     }
 
     private void UnsubscribeEvents()

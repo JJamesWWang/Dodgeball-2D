@@ -21,6 +21,7 @@ public class Player : NetworkBehaviour
     private Room room;
 
     public uint ConnectionNetId { get { return connectionNetId; } }
+    public bool IsLocalPlayer { get { return isLocalPlayer; } }
     public Team Team { get { return data.Team; } }
     public bool IsLeftTeam { get { return data.IsLeftTeam; } }
     public bool IsRightTeam { get { return data.IsRightTeam; } }
