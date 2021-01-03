@@ -53,6 +53,7 @@ public class GameOverUI : MonoBehaviour
     public void HandleRestartClicked()
     {
         room.ServerChangeScene(room.RoomScene);
+        Debug.Log("SERVER: Player clicked restart button.");
     }
 
     public void HandleDisconnectClicked()

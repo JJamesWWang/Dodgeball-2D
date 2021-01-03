@@ -84,6 +84,16 @@ public class Room : NetworkRoomManager
 
     #region Server
 
+    public override void OnRoomStartServer()
+    {
+        Debug.Log("SERVER: Server started.");
+    }
+
+    public override void OnRoomStopServer()
+    {
+        Debug.Log("SERVER: Server stopped.");
+    }
+
     public override void OnServerConnect(NetworkConnection conn)
     {
         if (numPlayers >= maxConnections)
@@ -137,7 +147,7 @@ public class Room : NetworkRoomManager
     {
         var connection = roomPlayer.GetComponent<Connection>();
         // Temporarily set player to out of nowhere
-        var player = Instantiate(playerPrefab, new Vector3(5000f, 0f, 0f), Quaternion.identity).GetComponent<Player>();
+        var player = Instantiate(playerPrefab).GetComponent<Player>();
         player.SetConnection(connection);
         return player;
     }

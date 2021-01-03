@@ -11,7 +11,7 @@ public enum Team
 
 // Properties: Team, IsLeftTeam, IsRightTeam, IsSpectator, Username
 // Events: ClientPlayerDataUpdated
-// Methods: CmdSetUsername, CmdSetIsLeftTeam, CmdSetIsSpectator, [Server] SetUsername, [Server] SetIsLeftTeam, [Server] SetIsSpectator
+// Methods: CmdSetUsername, CmdSetTeam, [Server] SetTeam, [Server] SetUsername
 public class PlayerData : NetworkBehaviour
 {
     // Temporarily serialized for debugging purposes

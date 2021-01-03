@@ -1366,7 +1366,7 @@ namespace Mirror
 
             if (connectionToClient?.identity == this)
             {
-                logger.LogError("RemoveClientAuthority cannot remove authority for a player object");
+                //logger.LogError("RemoveClientAuthority cannot remove authority for a player object");
                 return;
             }
 

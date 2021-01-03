@@ -12,7 +12,8 @@ public class MatchTracker : NetworkBehaviour
     private ScoreTracker scoreTracker;
 
     public static event Action ServerMatchStarted;
-    public static event Action ServerMatchEnded;
+    /// <summary> bool: isLeftTeamWin </summary>
+    public static event Action<bool> ServerMatchEnded;
     public static event Action ClientMatchStarted;
     /// <summary> bool: isLeftTeamWin </summary>
     public static event Action<bool> ClientMatchEnded;
@@ -56,18 +57,18 @@ public class MatchTracker : NetworkBehaviour
     {
         ResetMatch();
         RpcInvokeMatchEnded(isLeftTeamWin);
-        ServerMatchEnded?.Invoke();
+        ServerMatchEnded?.Invoke(isLeftTeamWin);
     }
 
     [ServerCallback]
     private void SubscribeEvents()
     {
-        RoundTracker.ServerRoundOver += HandleRoundOver;
+        RoundTracker.ServerRoundEnded += HandleRoundStarted;
         ScoreTracker.ServerScoreUpdated += HandleScoreUpdated;
     }
 
     [Server]
-    private void HandleRoundOver(bool isLeftTeamWin)
+    private void HandleRoundStarted(bool isLeftTeamWin)
     {
         IncrementScore(isLeftTeamWin);
         if (!isOver)
@@ -101,7 +102,7 @@ public class MatchTracker : NetworkBehaviour
     private bool IsMatchOver(int leftTeamScore, int rightTeamScore)
     {
         int scoreToWin = scoreTracker.ScoreToWin;
-        return leftTeamScore == scoreToWin || rightTeamScore == scoreToWin;
+        return leftTeamScore >= scoreToWin || rightTeamScore >= scoreToWin;
     }
 
     [Server]
@@ -114,7 +115,7 @@ public class MatchTracker : NetworkBehaviour
     [ServerCallback]
     private void UnsubscribeEvents()
     {
-        RoundTracker.ServerRoundOver -= HandleRoundOver;
+        RoundTracker.ServerRoundEnded -= HandleRoundStarted;
         ScoreTracker.ServerScoreUpdated -= HandleScoreUpdated;
     }
 

@@ -13,12 +13,14 @@ public class PlayerCommands : NetworkBehaviour
     private PlayerArm playerArm;
     [SerializeField] private ThrowPowerBar throwPowerBarPrefab = null;
     private ThrowPowerBar throwPowerBar;
+    private CommandLogger commandLogger;
 
     private void Awake()
     {
         playerMovement = GetComponent<PlayerMovement>();
         playerArm = GetComponent<PlayerArm>();
         mainCamera = Camera.main;
+        commandLogger = CommandLogger.singleton;
     }
 
     private void OnEnable()
@@ -69,9 +71,10 @@ public class PlayerCommands : NetworkBehaviour
     }
 
     [Client]
-    private void MoveTowards(Vector2 point)
+    private void MoveTowards(Vector2 destinationPoint)
     {
-        playerMovement.CmdMoveTowards(point);
+        playerMovement.CmdMoveTowards(destinationPoint);
+        commandLogger.LogCommand($"Player wants to move to destination point {destinationPoint}.");
     }
 
     [Client]
@@ -85,7 +88,8 @@ public class PlayerCommands : NetworkBehaviour
     private void StartThrow()
     {
         playerArm.CmdStartThrow();
-        throwPowerBar = Instantiate(throwPowerBarPrefab, Vector3.zero, Quaternion.identity);
+        throwPowerBar = Utils.InstantiateOffScreen(throwPowerBarPrefab);
+        commandLogger.LogCommand("Player wants to start throw.");
     }
 
     [Client]
@@ -101,6 +105,7 @@ public class PlayerCommands : NetworkBehaviour
     private void ReleaseThrow(Vector2 throwAtPoint)
     {
         playerArm.CmdReleaseThrow(throwAtPoint);
+        commandLogger.LogCommand($"Player wants to release throw at point {throwAtPoint}.");
     }
 
     [Client]

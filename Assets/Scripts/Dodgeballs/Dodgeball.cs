@@ -10,6 +10,7 @@ public class Dodgeball : NetworkBehaviour
     [Tooltip("Number of bounces before Dodgeball disappears.")]
     [SerializeField] private int maxBounces = 3;
     private int timesBounced = 0;
+    private const string playerLayerName = "Player";
     private SpriteRenderer visibilityChecker;
     private bool hasCrossedMiddleOnce;
     private Vector2 spawnPosition;
@@ -108,7 +109,7 @@ public class Dodgeball : NetworkBehaviour
     [Server]
     private bool IsPlayerCollision(GameObject collidedObject)
     {
-        return collidedObject.layer == LayerMask.NameToLayer("Player");
+        return collidedObject.layer == LayerMask.NameToLayer(playerLayerName);
     }
 
     [Server]

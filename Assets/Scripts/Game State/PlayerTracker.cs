@@ -47,7 +47,7 @@ public class PlayerTracker : NetworkBehaviour
     [Server]
     public void SpawnPlayers()
     {
-        ClearNullPlayers();
+        ClearNullActivePlayers();
         foreach (Player player in room.Players)
             if (!player.IsSpectator)
                 SpawnPlayer(player);
@@ -55,21 +55,21 @@ public class PlayerTracker : NetworkBehaviour
 
     // More of a safety check, theoretically this should never do anything.
     [Server]
-    private void ClearNullPlayers()
+    private void ClearNullActivePlayers()
     {
         foreach (Player player in activePlayers)
-            RemoveNullPlayer(activePlayers, player);
+            RemoveNullActivePlayer(activePlayers, player);
         foreach (Player player in leftTeamActivePlayers)
-            RemoveNullPlayer(leftTeamActivePlayers, player);
+            RemoveNullActivePlayer(leftTeamActivePlayers, player);
         foreach (Player player in rightTeamActivePlayers)
-            RemoveNullPlayer(rightTeamActivePlayers, player);
+            RemoveNullActivePlayer(rightTeamActivePlayers, player);
     }
 
     [Server]
-    private void RemoveNullPlayer(List<Player> playerList, Player player)
+    private void RemoveNullActivePlayer(List<Player> playerList, Player player)
     {
         if (player != null) { return; }
-        Debug.LogError("Player was null. Removed null Player.");
+        Debug.LogError("Active Player was null. Removed null Active Player.");
         playerList.Remove(player);
     }
 
@@ -78,6 +78,8 @@ public class PlayerTracker : NetworkBehaviour
     {
         player.transform.position = GetPlayerSpawnPoint(player);
         player.transform.localEulerAngles = GetPlayerSpawnRotation(player);
+        player.SetOnField(true);
+        player.SetInputEnabled(true);
         AddPlayer(player);
     }
 
@@ -102,44 +104,43 @@ public class PlayerTracker : NetworkBehaviour
         activePlayers.Add(player);
         if (player.IsLeftTeam)
             leftTeamActivePlayers.Add(player);
-        else
+        else if (player.IsRightTeam)
             rightTeamActivePlayers.Add(player);
+    }
+
+    [Server]
+    public void SetPlayerInputEnabled(bool enabled)
+    {
+        ClearNullActivePlayers();
+        foreach (Player player in ActivePlayers)
+            player.SetInputEnabled(enabled);
     }
 
     [Server]
     public void DespawnPlayers()
     {
-        ClearNullPlayers();
-        // Temporarily set player to out of nowhere
+        ClearNullActivePlayers();
         foreach (Player player in ActivePlayers)
             DespawnPlayer(player);
         leftTeamActivePlayers.Clear();
         rightTeamActivePlayers.Clear();
     }
 
-    [Server]
     private void DespawnPlayer(Player player)
     {
-        player.transform.position = new Vector2(5000, 0);
-        player.DisableInput();
+        player.SetOnField(false);
+        player.SetInputEnabled(false);
+        RemovePlayer(player);
     }
 
-    /// <summary> Enables input for all players</summary>
     [Server]
-    public void EnablePlayerInput()
+    private void RemovePlayer(Player player)
     {
-        ClearNullPlayers();
-        foreach (Player player in ActivePlayers)
-            player.EnableInput();
-    }
-
-    /// <summary> Disables input for all players</summary>
-    [Server]
-    public void DisablePlayerInput()
-    {
-        ClearNullPlayers();
-        foreach (Player player in ActivePlayers)
-            player.DisableInput();
+        activePlayers.Remove(player);
+        if (player.IsLeftTeam)
+            leftTeamActivePlayers.Remove(player);
+        else
+            rightTeamActivePlayers.Remove(player);
     }
 
     [ServerCallback]
@@ -158,20 +159,8 @@ public class PlayerTracker : NetworkBehaviour
     [Server]
     private void EliminatePlayer(Player player)
     {
-        // Temporarily set player to out of nowhere
         DespawnPlayer(player);
-        RemovePlayer(player);
         ServerPlayerEliminated?.Invoke(player);
-    }
-
-    [Server]
-    private void RemovePlayer(Player player)
-    {
-        activePlayers.Remove(player);
-        if (player.IsLeftTeam)
-            leftTeamActivePlayers.Remove(player);
-        else
-            rightTeamActivePlayers.Remove(player);
     }
 
     [Server]

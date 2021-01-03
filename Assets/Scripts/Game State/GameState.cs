@@ -107,7 +107,7 @@ public class GameState : NetworkBehaviour
     }
 
     [Server]
-    private void HandleMatchEnded()
+    private void HandleMatchEnded(bool _isLeftTeamWin)
     {
         IsInPlay = false;
     }

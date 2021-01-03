@@ -13,10 +13,10 @@ public class RoundTracker : NetworkBehaviour
     [SerializeField] private float timeToStartRound = 3f;
 
     /// <summary> bool: isLeftTeamWin </summary>
-    public static event Action<bool> ServerRoundOver;
-    /// <summary> float: timeBetweenRounds </summary>
+    public static event Action<bool> ServerRoundEnded;
+    /// <summary> float: timeToStartRound </summary>
     public static event Action<float> ClientCountdownStarted;
-    public static event Action<bool> ClientRoundOver;
+    public static event Action<bool> ClientRoundEnded;
 
     private void Awake()
     {
@@ -51,8 +51,9 @@ public class RoundTracker : NetworkBehaviour
         yield return new WaitForSeconds(timeToShowWinner);
         playerTracker.SpawnPlayers();
         RpcInvokeCountdownStarted();
+        playerTracker.SetPlayerInputEnabled(false);
         yield return new WaitForSeconds(timeToStartRound);
-        playerTracker.EnablePlayerInput();
+        playerTracker.SetPlayerInputEnabled(true);
     }
 
     [ServerCallback]
@@ -69,7 +70,7 @@ public class RoundTracker : NetworkBehaviour
         {
             // Invoke client first, otherwise UI will overlap
             RpcInvokeRoundOver(player.IsRightTeam);
-            ServerRoundOver?.Invoke(player.IsRightTeam);
+            ServerRoundEnded?.Invoke(player.IsRightTeam);
         }
     }
 
@@ -81,7 +82,7 @@ public class RoundTracker : NetworkBehaviour
     }
 
     [Server]
-    private void HandleMatchEnded()
+    private void HandleMatchEnded(bool _isLeftTeamWin)
     {
         StopAllCoroutines();
     }
@@ -106,7 +107,7 @@ public class RoundTracker : NetworkBehaviour
     [ClientRpc]
     private void RpcInvokeRoundOver(bool isLeftTeamWin)
     {
-        ClientRoundOver?.Invoke(isLeftTeamWin);
+        ClientRoundEnded?.Invoke(isLeftTeamWin);
     }
 
     #endregion

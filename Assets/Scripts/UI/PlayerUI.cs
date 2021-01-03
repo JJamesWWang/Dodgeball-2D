@@ -32,7 +32,7 @@ public class PlayerUI : MonoBehaviour
 
     private void CreateUsernameText(Player player)
     {
-        PlayerFollowingText usernameText = Instantiate(usernameTextPrefab);
+        PlayerFollowingText usernameText = Utils.InstantiateOffScreen(usernameTextPrefab);
         usernameText.SetPlayer(player);
         usernameText.SetText(player.Username);
         usernameText.transform.SetParent(canvas.transform);
@@ -49,9 +49,9 @@ public class PlayerUI : MonoBehaviour
     private PlayerFollowingImage InstantiatePlayerIndicator(Player player)
     {
         if (player.IsLeftTeam)
-            return Instantiate(leftTeamPlayerIndicatorPrefab);
+            return Utils.InstantiateOffScreen(leftTeamPlayerIndicatorPrefab);
         else
-            return Instantiate(rightTeamPlayerIndicatorPrefab);
+            return Utils.InstantiateOffScreen(rightTeamPlayerIndicatorPrefab);
     }
 
     private void UnsubscribeEvents()

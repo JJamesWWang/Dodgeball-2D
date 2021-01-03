@@ -52,7 +52,7 @@ public class SteamRoom : Room
     // Server
     private void HandleLobbyCreated(Result result, Lobby lobby)
     {
-        Debug.Log($"Created Lobby with result {result}.");
+        Debug.Log($"Attempted to create Lobby with result {result}.");
         if (result != Result.OK)
         {
             Disconnect();

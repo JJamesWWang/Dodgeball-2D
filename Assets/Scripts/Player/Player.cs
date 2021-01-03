@@ -1,10 +1,11 @@
 using UnityEngine;
 using Mirror;
 using System;
+using System.Collections.Generic;
 
 // Properties: ConnectionNetId, Team, IsLeftTeam, IsRightTeam, IsSpectator, Username, 
 // Events: ServerPlayerHit, ServerPlayerDisconnected, ClientPlayerSpawned
-// Methods: [Server] SetConnection, [Server] EnableInput, [Server] DisableInput, 
+// Methods: [Server] SetConnection, [Server] SetColor, [Server] SetOnField, [Server] SetInputEnabled
 public class Player : NetworkBehaviour
 {
     // Temporarily serialized for debugging purposes
@@ -17,6 +18,8 @@ public class Player : NetworkBehaviour
     private PlayerCommands commands;
     private PlayerMovement movement;
     private PlayerArm arm;
+    private CapsuleCollider2D bodyCollider;
+    [SerializeField] private List<SpriteRenderer> sprites;
     private SpriteColorer spriteColorer;
     private Room room;
 
@@ -28,6 +31,7 @@ public class Player : NetworkBehaviour
     public bool IsSpectator { get { return data.IsSpectator; } }
     public string Username { get { return data.Username; } }
     public Color Color { get { return spriteColorer.Color; } }
+    public bool IsOnField { get { return sprites[0].enabled && bodyCollider.enabled; } }
 
 
     public static event Action<Player> ServerPlayerHit;
@@ -39,6 +43,7 @@ public class Player : NetworkBehaviour
         commands = GetComponent<PlayerCommands>();
         movement = GetComponent<PlayerMovement>();
         arm = GetComponent<PlayerArm>();
+        bodyCollider = GetComponent<CapsuleCollider2D>();
         spriteColorer = GetComponent<SpriteColorer>();
     }
 
@@ -48,6 +53,8 @@ public class Player : NetworkBehaviour
     {
         room = (Room)NetworkManager.singleton;
         room.AddPlayer(this);
+        SetOnField(false);
+        SetInputEnabled(false);
     }
 
     public override void OnStopServer()
@@ -73,15 +80,35 @@ public class Player : NetworkBehaviour
             spriteColorer.SetColor(teamsConfig.RightTeamColor);
     }
 
+    /// <summary> Is the player physically present on the field? (toggles visibility & hit detection) </summary>
     [Server]
-    public void EnableInput()
+    public void SetOnField(bool isOn)
     {
-        commands.SetServerInputEnabled(true);
+        SetSpriteVisible(isOn);
+        SetCollisionEnabled(isOn);
     }
 
     [Server]
-    public void DisableInput()
+    private void SetSpriteVisible(bool show)
     {
+        foreach (var sprite in sprites)
+            sprite.enabled = show;
+    }
+
+    [Server]
+    private void SetCollisionEnabled(bool enabled)
+    {
+        bodyCollider.enabled = enabled;
+    }
+
+    [Server]
+    public void SetInputEnabled(bool enabled)
+    {
+        if (enabled)
+        {
+            commands.SetServerInputEnabled(true);
+            return;
+        }
         commands.SetServerInputEnabled(false);
         movement.StopMovement();
         arm.StopThrow();

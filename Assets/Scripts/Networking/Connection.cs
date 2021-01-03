@@ -9,9 +9,9 @@ public class Connection : NetworkRoomPlayer
     private Room room;
     public static Connection LocalConnection { get; private set; }
     public PlayerData PlayerData { get; private set; }
-    public static event Action<Connection> ClientConnected;
-    public static event Action<Connection> ClientLocalConnected;
-    public static event Action<Connection> ClientDisconnected;
+    public static event Action<Connection> ClientStarted;
+    public static event Action<Connection> ClientLocalStarted;
+    public static event Action<Connection> ClientStopped;
 
     private void Awake()
     {
@@ -29,8 +29,9 @@ public class Connection : NetworkRoomPlayer
     public override void OnStopServer()
     {
         room.RemoveConnection(this);
-        if (NetworkClient.active)
-            ClientDisconnected?.Invoke(this);
+        // Theoretically, this should be unnecessary, commenting it out.
+        //if (NetworkClient.active)
+        //ClientStopped?.Invoke(this);
     }
 
     #endregion
@@ -42,7 +43,7 @@ public class Connection : NetworkRoomPlayer
         room = (Room)NetworkManager.singleton;
         if (!NetworkServer.active)
             room.AddConnection(this);
-        ClientConnected?.Invoke(this);
+        ClientStarted?.Invoke(this);
     }
 
     public override void OnStartAuthority()
@@ -52,7 +53,7 @@ public class Connection : NetworkRoomPlayer
 
     public override void OnStartLocalPlayer()
     {
-        ClientLocalConnected?.Invoke(this);
+        ClientLocalStarted?.Invoke(this);
     }
 
     public override void OnStopClient()
@@ -61,7 +62,7 @@ public class Connection : NetworkRoomPlayer
             room.RemoveConnection(this);
         if (hasAuthority)
             LocalConnection = null;
-        ClientDisconnected?.Invoke(this);
+        ClientStopped?.Invoke(this);
     }
 
     #endregion

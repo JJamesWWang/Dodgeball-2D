@@ -14,6 +14,7 @@ public class LobbyUI : NetworkBehaviour
     [SerializeField] private Button inviteFriendButton;
     [SerializeField] private TMP_InputField usernameInput;
     [SerializeField] private Button startButton;
+    private CommandLogger commandLogger;
 
     #region General
 
@@ -25,6 +26,11 @@ public class LobbyUI : NetworkBehaviour
     private void OnDisable()
     {
         UnsubscribeEvents();
+    }
+
+    private void Awake()
+    {
+        commandLogger = CommandLogger.singleton;
     }
 
     public void HandleLeaveClicked()
@@ -42,6 +48,7 @@ public class LobbyUI : NetworkBehaviour
         // Temporarily disabling for easier testing
         //if (GameState.IsValidTeamComposition())
         room.ServerChangeScene(room.GameplayScene);
+        Debug.Log("SERVER: Player clicked lobby start button.");
     }
 
     #endregion
@@ -72,6 +79,11 @@ public class LobbyUI : NetworkBehaviour
         localPlayerData = connection.PlayerData;
         ConstructPlayersText();
         usernameInput.text = localPlayerData.Username;
+        if (room is SteamRoom)
+        {
+            localPlayerData.CmdSetUsername(SteamClient.Name);
+            commandLogger.LogCommand($"Player wants to set username to {SteamClient.Name}.");
+        }
     }
 
     [Client]
@@ -98,12 +110,14 @@ public class LobbyUI : NetworkBehaviour
     public void HandleJoinLeftTeamClicked()
     {
         localPlayerData.CmdSetTeam(Team.Left);
+        commandLogger.LogCommand($"Player wants to set team to left.");
     }
 
     [Client]
     public void HandleSpectateClicked()
     {
         localPlayerData.CmdSetTeam(Team.Spectator);
+        commandLogger.LogCommand($"Player wants to set team to spectator.");
     }
 
     [Client]
@@ -117,6 +131,7 @@ public class LobbyUI : NetworkBehaviour
     public void HandleJoinRightTeamClicked()
     {
         localPlayerData.CmdSetTeam(Team.Right);
+        commandLogger.LogCommand($"Player wants to set team to right.");
     }
 
     [Client]
@@ -124,33 +139,34 @@ public class LobbyUI : NetworkBehaviour
     {
         string username = usernameInput.text;
         localPlayerData.CmdSetUsername(username);
+        commandLogger.LogCommand($"Player wants to set username to {username}");
     }
 
     [ClientCallback]
     private void SubscribeEvents()
     {
-        Connection.ClientLocalConnected += HandleLocalPlayerConnected;
-        Connection.ClientConnected += HandlePlayerConnected;
-        Connection.ClientDisconnected += HandlePlayerDisconnected;
+        Connection.ClientLocalStarted += HandleClientLocalStarted;
+        Connection.ClientStarted += HandleClientStarted;
+        Connection.ClientStopped += HandleClientStopped;
         PlayerData.ClientPlayerDataUpdated += HandlePlayerDataUpdated;
         SteamMatchmaking.OnLobbyMemberJoined += HandleLobbyMemberJoined;
         SteamMatchmaking.OnLobbyMemberDisconnected += HandleLobbyMemberDisconnected;
     }
 
     [Client]
-    private void HandleLocalPlayerConnected(Connection connection)
+    private void HandleClientLocalStarted(Connection connection)
     {
         Init(connection);
     }
 
     [Client]
-    private void HandlePlayerConnected(Connection connection)
+    private void HandleClientStarted(Connection connection)
     {
         ConstructPlayersText();
     }
 
     [ClientCallback]
-    private void HandlePlayerDisconnected(Connection connection)
+    private void HandleClientStopped(Connection connection)
     {
         ConstructPlayersText();
     }
@@ -176,9 +192,9 @@ public class LobbyUI : NetworkBehaviour
     [ClientCallback]
     private void UnsubscribeEvents()
     {
-        Connection.ClientLocalConnected -= HandleLocalPlayerConnected;
-        Connection.ClientConnected -= HandlePlayerConnected;
-        Connection.ClientDisconnected -= HandlePlayerDisconnected;
+        Connection.ClientLocalStarted -= HandleClientLocalStarted;
+        Connection.ClientStarted -= HandleClientStarted;
+        Connection.ClientStopped -= HandleClientStopped;
         PlayerData.ClientPlayerDataUpdated -= HandlePlayerDataUpdated;
         SteamMatchmaking.OnLobbyMemberJoined -= HandleLobbyMemberJoined;
         SteamMatchmaking.OnLobbyMemberDisconnected -= HandleLobbyMemberDisconnected;

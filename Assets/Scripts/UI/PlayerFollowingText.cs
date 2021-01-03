@@ -31,6 +31,12 @@ public class PlayerFollowingText : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+        if (!player.IsOnField)
+        {
+            text.enabled = false;
+            return;
+        }
+        text.enabled = true;
         Vector2 playerPosition = player.transform.position;
         rect.position = playerPosition + offset;
     }
