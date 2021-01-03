@@ -123,24 +123,24 @@ public class EventLogger : MonoBehaviour
 
     private void SubscribeNetworkingEvents()
     {
-        Connection.ClientStarted += HandleClientStarted;
-        Connection.ClientLocalStarted += HandleClientLocalStarted;
-        Connection.ClientStopped += HandleClientStopped;
+        Connection.ClientConnectionStarted += HandleClientConnectionStarted;
+        Connection.ClientLocalConnectionStarted += HandleClientLocalConnectionStarted;
+        Connection.ClientConnectionStopped += HandleClientConnectionStopped;
         Room.ClientConnected += HandleClientConnected;
         Room.ClientDisconnected += HandleClientDisconnected;
     }
 
-    private void HandleClientStarted(Connection connection)
+    private void HandleClientConnectionStarted(Connection connection)
     {
         Debug.Log("CLIENT: Client started.");
     }
 
-    private void HandleClientLocalStarted(Connection connection)
+    private void HandleClientLocalConnectionStarted(Connection connection)
     {
         Debug.Log("CLIENT: Client local started.");
     }
 
-    private void HandleClientStopped(Connection connection)
+    private void HandleClientConnectionStopped(Connection connection)
     {
         Debug.Log("CLIENT: Client stopped.");
     }
@@ -199,6 +199,7 @@ public class EventLogger : MonoBehaviour
     {
         Player.ServerPlayerHit += HandleServerPlayerHit;
         Player.ServerPlayerDisconnected += HandleServerPlayerDisconnected;
+        Player.ClientLocalPlayerStarted += HandleClientLocalPlayerStarted;
         Player.ClientPlayerSpawned += HandleClientPlayerSpawned;
         PlayerData.ClientPlayerDataUpdated += HandleClientPlayerDataUpdated;
     }
@@ -210,6 +211,11 @@ public class EventLogger : MonoBehaviour
     private void HandleServerPlayerDisconnected(Player player)
     {
         Debug.Log($"SERVER: PLAYER: Player with username {player.Username} disconnected.");
+    }
+
+    private void HandleClientLocalPlayerStarted(Player player)
+    {
+        Debug.Log($"CLIENT: PLAYER: Local Player with username {player.Username} started.");
     }
 
     private void HandleClientPlayerSpawned(Player player)
@@ -260,9 +266,9 @@ public class EventLogger : MonoBehaviour
 
     private void UnsubscribeNetworkingEvents()
     {
-        Connection.ClientStarted -= HandleClientStarted;
-        Connection.ClientLocalStarted -= HandleClientLocalStarted;
-        Connection.ClientStopped -= HandleClientStopped;
+        Connection.ClientConnectionStarted -= HandleClientConnectionStarted;
+        Connection.ClientLocalConnectionStarted -= HandleClientLocalConnectionStarted;
+        Connection.ClientConnectionStopped -= HandleClientConnectionStopped;
         Room.ClientConnected -= HandleClientConnected;
         Room.ClientDisconnected -= HandleClientDisconnected;
         SteamRoom.ClientCreateLobbyAttempted -= HandleClientCreateLobbyAttempted;
@@ -274,6 +280,7 @@ public class EventLogger : MonoBehaviour
     {
         Player.ServerPlayerHit -= HandleServerPlayerHit;
         Player.ServerPlayerDisconnected -= HandleServerPlayerDisconnected;
+        Player.ClientLocalPlayerStarted -= HandleClientLocalPlayerStarted;
         Player.ClientPlayerSpawned -= HandleClientPlayerSpawned;
         PlayerData.ClientPlayerDataUpdated -= HandleClientPlayerDataUpdated;
     }

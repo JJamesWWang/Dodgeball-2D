@@ -146,8 +146,7 @@ public class Room : NetworkRoomManager
     private Player CreateGamePlayer(GameObject roomPlayer)
     {
         var connection = roomPlayer.GetComponent<Connection>();
-        // Temporarily set player to out of nowhere
-        var player = Instantiate(playerPrefab).GetComponent<Player>();
+        var player = Utils.InstantiateOffScreen(playerPrefab).GetComponent<Player>();
         player.SetConnection(connection);
         return player;
     }

@@ -68,8 +68,6 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   timeToWaitForAllPlayersToConnect: 5
-  leftTeamColor: {r: 0.59607846, g: 0, b: 0, a: 1}
-  rightTeamColor: {r: 0, g: 0.4862745, b: 1, a: 1}
 --- !u!114 &2360796140888744032
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -98,7 +96,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  timeBetweenRounds: 3
+  timeToShowWinner: 2
+  timeToStartRound: 3
 --- !u!114 &5949752176176079329
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -128,8 +127,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  leftTeamPlayers: []
-  rightTeamPlayers: []
+  activePlayers: []
+  leftTeamActivePlayers: []
+  rightTeamActivePlayers: []
 --- !u!114 &2360796140888744061
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -144,6 +144,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.016666
-  scoreToWin: 11
+  scoreToWin: 2
   leftTeamScore: 0
   rightTeamScore: 0

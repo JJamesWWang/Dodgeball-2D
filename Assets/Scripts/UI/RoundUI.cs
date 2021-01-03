@@ -40,7 +40,7 @@ public class RoundUI : MonoBehaviour
 
     private void SubscribeEvents()
     {
-        Connection.ClientLocalStarted += HandleLocalStarted;
+        Connection.ClientLocalConnectionStarted += HandleLocalConnectionStarted;
         MatchTracker.ClientMatchStarted += HandleMatchStarted;
         RoundTracker.ClientCountdownStarted += HandleCountdownStarted;
         ScoreTracker.ClientScoreUpdated += HandleScoreUpdated;
@@ -48,9 +48,10 @@ public class RoundUI : MonoBehaviour
         MatchTracker.ClientMatchEnded += HandleMatchEnded;
     }
 
-    private void HandleLocalStarted(Connection localConnection)
+    // The Player prefab isn't actually instantiated when Players connect midgame, so we use ConnectionStarted
+    private void HandleLocalConnectionStarted(Connection connection)
     {
-        var playerData = localConnection.PlayerData;
+        var playerData = connection.PlayerData;
         if (playerData.IsSpectator)
             waitingForPlayersText.gameObject.SetActive(false);
     }
@@ -91,7 +92,7 @@ public class RoundUI : MonoBehaviour
 
     private void UnsubscribeEvents()
     {
-        Connection.ClientLocalStarted -= HandleLocalStarted;
+        Connection.ClientLocalConnectionStarted -= HandleLocalConnectionStarted;
         MatchTracker.ClientMatchStarted -= HandleMatchStarted;
         RoundTracker.ClientCountdownStarted -= HandleCountdownStarted;
         ScoreTracker.ClientScoreUpdated -= HandleScoreUpdated;

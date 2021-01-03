@@ -145,28 +145,28 @@ public class LobbyUI : NetworkBehaviour
     [ClientCallback]
     private void SubscribeEvents()
     {
-        Connection.ClientLocalStarted += HandleClientLocalStarted;
-        Connection.ClientStarted += HandleClientStarted;
-        Connection.ClientStopped += HandleClientStopped;
+        Connection.ClientLocalConnectionStarted += HandleClientLocalConnectionStarted;
+        Connection.ClientConnectionStarted += HandleClientConnectionStarted;
+        Connection.ClientConnectionStopped += HandleClientConnectionStopped;
         PlayerData.ClientPlayerDataUpdated += HandlePlayerDataUpdated;
         SteamMatchmaking.OnLobbyMemberJoined += HandleLobbyMemberJoined;
         SteamMatchmaking.OnLobbyMemberDisconnected += HandleLobbyMemberDisconnected;
     }
 
     [Client]
-    private void HandleClientLocalStarted(Connection connection)
+    private void HandleClientLocalConnectionStarted(Connection connection)
     {
         Init(connection);
     }
 
     [Client]
-    private void HandleClientStarted(Connection connection)
+    private void HandleClientConnectionStarted(Connection connection)
     {
         ConstructPlayersText();
     }
 
     [ClientCallback]
-    private void HandleClientStopped(Connection connection)
+    private void HandleClientConnectionStopped(Connection connection)
     {
         ConstructPlayersText();
     }
@@ -192,9 +192,9 @@ public class LobbyUI : NetworkBehaviour
     [ClientCallback]
     private void UnsubscribeEvents()
     {
-        Connection.ClientLocalStarted -= HandleClientLocalStarted;
-        Connection.ClientStarted -= HandleClientStarted;
-        Connection.ClientStopped -= HandleClientStopped;
+        Connection.ClientLocalConnectionStarted -= HandleClientLocalConnectionStarted;
+        Connection.ClientConnectionStarted -= HandleClientConnectionStarted;
+        Connection.ClientConnectionStopped -= HandleClientConnectionStopped;
         PlayerData.ClientPlayerDataUpdated -= HandlePlayerDataUpdated;
         SteamMatchmaking.OnLobbyMemberJoined -= HandleLobbyMemberJoined;
         SteamMatchmaking.OnLobbyMemberDisconnected -= HandleLobbyMemberDisconnected;

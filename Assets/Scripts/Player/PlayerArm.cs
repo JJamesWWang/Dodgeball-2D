@@ -39,7 +39,7 @@ public class PlayerArm : NetworkBehaviour
     [Command]
     public void CmdStartThrow()
     {
-        if (hasThrowStarted || cooldownTimer > 0f) { return; }
+        if (hasThrowStarted) { return; }
         throwStartTime = Time.time;
         hasThrowStarted = true;
     }
@@ -48,9 +48,28 @@ public class PlayerArm : NetworkBehaviour
     public void CmdReleaseThrow(Vector2 throwAtPoint)
     {
         if (!hasThrowStarted) { return; }
+        if (IsOnCooldown() || IsThrowingAtSelf(throwAtPoint))
+        {
+            hasThrowStarted = false;
+            return;
+        }
         ThrowDodgeball(throwAtPoint);
         cooldownTimer = throwCooldown;
         hasThrowStarted = false;
+    }
+
+    [Server]
+    private bool IsThrowingAtSelf(Vector2 throwAtPoint)
+    {
+        Vector2 throwFromOrigin = transform.position;
+        float distanceSquared = (throwAtPoint - throwFromOrigin).sqrMagnitude;
+        return distanceSquared < offsetDistance * offsetDistance;
+    }
+
+    [Server]
+    private bool IsOnCooldown()
+    {
+        return cooldownTimer > 0f;
     }
 
     [Server]

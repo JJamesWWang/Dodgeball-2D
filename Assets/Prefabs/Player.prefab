@@ -152,6 +152,8 @@ MonoBehaviour:
   connectionNetId: 0
   teamsConfig: {fileID: 11400000, guid: 4052489421253dd49acf812ffc6a6a0f, type: 2}
   color: {r: 0, g: 0, b: 0, a: 0}
+  isSpriteVisible: 0
+  isCollisionEnabled: 0
   sprites:
   - {fileID: 4869748297095513570}
   - {fileID: 1745795231011489708}

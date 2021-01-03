@@ -3,15 +3,15 @@ using Mirror;
 using System;
 
 // Properties: PlayerData
-// Events: ClientConnected, ClientLocalConnected, ClientDisconnected
+// Events: ClientConnectionConnected, ClientLocalConnectionConnected, ClientConnectionDisconnected
 public class Connection : NetworkRoomPlayer
 {
     private Room room;
     public static Connection LocalConnection { get; private set; }
     public PlayerData PlayerData { get; private set; }
-    public static event Action<Connection> ClientStarted;
-    public static event Action<Connection> ClientLocalStarted;
-    public static event Action<Connection> ClientStopped;
+    public static event Action<Connection> ClientConnectionStarted;
+    public static event Action<Connection> ClientLocalConnectionStarted;
+    public static event Action<Connection> ClientConnectionStopped;
 
     private void Awake()
     {
@@ -43,7 +43,7 @@ public class Connection : NetworkRoomPlayer
         room = (Room)NetworkManager.singleton;
         if (!NetworkServer.active)
             room.AddConnection(this);
-        ClientStarted?.Invoke(this);
+        ClientConnectionStarted?.Invoke(this);
     }
 
     public override void OnStartAuthority()
@@ -53,7 +53,7 @@ public class Connection : NetworkRoomPlayer
 
     public override void OnStartLocalPlayer()
     {
-        ClientLocalStarted?.Invoke(this);
+        ClientLocalConnectionStarted?.Invoke(this);
     }
 
     public override void OnStopClient()
@@ -62,7 +62,7 @@ public class Connection : NetworkRoomPlayer
             room.RemoveConnection(this);
         if (hasAuthority)
             LocalConnection = null;
-        ClientStopped?.Invoke(this);
+        ClientConnectionStopped?.Invoke(this);
     }
 
     #endregion

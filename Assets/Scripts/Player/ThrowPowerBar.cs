@@ -11,7 +11,7 @@ public class ThrowPowerBar : MonoBehaviour
     [SerializeField] private Vector2 offset = new Vector2(-5f, 5f);
     private Camera mainCamera;
 
-    private void Awake()
+    private void Start()
     {
         mainCamera = Camera.main;
         fillSpeed = 1f / playerArm.TimeTo100Percent;

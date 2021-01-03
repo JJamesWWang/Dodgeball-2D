@@ -52,11 +52,20 @@ public class GameState : NetworkBehaviour
         int secondsPassed = 0;
         while (secondsPassed < timeToWaitForAllPlayersToConnect)
         {
-            if (room.Players.Count == room.Connections.Count)
-                break;
-            secondsPassed += 1;
             yield return new WaitForSeconds(1f);
+            secondsPassed += 1;
+            if (AreAllPlayersReady())
+                break;
         }
+    }
+
+    [Server]
+    private bool AreAllPlayersReady()
+    {
+        foreach (Player player in room.Players)
+            if (!player.Ready)
+                return false;
+        return true;
     }
 
     [Server]
@@ -103,7 +112,8 @@ public class GameState : NetworkBehaviour
     [Server]
     private void HandleATeamLeft(bool isLeftTeam)
     {
-        EndGame(!isLeftTeam);
+        if (IsInPlay)
+            EndGame(!isLeftTeam);
     }
 
     [Server]

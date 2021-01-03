@@ -19,6 +19,10 @@ public class PlayerCommands : NetworkBehaviour
     {
         playerMovement = GetComponent<PlayerMovement>();
         playerArm = GetComponent<PlayerArm>();
+    }
+
+    private void Start()
+    {
         mainCamera = Camera.main;
         commandLogger = CommandLogger.singleton;
     }

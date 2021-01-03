@@ -120,7 +120,7 @@ public class PlayerTracker : NetworkBehaviour
     public void DespawnPlayers()
     {
         ClearNullActivePlayers();
-        foreach (Player player in ActivePlayers)
+        foreach (Player player in new List<Player>(ActivePlayers))
             DespawnPlayer(player);
         leftTeamActivePlayers.Clear();
         rightTeamActivePlayers.Clear();
