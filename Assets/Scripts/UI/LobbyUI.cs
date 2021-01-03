@@ -48,7 +48,7 @@ public class LobbyUI : NetworkBehaviour
         // Temporarily disabling for easier testing
         //if (GameState.IsValidTeamComposition())
         room.ServerChangeScene(room.GameplayScene);
-        Debug.Log("SERVER: Player clicked lobby start button.");
+        EventLogger.LogEvent("SERVER: Player clicked lobby start button.");
     }
 
     #endregion

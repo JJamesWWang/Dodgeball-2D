@@ -52,7 +52,7 @@ public class Room : NetworkRoomManager
     {
         if (connection != null) { return; }
         connections.Remove(connection);
-        Debug.LogError("Connection was null. Removed null Connection.");
+        EventLogger.LogError("Connection was null. Removed null Connection.");
     }
 
     // Theoretically should never happen, more of a safety check
@@ -66,7 +66,7 @@ public class Room : NetworkRoomManager
     {
         if (player != null) { return; }
         players.Remove(player);
-        Debug.LogError("Player was null. Removed null Player.");
+        EventLogger.LogError("Player was null. Removed null Player.");
     }
 
     public void Disconnect()
@@ -86,12 +86,12 @@ public class Room : NetworkRoomManager
 
     public override void OnRoomStartServer()
     {
-        Debug.Log("SERVER: Server started.");
+        EventLogger.LogEvent("SERVER: Server started.");
     }
 
     public override void OnRoomStopServer()
     {
-        Debug.Log("SERVER: Server stopped.");
+        EventLogger.LogEvent("SERVER: Server stopped.");
     }
 
     public override void OnServerConnect(NetworkConnection conn)

@@ -37,7 +37,7 @@ public class Bounds : MonoBehaviour
     private void Start()
     {
         if (!AreBoundsSet())
-            Debug.LogWarning("Bounds set to 0.");
+            EventLogger.LogWarning("Bounds set to 0.");
     }
 
     private bool AreBoundsSet()

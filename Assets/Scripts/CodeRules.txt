@@ -23,7 +23,7 @@
     3) Private methods immediately after they are called
     4) Unity event handling
     5) Event subscribing, handling (in order of subscribed), unsubscribing, and SyncVar hooks respectively
-11. Prefixes in Debug.Logging in the following order:
+11. Prefixes in logging in the following order:
     1. SERVER: Relating to server (Room) operations.
     2. HOST: Relating to host (SteamRoom) operations.
     3. CLIENT: Relating to client (Connection) operations.

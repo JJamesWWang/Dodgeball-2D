@@ -150,7 +150,7 @@ public class Player : NetworkBehaviour
         foreach (Connection connection in room.Connections)
             if (connection.netId == ConnectionNetId)
                 return connection.PlayerData;
-        Debug.LogError("No Player found in FindPlayerData().");
+        EventLogger.LogError("No Player found in FindPlayerData().");
         return null;
     }
 

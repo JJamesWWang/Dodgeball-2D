@@ -27,6 +27,24 @@ public class EventLogger : MonoBehaviour
         UnsubscribeEvents();
     }
 
+    // So that we have references to events that are logged outside of this class
+    // Do not use these methods inside of this class.
+    public static void LogEvent(string message)
+    {
+        Debug.Log(message);
+    }
+
+    public static void LogWarning(string message)
+    {
+        Debug.LogWarning(message);
+    }
+
+    public static void LogError(string message)
+    {
+        Debug.LogError(message);
+    }
+
+
     // Subscribing in order of appearance in Scripts folder tree
     private void SubscribeEvents()
     {
