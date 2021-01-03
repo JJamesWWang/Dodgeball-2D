@@ -144,6 +144,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.016666
-  scoreToWin: 2
+  scoreToWin: 11
   leftTeamScore: 0
   rightTeamScore: 0

@@ -29,13 +29,17 @@ public class Connection : NetworkRoomPlayer
     public override void OnStopServer()
     {
         room.RemoveConnection(this);
+        // Theoretically, this should be unnecessary, BUT it's a known bug that hosts don't fire OnStopClient correctly.
+        // See https://github.com/vis2k/Mirror/issues/1940
+        if (NetworkClient.active)
+            ClientConnectionStopped?.Invoke(this);
     }
 
     #endregion
 
     #region Client
 
-    public override void OnClientEnterRoom()
+    public override void OnStartClient()
     {
         room = (Room)NetworkManager.singleton;
         if (!NetworkServer.active)
@@ -53,7 +57,7 @@ public class Connection : NetworkRoomPlayer
         ClientLocalConnectionStarted?.Invoke(this);
     }
 
-    public override void OnClientExitRoom()
+    public override void OnStopClient()
     {
         if (!NetworkServer.active)
             room.RemoveConnection(this);
