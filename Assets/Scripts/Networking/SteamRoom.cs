@@ -52,7 +52,6 @@ public class SteamRoom : Room
     // Server
     private void HandleLobbyCreated(Result result, Lobby lobby)
     {
-        Debug.Log($"Attempted to create Lobby with result {result}.");
         if (result != Result.OK)
         {
             Disconnect();
@@ -75,7 +74,6 @@ public class SteamRoom : Room
     // Client
     private void HandleGameLobbyJoinRequested(Lobby lobby, SteamId steamId)
     {
-        Debug.Log("Game Lobby join requested.");
         if (NetworkServer.active || NetworkClient.isConnected) { return; }
         SteamMatchmaking.JoinLobbyAsync(lobby.Id);
         ClientGameLobbyJoinRequested?.Invoke();
@@ -85,7 +83,6 @@ public class SteamRoom : Room
     private void HandleLobbyEntered(Lobby lobby)
     {
         if (NetworkServer.active) { return; }
-        Debug.Log("Lobby entered.");
         networkAddress = lobby.GetData(nameof(networkAddress));
         StartClient();
     }

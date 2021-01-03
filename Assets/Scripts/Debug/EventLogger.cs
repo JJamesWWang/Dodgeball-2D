@@ -11,7 +11,7 @@ public class EventLogger : MonoBehaviour
     private void Awake()
     {
         if (singleton != null && singleton != this)
-            Destroy(singleton.gameObject);
+            Destroy(gameObject);
         else
             singleton = this;
         DontDestroyOnLoad(gameObject);
