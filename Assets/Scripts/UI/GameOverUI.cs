@@ -52,12 +52,14 @@ public class GameOverUI : MonoBehaviour
 
     public void HandleRestartClicked()
     {
-        room.ServerChangeScene(room.RoomScene);
         EventLogger.LogEvent("SERVER: Player clicked restart button.");
+        room.ServerChangeScene(room.RoomScene);
     }
 
     public void HandleDisconnectClicked()
     {
+        if (NetworkClient.active)
+            EventLogger.LogEvent("CLIENT: Player clicked on disconnect button.");
         room.Disconnect();
     }
 

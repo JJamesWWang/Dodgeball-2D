@@ -69,7 +69,7 @@ public class Room : NetworkRoomManager
         players.Remove(player);
     }
 
-    public void Disconnect()
+    public virtual void Disconnect()
     {
         if (NetworkServer.active)
             if (NetworkClient.isConnected)

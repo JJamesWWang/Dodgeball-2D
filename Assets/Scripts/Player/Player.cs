@@ -177,7 +177,6 @@ public class Player : NetworkBehaviour
         bodyCollider.enabled = newEnabled;
     }
 
-
     #endregion Client
 
 }

@@ -26,6 +26,12 @@ public class SteamRoom : Room
         UnsubscribeEvents();
     }
 
+    public override void Disconnect()
+    {
+        base.Disconnect();
+        SteamClient.Shutdown();
+    }
+
     #region Server
 
     public void CreateSteamLobby()

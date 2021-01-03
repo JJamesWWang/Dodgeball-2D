@@ -35,12 +35,19 @@ public class LobbyUI : NetworkBehaviour
 
     public void HandleLeaveClicked()
     {
+        if (NetworkClient.isConnected)
+            EventLogger.LogEvent("CLIENT: Clicked on button to leave lobby.");
         room.Disconnect();
     }
 
     #endregion
 
     #region Server
+
+    public override void OnStartServer()
+    {
+        room = (Room)NetworkManager.singleton;
+    }
 
     [Server]
     public void HandleStartClicked()
