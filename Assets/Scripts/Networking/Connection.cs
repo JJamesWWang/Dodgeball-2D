@@ -29,16 +29,13 @@ public class Connection : NetworkRoomPlayer
     public override void OnStopServer()
     {
         room.RemoveConnection(this);
-        // Theoretically, this should be unnecessary, commenting it out.
-        //if (NetworkClient.active)
-        //ClientStopped?.Invoke(this);
     }
 
     #endregion
 
     #region Client
 
-    public override void OnStartClient()
+    public override void OnClientEnterRoom()
     {
         room = (Room)NetworkManager.singleton;
         if (!NetworkServer.active)
@@ -56,7 +53,7 @@ public class Connection : NetworkRoomPlayer
         ClientLocalConnectionStarted?.Invoke(this);
     }
 
-    public override void OnStopClient()
+    public override void OnClientExitRoom()
     {
         if (!NetworkServer.active)
             room.RemoveConnection(this);

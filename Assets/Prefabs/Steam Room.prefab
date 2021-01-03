@@ -63,7 +63,7 @@ MonoBehaviour:
   spawnPrefabs: []
   showRoomGUI: 0
   minPlayers: 10
-  roomPlayerPrefab: {fileID: 4534741638958361608, guid: 12b7eb62d3e8d1a40b43a6f58c1a6279, type: 3}
+  roomPlayerPrefab: {fileID: 5636154473464528626, guid: 12b7eb62d3e8d1a40b43a6f58c1a6279, type: 3}
   RoomScene: Assets/Scenes/Lobby.unity
   GameplayScene: Assets/Scenes/Map 1.unity
   _allPlayersReady: 0
@@ -108,7 +108,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   Channels: 02000000
-  Timeout: 25
+  Timeout: 5
   SteamAppID: 480
   AllowSteamRelay: 1
   SteamUserID: 0

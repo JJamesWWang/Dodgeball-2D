@@ -69,7 +69,7 @@ public class PlayerTracker : NetworkBehaviour
     private void RemoveNullActivePlayer(List<Player> playerList, Player player)
     {
         if (player != null) { return; }
-        Debug.LogError("Active Player was null. Removed null Active Player.");
+        EventLogger.LogError("Active Player was null. Removed null Active Player.");
         playerList.Remove(player);
     }
 
