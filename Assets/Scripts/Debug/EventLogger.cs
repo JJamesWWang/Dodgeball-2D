@@ -33,6 +33,7 @@ public class EventLogger : MonoBehaviour
         if (!isLoggingOn) { return; }
         SubscribeGameStateEvents();
         SubscribeNetworkingEvents();
+        SubscribeSteamEvents();
         SubscribePlayerEvents();
         SubscribeUIEvents();
     }
@@ -243,6 +244,7 @@ public class EventLogger : MonoBehaviour
         if (!isLoggingOn) { return; }
         UnsubscribeGameStateEvents();
         UnsubscribeNetworkingEvents();
+        UnsubscribeSteamEvents();
         UnsubscribePlayerEvents();
         UnsubscribeUIEvents();
     }
@@ -271,10 +273,18 @@ public class EventLogger : MonoBehaviour
         Connection.ClientConnectionStopped -= HandleClientConnectionStopped;
         Room.ClientConnected -= HandleClientConnected;
         Room.ClientDisconnected -= HandleClientDisconnected;
+    }
+
+    private void UnsubscribeSteamEvents()
+    {
         SteamRoom.ClientCreateLobbyAttempted -= HandleClientCreateLobbyAttempted;
         SteamRoom.ClientCreateLobbyFailed -= HandleClientCreateLobbyFailed;
+        SteamMatchmaking.OnLobbyCreated -= HandleLobbyCreated;
         SteamRoom.ClientGameLobbyJoinRequested -= HandleClientGameLobbyJoinRequested;
+        SteamFriends.OnGameLobbyJoinRequested -= HandleGameLobbyJoinRequested;
+        SteamMatchmaking.OnLobbyEntered -= HandleLobbyEntered;
     }
+
 
     private void UnsubscribePlayerEvents()
     {
