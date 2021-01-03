@@ -61,14 +61,16 @@ public class Player : NetworkBehaviour
     public override void OnStartServer()
     {
         room = (Room)NetworkManager.singleton;
-        room.AddPlayer(this);
+        if (!NetworkClient.isConnected)
+            room.AddPlayer(this);
         SetOnField(false);
         SetInputEnabled(false);
     }
 
     public override void OnStopServer()
     {
-        room.RemovePlayer(this);
+        if (!NetworkClient.isConnected)
+            room.RemovePlayer(this);
         ServerPlayerDisconnected?.Invoke(this);
     }
 
@@ -139,8 +141,7 @@ public class Player : NetworkBehaviour
     {
         room = (Room)NetworkManager.singleton;
         data = FindPlayerData();
-        if (!NetworkServer.active)
-            room.AddPlayer(this);
+        room.AddPlayer(this);
         ClientPlayerSpawned?.Invoke(this);
     }
 
@@ -162,8 +163,7 @@ public class Player : NetworkBehaviour
 
     public override void OnStopClient()
     {
-        if (!NetworkServer.active)
-            room.RemovePlayer(this);
+        room.RemovePlayer(this);
     }
 
     private void HandleSpriteVisibleUpdated(bool _oldVisibility, bool newVisibility)

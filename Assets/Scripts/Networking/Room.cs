@@ -13,33 +13,13 @@ public class Room : NetworkRoomManager
     [SerializeField] private List<Connection> connections = new List<Connection>();
     [SerializeField] private List<Player> players = new List<Player>();
 
-    public ReadOnlyCollection<Connection> Connections { get { CheckNullConnections(); return connections.AsReadOnly(); } }
-    public ReadOnlyCollection<Player> Players { get { CheckNullPlayers(); return players.AsReadOnly(); } }
+    public IReadOnlyCollection<Connection> Connections { get { CheckNullConnections(); return connections; } }
+    public IReadOnlyCollection<Player> Players { get { CheckNullPlayers(); return players; } }
 
     public static event Action ClientConnected;
     public static event Action ClientDisconnected;
 
     #region General
-
-    public void AddConnection(Connection connection)
-    {
-        connections.Add(connection);
-    }
-
-    public void RemoveConnection(Connection connection)
-    {
-        connections.Remove(connection);
-    }
-
-    public void AddPlayer(Player player)
-    {
-        players.Add(player);
-    }
-
-    public void RemovePlayer(Player player)
-    {
-        players.Remove(player);
-    }
 
     // Theoretically should never happen, more of a safety check
     private void CheckNullConnections()
@@ -67,6 +47,26 @@ public class Room : NetworkRoomManager
         if (player != null) { return; }
         players.Remove(player);
         EventLogger.LogError("Player was null. Removed null Player.");
+    }
+
+    public void AddConnection(Connection connection)
+    {
+        connections.Add(connection);
+    }
+
+    public void RemoveConnection(Connection connection)
+    {
+        connections.Remove(connection);
+    }
+
+    public void AddPlayer(Player player)
+    {
+        players.Add(player);
+    }
+
+    public void RemovePlayer(Player player)
+    {
+        players.Remove(player);
     }
 
     public void Disconnect()

@@ -108,7 +108,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   Channels: 02000000
-  Timeout: 5
+  Timeout: 10
   SteamAppID: 480
   AllowSteamRelay: 1
   SteamUserID: 0

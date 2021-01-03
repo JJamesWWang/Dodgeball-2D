@@ -2,7 +2,6 @@ using UnityEngine;
 using Mirror;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 // Properties: ActivePlayers, LeftTeamActivePlayers, RightTeamActivePlayers
 // Events: ServerPlayerEliminated, ServerATeamLeft
@@ -18,9 +17,9 @@ public class PlayerTracker : NetworkBehaviour
     private Map map;
 
     /// <summary> Players that haven't been eliminated. </summary>
-    public ReadOnlyCollection<Player> ActivePlayers { get { return activePlayers.AsReadOnly(); } }
-    public ReadOnlyCollection<Player> LeftTeamActivePlayers { get { return leftTeamActivePlayers.AsReadOnly(); } }
-    public ReadOnlyCollection<Player> RightTeamActivePlayers { get { return rightTeamActivePlayers.AsReadOnly(); } }
+    public IReadOnlyCollection<Player> ActivePlayers { get { return activePlayers; } }
+    public IReadOnlyCollection<Player> LeftTeamActivePlayers { get { return leftTeamActivePlayers; } }
+    public IReadOnlyCollection<Player> RightTeamActivePlayers { get { return rightTeamActivePlayers; } }
 
     public static event Action<Player> ServerPlayerEliminated;
     /// <summary> bool: isLeftTeam </summary>
