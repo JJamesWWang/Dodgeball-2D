@@ -81,6 +81,7 @@ public class LobbyUI : NetworkBehaviour
         usernameInput.text = localPlayerData.Username;
         if (room is SteamRoom)
         {
+            usernameInput.text = SteamClient.Name;
             localPlayerData.CmdSetUsername(SteamClient.Name);
             commandLogger.LogCommand($"Player wants to set username to {SteamClient.Name}.");
         }

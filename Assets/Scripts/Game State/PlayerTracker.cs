@@ -57,11 +57,11 @@ public class PlayerTracker : NetworkBehaviour
     [Server]
     private void ClearNullActivePlayers()
     {
-        foreach (Player player in activePlayers)
+        foreach (Player player in new List<Player>(ActivePlayers))
             RemoveNullActivePlayer(activePlayers, player);
-        foreach (Player player in leftTeamActivePlayers)
+        foreach (Player player in new List<Player>(LeftTeamActivePlayers))
             RemoveNullActivePlayer(leftTeamActivePlayers, player);
-        foreach (Player player in rightTeamActivePlayers)
+        foreach (Player player in new List<Player>(RightTeamActivePlayers))
             RemoveNullActivePlayer(rightTeamActivePlayers, player);
     }
 

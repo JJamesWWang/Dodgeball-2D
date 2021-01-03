@@ -44,7 +44,7 @@ public class Room : NetworkRoomManager
     // Theoretically should never happen, more of a safety check
     private void CheckNullConnections()
     {
-        foreach (var connection in connections)
+        foreach (var connection in new List<Connection>(connections))
             RemoveNullConnection(connection);
     }
 
@@ -58,7 +58,7 @@ public class Room : NetworkRoomManager
     // Theoretically should never happen, more of a safety check
     private void CheckNullPlayers()
     {
-        foreach (var player in players)
+        foreach (var player in new List<Player>(players))
             RemoveNullPlayer(player);
     }
 
